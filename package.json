@@ -1,0 +1,28 @@
+{
+  "name": "serendip.crm.api",
+  "version": "1.0.0",
+  "description": "CRM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-esm/serendip"
+  },
+  "author": "Mohsen Esmaeili <m-esm@hotmail.com>",
+  "license": "ISC",
+  "homepage": "https://github.com/m-esm/serendip#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-deploy-ftp": "^1.0.1",
+    "gulp-nodemon": "^2.2.1",
+    "gulp-typescript": "^4.0.1",
+    "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "moment": "^2.21.0",
+    "serendip": "file:../serendip"
+  }
+}
