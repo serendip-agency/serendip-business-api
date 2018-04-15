@@ -14,6 +14,8 @@
   "license": "ISC",
   "homepage": "https://github.com/m-esm/serendip#readme",
   "devDependencies": {
+    "@types/mongodb": "^3.0.13",
+    "@types/underscore": "^1.8.8",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
     "gulp-deploy-ftp": "^1.0.1",
@@ -23,6 +25,8 @@
   },
   "dependencies": {
     "moment": "^2.21.0",
-    "serendip": "file:../serendip"
+    "mongodb": "^3.0.6",
+    "serendip": "file:../serendip",
+    "underscore": "^1.8.3"
   }
 }
