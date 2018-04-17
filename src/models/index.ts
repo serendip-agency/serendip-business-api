@@ -10,8 +10,7 @@ export * from './PersonSocialModel'
 
 export * from './ProductModel'
 
-export * from './ProductTypeModel'
+export * from './ProductCategoryModel'
 export * from './SaleModel'
 export * from './ServiceModel'
 export * from './ServiceTypeModel'
-export * from './SocialProvider'

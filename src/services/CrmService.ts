@@ -69,7 +69,12 @@ export class CrmService implements ServerServiceInterface {
         if (!req.body.crm)
             return next(new ServerError(400, 'crm field missing'));
 
-        var crm: CrmModel = await Server.services["CrmService"].findById(req.body.crm);
+        var crm: CrmModel;
+        try {
+            crm = await Server.services["CrmService"].findById(req.body.crm);
+        } catch (e) {
+
+        }
 
 
         if (!crm)

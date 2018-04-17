@@ -16,11 +16,11 @@ export class CrmModel {
             throw new Error('model empty');
 
         if (!model.title)
-            throw new Error('model title required');
+            throw new Error('model.title required');
 
 
         if (!model.owner)
-            throw new Error('model owner required');
+            throw new Error('model.owner required');
 
 
     }

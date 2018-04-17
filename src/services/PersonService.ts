@@ -1,11 +1,11 @@
 import { ServerServiceInterface, DbService, Server, DbCollection } from "serendip";
-import { CompanyModel } from "../models";
+import { PersonModel } from "../models";
 import { ObjectId } from "bson";
 
-export class CompanyService implements ServerServiceInterface {
+export class PersonService implements ServerServiceInterface {
 
     _dbService: DbService;
-    collection: DbCollection<CompanyModel>;
+    collection: DbCollection<PersonModel>;
 
     static dependencies = ["CrmService", "DbService"];
 
@@ -16,21 +16,20 @@ export class CompanyService implements ServerServiceInterface {
 
     async start() {
 
-        this.collection = await this._dbService.collection<CompanyModel>('CrmCompanies', true);
-        this.collection.createIndex({ name: 1 }, { unique: true });
+        this.collection = await this._dbService.collection<PersonModel>('CrmPersons', true);
 
     }
 
-    async insert(model: CompanyModel) {
+    async insert(model: PersonModel) {
         return this.collection.insertOne(model);
     }
 
-    async update(model: CompanyModel) {
+    async update(model: PersonModel) {
         return this.collection.updateOne(model);
     }
 
-    async delete(id, userId) {
-        return this.collection.deleteOne(id, userId);
+    async delete(model: PersonModel) {
+        return this.collection.deleteOne(model._id);
     }
 
     async findById(id: string) {
@@ -41,12 +40,6 @@ export class CompanyService implements ServerServiceInterface {
             return undefined;
         else
             return query[0];
-
-    }
-
-    async findByCrmId(id: string) {
-
-        return this.collection.find( { "crm": id.toString() } );
 
     }
 

@@ -1,7 +1,5 @@
 import { CrmModelInterface } from '../interfaces';
-
-export class ServiceTypeModel implements CrmModelInterface {
-
+export class ProductCategoryModel implements CrmModelInterface {
 
     _id?: string;
     crm: string;
@@ -9,9 +7,6 @@ export class ServiceTypeModel implements CrmModelInterface {
         throw new Error("Method not implemented.");
     }
 
-    price: number;
-
-    priceCurrency: string;
-
+    name: string;
 
 }

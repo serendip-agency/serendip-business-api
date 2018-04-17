@@ -1,10 +1,17 @@
-export class ProductModel{
+import { CrmModelInterface } from "../interfaces";
 
-    name : string;
-    
-    price : number;
+export class ProductModel implements CrmModelInterface {
 
-    priceCurrency : string;
+    _id?: string;
+    crm: string;
+    validate(): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
+    name: string;
+
+    price: number;
+
+    priceCurrency: string;
 
 
 

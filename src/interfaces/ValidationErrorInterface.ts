@@ -1,7 +1,7 @@
 export interface ValidationErrorInterface {
 
     property: string;
-    message: string;
+    type: string;
     code?: number;
 
 }

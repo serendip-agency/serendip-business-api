@@ -1,16 +1,18 @@
 export interface CrmModelInterface {
 
-    /**
-     * related CRM
-     */
-    crm: string;
+  _id?: string;
+
+  /**
+   * related CRM
+   */
+  crm: string;
 
 
 
-    /**
-     * model validation
-     */
-   validate(): Promise<any>;
+  /**
+   * model validation
+   */
+   validate?(model: any): Promise<any>;
 
 
 }
