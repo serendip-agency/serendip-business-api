@@ -1,5 +1,5 @@
 {
-  "name": "serendip.crm.api",
+  "name": "serendip-crm-api",
   "version": "1.0.0",
   "description": "CRM",
   "main": "index.js",

@@ -1,4 +1,4 @@
-import { ServerEndpointInterface, Server, ServerError } from "serendip";
+import { ServerEndpointInterface, Server, ServerError, ServerRequestInterface, ServerResponseInterface } from "serendip";
 import { CompanyService, CrmService, CrmCheckAccessResultInterface } from "../services";
 import { CompanyModel } from "../models";
 
@@ -17,19 +17,44 @@ export class CompanyController {
 
     }
 
+    public async onRequest(req: ServerRequestInterface, res: ServerResponseInterface, next, done) {
+        next();
+    }
+
     public list: ServerEndpointInterface = {
         method: 'post',
         actions: [
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model = await this.companyService.findByCrmId(access.crm._id);
-        
+
+                
+                var model = await this.companyService.findByCrmId(
+                    access.crm._id,
+                    req.body.skip,
+                    req.body.limit);
+
                 res.json(model);
 
             }
         ]
     }
+
+    public count: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+
+                
+                var model = await this.companyService.count(access.crm._id);
+
+                res.json(model);
+
+            }
+        ]
+    }
+
 
     public insert: ServerEndpointInterface = {
         method: 'post',
@@ -93,6 +118,7 @@ export class CompanyController {
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
                 var _id = req.body._id;
+
                 if (!_id)
                     return next(new ServerError(400, '_id is missing'));
 
