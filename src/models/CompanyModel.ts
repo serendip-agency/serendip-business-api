@@ -4,17 +4,17 @@ import { CrmModelInterface } from "../interfaces";
 
 export class CompanyModel implements CrmModelInterface {
 
-    constructor(model: CompanyModel) {
+    constructor(model?: CompanyModel) {
 
-        if (model._id)
-            this._id = model._id;
-            
-        this.contacts = model.contacts;
-        this.crm = model.crm;
-        this.name = model.name;
-        this.persons = model.persons;
-        this.type = model.type;
+        if (model) {
+            if (model._id)
+                this._id = model._id;
 
+            this.contacts = model.contacts;
+            this.crm = model.crm;
+            this.name = model.name;
+            this.type = model.type;
+        }
     }
 
     static async validate(model: any): Promise<any> {
@@ -31,10 +31,6 @@ export class CompanyModel implements CrmModelInterface {
      */
     contacts: ContactModel[];
 
-    /**
-     * related persons
-     */
-    persons: string[]
 
 
     /**

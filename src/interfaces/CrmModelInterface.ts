@@ -1,3 +1,5 @@
+import { ValidationErrorInterface } from ".";
+
 export interface CrmModelInterface {
 
   _id?: string;
@@ -12,7 +14,6 @@ export interface CrmModelInterface {
   /**
    * model validation
    */
-   validate?(model: any): Promise<any>;
-
+   validate?(model: any): Promise<ValidationErrorInterface[]>;
 
 }

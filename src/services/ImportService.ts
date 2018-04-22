@@ -44,7 +44,6 @@ export class ImportService implements ServerServiceInterface {
                 }],
                 name: client.name,
                 crm: '5ad3da917e73503cd4bd5d1f',
-                persons: [],
                 type: []
             }));
 

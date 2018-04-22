@@ -2,7 +2,6 @@ import { CrmModelInterface } from "../interfaces";
 
 export class ServiceModel implements CrmModelInterface {
 
-
     crm: string;
 
     _id?: string;
@@ -16,9 +15,9 @@ export class ServiceModel implements CrmModelInterface {
      */
     products : string[];
 
-    async validate() {
+    // async validate() {
 
-    }
+    // }
 
 
 
