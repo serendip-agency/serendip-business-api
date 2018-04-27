@@ -1,6 +1,6 @@
 import { ContactModel } from ".";
-import { CrmModelInterface } from "../interfaces";
-
+import { CrmModelInterface, ValidationErrorInterface } from "../interfaces";
+import * as validator from 'validator'
 
 export class CompanyModel implements CrmModelInterface {
 
@@ -17,8 +17,19 @@ export class CompanyModel implements CrmModelInterface {
         }
     }
 
-    static async validate(model: any): Promise<any> {
+
+    static async validate(model: CompanyModel): Promise<void> {
+        var errs: ValidationErrorInterface[] = [];
+
+        if (!validator.isLength(model.name, { min: 3, max: 64 }))
+            errs.push({ property: 'name', type: 'length' })
+
+
+        if (errs)
+            throw errs;
+
     }
+
 
     _id?: string;
 

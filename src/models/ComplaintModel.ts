@@ -1,5 +1,5 @@
 import { ServiceModel, ProductModel } from ".";
-import { CrmModelInterface } from "../interfaces";
+import { CrmModelInterface, ValidationErrorInterface } from "../interfaces";
 
 export class ComplaintModel implements CrmModelInterface {
     _id?: string;
@@ -10,8 +10,12 @@ export class ComplaintModel implements CrmModelInterface {
 
     products: ProductModel[];
 
-    validate(): Promise<any> {
-        throw new Error("Method not implemented.");
+    static async validate(model: ComplaintModel): Promise<ValidationErrorInterface[]> {
+        var errs: ValidationErrorInterface[] = [];
+
+
+
+        return errs;
     }
 
 
