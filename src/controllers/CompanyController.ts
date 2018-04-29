@@ -1,6 +1,11 @@
-import { ServerEndpointInterface, Server, ServerError, ServerRequestInterface, ServerResponseInterface } from "serendip";
+import { ServerEndpointInterface, Server, ServerError, ServerRequestInterface, ServerResponseInterface, DbService, Validator } from "serendip";
 import { CompanyService, CrmService, CrmCheckAccessResultInterface } from "../services";
 import { CompanyModel } from "../models";
+import * as archiver from 'archiver';
+import * as fs from 'fs';
+import { join } from "path";
+import * as _ from 'underscore'
+import { ObjectID, ObjectId } from "bson";
 
 export class CompanyController {
 
@@ -9,16 +14,110 @@ export class CompanyController {
 
     private companyService: CompanyService;
     private crmService: CrmService;
+    private dbService: DbService;
 
     constructor() {
 
         this.companyService = Server.services["CompanyService"];
         this.crmService = Server.services["CrmService"];
+        this.dbService = Server.services["DbService"];
 
     }
 
     public async onRequest(req: ServerRequestInterface, res: ServerResponseInterface, next, done) {
         next();
+    }
+
+
+
+    public zip: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+
+
+                var range = {
+                    from: 0,
+                    to: Date.now()
+                };
+
+                if (req.body.from && Validator.isNumeric(req.body.from))
+                    range.from = req.body.from;
+
+                if (req.body.to && Validator.isNumeric(req.body.to))
+                    range.to = req.body.to;
+
+
+                var model = await this.companyService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } });
+
+
+                var zip = archiver('zip', {
+                    zlib: { level: 9 } // Sets the compression level.
+                });
+
+
+                res.setHeader('content-type', 'application/zip');
+
+
+                zip.pipe(fs.createWriteStream(join(Server.dir, 'testing.zip')));
+
+                zip.pipe(res);
+
+                zip.append(JSON.stringify(model), { name: 'data.json' });
+
+                zip.finalize();
+
+
+
+            }
+        ]
+    }
+
+    public changes: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+
+
+                var range = {
+                    from: 0,
+                    to: Date.now()
+                };
+
+                if (req.body.from && Validator.isNumeric(req.body.from))
+                    range.from = req.body.from;
+
+                if (req.body.to && Validator.isNumeric(req.body.to))
+                    range.to = req.body.to;
+
+                if (req.body._id) {
+
+                    var actualRecord = await this.companyService.findById(req.body._id);
+
+                    if (!actualRecord)
+                        return next(new ServerError(400, "record not found"));
+
+                    var recordChanges = await this.dbService.entityCollection.find({ entityId: actualRecord._id })
+
+                    res.json(recordChanges);
+
+                } else {
+
+                    var changedRecords = _.map(await this.companyService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } }), (item) => {
+                        return item._id;
+                    });
+
+                    var deletedRecords = _.map(await this.dbService.entityCollection.find({ "model.crm": access.crm._id.toString(), type: 0, date: { $gt: range.from, $lt: range.to } }), (item) => {
+                        return item.entityId;
+                    });
+
+                    res.json({ changed: changedRecords , deleted : deletedRecords });
+
+                }
+            }
+        ]
     }
 
     public list: ServerEndpointInterface = {
@@ -28,7 +127,7 @@ export class CompanyController {
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
 
-                
+
                 var model = await this.companyService.findByCrmId(
                     access.crm._id,
                     req.body.skip,
@@ -46,7 +145,7 @@ export class CompanyController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                
+
                 var model = await this.companyService.count(access.crm._id);
 
                 res.json(model);
@@ -95,13 +194,13 @@ export class CompanyController {
                 try {
                     await CompanyModel.validate(model);
                 } catch (e) {
-                    return next(new ServerError(400, e.message));
+                    return next(new ServerError(400, e.message || e));
                 }
 
                 try {
                     await this.companyService.update(model);
                 } catch (e) {
-                    return next(new ServerError(500, e.message));
+                    return next(new ServerError(500, e.message || e));
                 }
 
                 res.json(model);
@@ -129,7 +228,7 @@ export class CompanyController {
                 try {
                     await this.companyService.delete(_id, req.user._id);
                 } catch (e) {
-                    return next(new ServerError(500, e.message));
+                    return next(new ServerError(500, e.message || e));
                 }
 
                 res.json(company);

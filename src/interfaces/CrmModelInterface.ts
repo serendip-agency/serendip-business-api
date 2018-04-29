@@ -9,11 +9,11 @@ export interface CrmModelInterface {
    */
   crm: string;
 
-
+  lastChange?: number;
 
   /**
    * model validation
    */
-   validate?(model: any): Promise<ValidationErrorInterface[]>;
+  validate?(model: any): Promise<ValidationErrorInterface[]>;
 
 }

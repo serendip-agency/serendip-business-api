@@ -23,32 +23,38 @@ export class ImportService implements ServerServiceInterface {
 
         this.data = JSON.parse(fs.readFileSync(join(Server.dir, '..', 'export-mvc.json')).toString());
 
-        //  this.importPersons();
+     //   this.importPersons();
 
-        //    this.importCompanies();
 
-        this.importServices();
+      //  this.importCompanies();
 
 
     }
 
     async importCompanies() {
         var collection = await this.dbService.collection("CrmCompanies");
+        console.log(this.data.clients[0]);
 
-        this.data.clients.forEach(async client => {
+        this.data.clients.forEach(async p => {
 
-            await collection.updateOne(new CompanyModel({
-                contacts: [{
-                    telephones: [],
-                    faxes: [],
-                    persons: [],
-                    name: '',
-                    address: { text: client.address }
-                }],
-                name: client.name,
-                crm: '5ad3da917e73503cd4bd5d1f',
-                type: []
-            }));
+            var query = await collection.find({ oid: p.Id });
+            if (query.length == 0) {
+                await collection.updateOne(new CompanyModel({
+                    contacts: [{
+                        telephones: [{ type: 'اصلی', value: p.telephone }],
+                        faxes: [],
+                        persons: [],
+                        name: '',
+                        address: { text: p.address }
+                    }],
+                    name: p.name,
+                    crm: '5ad3da917e73503cd4bd5d1f',
+                    type: [],
+                    oid: p.Id
+                }));
+
+                console.log(p.Id);
+            }
 
         });
     }

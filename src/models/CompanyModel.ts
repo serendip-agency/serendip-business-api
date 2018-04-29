@@ -1,6 +1,6 @@
 import { ContactModel } from ".";
 import { CrmModelInterface, ValidationErrorInterface } from "../interfaces";
-import * as validator from 'validator'
+import { Validator } from 'serendip'
 
 export class CompanyModel implements CrmModelInterface {
 
@@ -14,6 +14,8 @@ export class CompanyModel implements CrmModelInterface {
             this.crm = model.crm;
             this.name = model.name;
             this.type = model.type;
+
+            this.oid = model.oid;
         }
     }
 
@@ -21,15 +23,16 @@ export class CompanyModel implements CrmModelInterface {
     static async validate(model: CompanyModel): Promise<void> {
         var errs: ValidationErrorInterface[] = [];
 
-        if (!validator.isLength(model.name, { min: 3, max: 64 }))
+        if (!Validator.isLength(model.name, 3, 64))
             errs.push({ property: 'name', type: 'length' })
 
 
-        if (errs)
+        if (errs && errs.length > 0)
             throw errs;
 
     }
 
+    oid?: string;
 
     _id?: string;
 

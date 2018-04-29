@@ -35,7 +35,7 @@ export class CompanyService implements ServerServiceInterface {
 
     async findById(id: string, skip?: number, limit?: number) {
 
-        var query = await this.collection.find({ _id: new ObjectId(id) }, skip,limit);
+        var query = await this.collection.find({ _id: new ObjectId(id) }, skip, limit);
 
         if (query.length == 0)
             return undefined;
@@ -46,12 +46,19 @@ export class CompanyService implements ServerServiceInterface {
 
     async findByCrmId(id: string, skip?: number, limit?: number) {
 
-        return this.collection.find({ "crm": id.toString() }, skip,limit);
+        return this.collection.find({ "crm": id.toString() }, skip, limit);
 
     }
 
-    
-    async count(crmId: string) : Promise<Number> {
+
+    async find(query, skip?: number, limit?: number) {
+
+        return this.collection.find(query);
+
+    }
+
+
+    async count(crmId: string): Promise<Number> {
 
         return this.collection.count({ "crm": crmId.toString() });
 
