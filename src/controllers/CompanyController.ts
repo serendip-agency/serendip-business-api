@@ -166,13 +166,13 @@ export class CompanyController {
                 try {
                     await CompanyModel.validate(model);
                 } catch (e) {
-                    return next(new ServerError(400, e.message));
+                    return next(new ServerError(400, e.message || e));
                 }
 
                 try {
                     model = await this.companyService.insert(model);
                 } catch (e) {
-                    return next(new ServerError(500, e.message));
+                    return next(new ServerError(500, e.message || e));
                 }
 
                 res.json(model);
