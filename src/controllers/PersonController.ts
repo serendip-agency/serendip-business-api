@@ -1,26 +1,26 @@
 import { ServerEndpointInterface, Server, ServerError, ServerRequestInterface, ServerResponseInterface, DbService, Validator } from "serendip";
-import { CompanyService, CrmService, CrmCheckAccessResultInterface } from "../services";
-import { CompanyModel } from "../models";
+import { PersonService, CrmService, CrmCheckAccessResultInterface } from "../services";
+import { PersonModel } from "../models";
 import * as archiver from 'archiver';
 import * as fs from 'fs';
 import { join } from "path";
 import * as _ from 'underscore'
 import { ObjectID, ObjectId } from "bson";
 
-export class CompanyController {
+export class PersonController {
 
     /**
      * /api/crm/...
      */
     static apiPrefix = "CRM";
 
-    private companyService: CompanyService;
+    private personService: PersonService;
     private crmService: CrmService;
     private dbService: DbService;
 
     constructor() {
 
-        this.companyService = Server.services["CompanyService"];
+        this.personService = Server.services["PersonService"];
         this.crmService = Server.services["CrmService"];
         this.dbService = Server.services["DbService"];
 
@@ -41,7 +41,7 @@ export class CompanyController {
                     to: req.body.to && Validator.isNumeric(req.body.to) ? req.body.to : Date.now()
                 };
 
-                var model = await this.companyService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } });
+                var model = await this.personService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } });
 
                 res.setHeader('content-type', 'application/zip');
 
@@ -70,7 +70,7 @@ export class CompanyController {
 
                 if (req.body._id) {
 
-                    var actualRecord = await this.companyService.findById(req.body._id);
+                    var actualRecord = await this.personService.findById(req.body._id);
                     if (!actualRecord)
                         return next(new ServerError(400, "record not found"));
 
@@ -80,7 +80,7 @@ export class CompanyController {
 
                 } else {
 
-                    var changedRecords = _.map(await this.companyService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } }), (item) => {
+                    var changedRecords = _.map(await this.personService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } }), (item) => {
                         return item._id;
                     });
 
@@ -101,7 +101,7 @@ export class CompanyController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model = await this.companyService.findByCrmId(
+                var model = await this.personService.findByCrmId(
                     access.crm._id,
                     req.body.skip,
                     req.body.limit);
@@ -118,7 +118,7 @@ export class CompanyController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model = await this.companyService.count(access.crm._id);
+                var model = await this.personService.count(access.crm._id);
                 res.json(model);
 
             }
@@ -131,16 +131,16 @@ export class CompanyController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model: CompanyModel = new CompanyModel(req.body);
+                var model: PersonModel = new PersonModel(req.body);
 
                 try {
-                    await CompanyModel.validate(model);
+                    await PersonModel.validate(model);
                 } catch (e) {
                     return next(new ServerError(400, e.message || e));
                 }
 
                 try {
-                    model = await this.companyService.insert(model);
+                    model = await this.personService.insert(model);
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }
@@ -157,17 +157,17 @@ export class CompanyController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model: CompanyModel = new CompanyModel(req.body);
+                var model: PersonModel = new PersonModel(req.body);
 
 
                 try {
-                    await CompanyModel.validate(model);
+                    await PersonModel.validate(model);
                 } catch (e) {
                     return next(new ServerError(400, e.message || e));
                 }
 
                 try {
-                    await this.companyService.update(model);
+                    await this.personService.update(model);
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }
@@ -189,17 +189,17 @@ export class CompanyController {
                 if (!_id)
                     return next(new ServerError(400, '_id is missing'));
 
-                var company = await this.companyService.findById(_id);
-                if (!company)
-                    return next(new ServerError(400, 'company not found'));
+                var person = await this.personService.findById(_id);
+                if (!person)
+                    return next(new ServerError(400, 'person not found'));
 
                 try {
-                    await this.companyService.delete(_id, req.user._id);
+                    await this.personService.delete(_id, req.user._id);
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }
 
-                res.json(company);
+                res.json(person);
 
             }
         ]

@@ -2,10 +2,13 @@ import { ServerServiceInterface, DbService, Server, DbCollection, ServerEndpoint
 import { CrmModel, CrmMemberModel } from "../models";
 import * as _ from 'underscore';
 import { ObjectId } from "bson";
+
+
 export interface CrmCheckAccessResultInterface {
     member: CrmMemberModel,
     crm: CrmModel
 }
+
 export class CrmService implements ServerServiceInterface {
 
     static dependencies = ["AuthService", "DbService"];
@@ -18,6 +21,7 @@ export class CrmService implements ServerServiceInterface {
         this._dbService = Server.services["DbService"];
 
     }
+
     async start() {
 
         this.crmCollection = await this._dbService.collection<CrmModel>('Crms', true);

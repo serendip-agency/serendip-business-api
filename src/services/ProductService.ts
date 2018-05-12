@@ -5,7 +5,7 @@ import { ObjectId } from "bson";
 export class ProductService implements ServerServiceInterface {
 
     _dbService: DbService;
-    productsCollection: DbCollection<ProductModel>;
+    collection: DbCollection<ProductModel>;
 
     static dependencies = ["CrmService", "DbService"];
 
@@ -16,30 +16,50 @@ export class ProductService implements ServerServiceInterface {
 
     async start() {
 
-        this.productsCollection = await this._dbService.collection<ProductModel>('CrmProducts', true);
+        this.collection = await this._dbService.collection<ProductModel>('CrmProducts', true);
 
     }
 
     async insert(model: ProductModel) {
-        return this.productsCollection.insertOne(model);
+        return this.collection.insertOne(model);
     }
 
     async update(model: ProductModel) {
-        return this.productsCollection.updateOne(model);
+        return this.collection.updateOne(model);
     }
 
-    async delete(model: ProductModel) {
-        return this.productsCollection.deleteOne(model._id);
+    async delete(id, userId) {
+        return this.collection.deleteOne(id, userId);
     }
 
-    async findById(id: string) {
+    async findById(id: string, skip?: number, limit?: number) {
 
-        var query = await this.productsCollection.find({ _id: new ObjectId(id) });
+        var query = await this.collection.find({ _id: new ObjectId(id) }, skip, limit);
 
         if (query.length == 0)
             return undefined;
         else
             return query[0];
+
+    }
+
+    async findByCrmId(id: string, skip?: number, limit?: number) {
+
+        return this.collection.find({ "crm": id.toString() }, skip, limit);
+
+    }
+
+
+    async find(query, skip?: number, limit?: number) {
+
+        return this.collection.find(query);
+
+    }
+
+
+    async count(crmId: string): Promise<Number> {
+
+        return this.collection.count({ "crm": crmId.toString() });
 
     }
 

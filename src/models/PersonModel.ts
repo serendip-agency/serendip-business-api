@@ -1,5 +1,6 @@
 import { PersonSocialModel } from "./PersonSocialModel";
-import { CrmModelInterface, ValueTypeInterface } from "../interfaces";
+import { CrmModelInterface, ValueTypeInterface, ValidationErrorInterface } from "../interfaces";
+import { Validator } from "serendip";
 
 export class PersonModel implements CrmModelInterface {
 
@@ -7,7 +8,10 @@ export class PersonModel implements CrmModelInterface {
 
         if (model) {
             this.crm = model.crm;
-            this._id = model._id;
+
+            if (model._id)
+                this._id = model._id;
+                
             this.firstName = model.firstName;
             this.lastName = model.lastName;
             this.profilePicture = model.profilePicture;
@@ -17,16 +21,21 @@ export class PersonModel implements CrmModelInterface {
             this.mobiles = model.mobiles;
             this.gender = model.gender;
             this.oid = model.oid;
-            
+
         }
     }
     crm: string;
-    static async validate(): Promise<any> {
-        throw new Error("Method not implemented.");
+    static async validate(model: PersonModel): Promise<void> {
+        var errs: ValidationErrorInterface[] = [];
+
+
+        if (errs && errs.length > 0)
+            throw errs;
+
     }
     _id?: string;
 
-    oid? : string;
+    oid?: string;
 
     firstName: string;
 

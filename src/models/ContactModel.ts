@@ -7,6 +7,8 @@ export class ContactModel {
     //     throw new Error("Method not implemented.");
     // }
     constructor(model: ContactModel) {
+
+        
         this.name = model.name;
         this.address = model.address;
         this.faxes = model.faxes;

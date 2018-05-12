@@ -17,7 +17,6 @@ export class CompanyService implements ServerServiceInterface {
     async start() {
 
         this.collection = await this._dbService.collection<CompanyModel>('CrmCompanies', true);
-        this.collection.createIndex({ name: 1 }, { unique: true });
 
     }
 
