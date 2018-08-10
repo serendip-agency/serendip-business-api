@@ -1,47 +1,49 @@
 import { ServerEndpointInterface, Server, ServerError, ServerRequestInterface, ServerResponseInterface, DbService, Validator } from "serendip";
-import { PersonService, CrmService, CrmCheckAccessResultInterface } from "../services";
-import { PersonModel } from "../models";
+import { PeopleService, CrmService, CrmCheckAccessResultInterface } from "../services";
+import { PeopleModel } from "../models";
 import * as archiver from 'archiver';
 import * as fs from 'fs';
 import { join } from "path";
 import * as _ from 'underscore'
 import { ObjectID, ObjectId } from "bson";
 
-export class PersonController {
+export class PeopleController {
 
     /**
      * /api/crm/...
      */
     static apiPrefix = "CRM";
 
-    private personService: PersonService;
+    private PeopleService: PeopleService;
     private crmService: CrmService;
     private dbService: DbService;
 
     constructor() {
 
-        this.personService = Server.services["PersonService"];
+        this.PeopleService = Server.services["PeopleService"];
         this.crmService = Server.services["CrmService"];
         this.dbService = Server.services["DbService"];
 
     }
 
-    public async onRequest(req: ServerRequestInterface, res: ServerResponseInterface, next, done) {
+    public onRequest(req: ServerRequestInterface, res: ServerResponseInterface, next, done) {
         next();
     }
 
     public zip: ServerEndpointInterface = {
         method: 'post',
+        isStream: true,
         actions: [
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
                 var range = {
+
                     from: req.body.from && Validator.isNumeric(req.body.from) ? req.body.from : 0,
                     to: req.body.to && Validator.isNumeric(req.body.to) ? req.body.to : Date.now()
                 };
 
-                var model = await this.personService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } });
+                var model = await this.PeopleService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } });
 
                 res.setHeader('content-type', 'application/zip');
 
@@ -62,7 +64,7 @@ export class PersonController {
         actions: [
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
-              
+
                 var range = {
                     from: req.body.from && Validator.isNumeric(req.body.from) ? req.body.from : 0,
                     to: req.body.to && Validator.isNumeric(req.body.to) ? req.body.to : Date.now()
@@ -70,7 +72,7 @@ export class PersonController {
 
                 if (req.body._id) {
 
-                    var actualRecord = await this.personService.findById(req.body._id);
+                    var actualRecord = await this.PeopleService.findById(req.body._id);
                     if (!actualRecord)
                         return next(new ServerError(400, "record not found"));
 
@@ -80,16 +82,19 @@ export class PersonController {
 
                 } else {
 
-                    var changedRecords = _.map(await this.personService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } }), (item) => {
+                    var changedRecords = _.map(await this.PeopleService.find({ crm: access.crm._id.toString(), _vdate: { $gt: range.from, $lt: range.to } }), (item) => {
                         return item._id;
                     });
+
 
                     var deletedRecords = _.map(await this.dbService.entityCollection.find({ "model.crm": access.crm._id.toString(), type: 0, date: { $gt: range.from, $lt: range.to } }), (item) => {
                         return item.entityId;
                     });
 
-                    res.json({ changed: changedRecords, deleted: deletedRecords });
+                    var result = { changed: changedRecords, deleted: deletedRecords };
+                    console.log(result, res.finished);
 
+                    res.json(result);
                 }
             }
         ]
@@ -101,12 +106,34 @@ export class PersonController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model = await this.personService.findByCrmId(
+                var model = await this.PeopleService.findByCrmId(
                     access.crm._id,
                     req.body.skip,
                     req.body.limit);
 
                 res.json(model);
+
+            }
+        ]
+    }
+
+    public details: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+
+                var model = await this.PeopleService.findById(req.body._id);
+
+                if (!model)
+                    return new ServerError(404, "People not found");
+
+                if (model.crm == access.crm._id)
+                    res.json(model);
+                else
+                    return new ServerError(404, "People not found");
+
+
 
             }
         ]
@@ -118,7 +145,7 @@ export class PersonController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model = await this.personService.count(access.crm._id);
+                var model = await this.PeopleService.count(access.crm._id);
                 res.json(model);
 
             }
@@ -131,16 +158,16 @@ export class PersonController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model: PersonModel = new PersonModel(req.body);
+                var model: PeopleModel = new PeopleModel(req.body);
 
                 try {
-                    await PersonModel.validate(model);
+                    await PeopleModel.validate(model);
                 } catch (e) {
                     return next(new ServerError(400, e.message || e));
                 }
 
                 try {
-                    model = await this.personService.insert(model);
+                    model = await this.PeopleService.insert(model);
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }
@@ -157,17 +184,17 @@ export class PersonController {
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-                var model: PersonModel = new PersonModel(req.body);
+                var model: PeopleModel = new PeopleModel(req.body);
 
 
                 try {
-                    await PersonModel.validate(model);
+                    await PeopleModel.validate(model);
                 } catch (e) {
                     return next(new ServerError(400, e.message || e));
                 }
 
                 try {
-                    await this.personService.update(model);
+                    await this.PeopleService.update(model);
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }
@@ -189,17 +216,17 @@ export class PersonController {
                 if (!_id)
                     return next(new ServerError(400, '_id is missing'));
 
-                var person = await this.personService.findById(_id);
-                if (!person)
-                    return next(new ServerError(400, 'person not found'));
+                var People = await this.PeopleService.findById(_id);
+                if (!People)
+                    return next(new ServerError(400, 'People not found'));
 
                 try {
-                    await this.personService.delete(_id, req.user._id);
+                    await this.PeopleService.delete(_id, req.user._id);
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }
 
-                res.json(person);
+                res.json(People);
 
             }
         ]

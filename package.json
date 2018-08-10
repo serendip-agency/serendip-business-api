@@ -14,24 +14,24 @@
   "license": "ISC",
   "homepage": "https://github.com/m-esm/serendip#readme",
   "devDependencies": {
-    "@types/mongodb": "^3.0.13",
+    "@types/mongodb": "^3.1.2",
     "@types/underscore": "^1.8.8",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
     "gulp-deploy-ftp": "^1.0.1",
     "gulp-nodemon": "^2.2.1",
-    "gulp-typescript": "^4.0.1",
-    "typescript": "^2.7.2"
+    "gulp-typescript": "^4.0.2",
+    "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@types/archiver": "^2.1.1",
+    "@types/archiver": "^2.1.2",
     "archiver": "^2.1.1",
     "iranian-calendar-events": "^0.2.0",
-    "moment": "^2.21.0",
-    "mongodb": "^3.0.6",
+    "moment": "^2.22.2",
+    "mongodb": "^3.1.1",
     "node-zip": "^1.1.1",
-    "serendip": "file:../serendip",
-    "underscore": "^1.8.3",
+    "serendip": "github:m-esm/serendip",
+    "underscore": "^1.9.1",
     "weather-js": "^2.0.0"
   }
 }

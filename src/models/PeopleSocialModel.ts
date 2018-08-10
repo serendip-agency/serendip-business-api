@@ -1,4 +1,4 @@
-export class PersonSocialModel {
+export class PeopleSocialModel {
 
     socialProvider: string;
     address: string;

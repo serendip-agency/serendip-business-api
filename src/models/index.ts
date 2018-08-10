@@ -5,8 +5,8 @@ export * from './CrmMemberModel'
 export * from './CrmModel'
 export * from './InteractionModel'
 
-export * from './PersonModel'
-export * from './PersonSocialModel'
+export * from './PeopleModel'
+export * from './PeopleSocialModel'
 
 export * from './ProductModel'
 

@@ -32,6 +32,7 @@ export class CompanyController {
 
     public zip: ServerEndpointInterface = {
         method: 'post',
+        isStream: true,
         actions: [
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
@@ -62,7 +63,7 @@ export class CompanyController {
         actions: [
             CrmService.checkUserAccess,
             async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
-              
+
                 var range = {
                     from: req.body.from && Validator.isNumeric(req.body.from) ? req.body.from : 0,
                     to: req.body.to && Validator.isNumeric(req.body.to) ? req.body.to : Date.now()

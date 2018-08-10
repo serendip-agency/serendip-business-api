@@ -3,7 +3,7 @@ import { ServerServiceInterface, Server, DbService } from "serendip";
 import * as fs from 'fs'
 import { join } from "path";
 import * as _ from 'underscore';
-import { PersonModel } from '..';
+import { PeopleModel } from '..';
 
 export class ImportService implements ServerServiceInterface {
 
@@ -23,7 +23,7 @@ export class ImportService implements ServerServiceInterface {
 
         this.data = JSON.parse(fs.readFileSync(join(Server.dir, '..', 'export-mvc.json')).toString());
 
-     //   this.importPersons();
+     //   this.importPeoples();
 
 
       //  this.importCompanies();
@@ -43,7 +43,7 @@ export class ImportService implements ServerServiceInterface {
                     contacts: [{
                         telephones: [{ type: 'اصلی', value: p.telephone }],
                         faxes: [],
-                        persons: [],
+                        peoples: [],
                         name: '',
                         address: { text: p.address }
                     }],
@@ -74,7 +74,7 @@ export class ImportService implements ServerServiceInterface {
             //     contacts: [{
             //         telephones: [],
             //         faxes: [],
-            //         persons: [],
+            //         Peoples: [],
             //         name: '',
             //         address: { text: client.address }
             //     }],
@@ -88,16 +88,16 @@ export class ImportService implements ServerServiceInterface {
 
 
 
-    async importPersons() {
+    async importPeoples() {
 
-        var collection = await this.dbService.collection("CrmPersons");
+        var collection = await this.dbService.collection("CrmPeoples");
 
-        this.data.persons.forEach(async (p: any) => {
+        this.data.Peoples.forEach(async (p: any) => {
 
             var query = await collection.find({ oid: p.Id });
 
             if (query.length == 0)
-                await collection.updateOne(new PersonModel({
+                await collection.updateOne(new PeopleModel({
                     crm: '5ad3da917e73503cd4bd5d1f',
                     gender: p.gender == 1,
                     firstName: p.name.split(' ')[0],

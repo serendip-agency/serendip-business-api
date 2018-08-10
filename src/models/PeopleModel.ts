@@ -1,10 +1,10 @@
-import { PersonSocialModel } from "./PersonSocialModel";
+import { PeopleSocialModel } from "./PeopleSocialModel";
 import { CrmModelInterface, ValueTypeInterface, ValidationErrorInterface } from "../interfaces";
-import { Validator } from "serendip";
 
-export class PersonModel implements CrmModelInterface {
+export class PeopleModel implements CrmModelInterface {
+ 
 
-    constructor(model?: PersonModel) {
+    constructor(model?: PeopleModel) {
 
         if (model) {
             this.crm = model.crm;
@@ -24,15 +24,15 @@ export class PersonModel implements CrmModelInterface {
 
         }
     }
+
     crm: string;
-    static async validate(model: PersonModel): Promise<void> {
+
+    static async validate(model: PeopleModel): Promise<void> {
         var errs: ValidationErrorInterface[] = [];
-
-
         if (errs && errs.length > 0)
             throw errs;
-
     }
+
     _id?: string;
 
     oid?: string;

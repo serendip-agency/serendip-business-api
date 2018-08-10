@@ -23,23 +23,7 @@ var run = function () {
         if (server.kill)
             server.kill();
 
-    server = child.spawn('node', ['dist/app.js']);
-
-    server.stdout.on('data', function (chunk) {
-
-        serverLog.write(chunk.toString());
-        console.info(chunk.toString());
-
-    });
-
-    server.stderr.on('data', function (chunk) {
-
-        serverLog.write(chunk.toString());
-        console.error(chunk.toString());
-
-    });
-
-
+    server = child.spawn('node', ['dist/app.js'],{ stdio: 'inherit' });
 
 };
 
@@ -106,7 +90,7 @@ gulp.task('preBuild', ['clean']);
 // clean and compile
 gulp.task('build', ['preBuild', 'ts'], function () {
 
-    
+
 });
 
 

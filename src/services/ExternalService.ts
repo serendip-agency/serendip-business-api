@@ -1,4 +1,4 @@
-import { ServerServiceInterface, DbService, Server, DbCollection, ServerEndpointActionInterface, ServerError } from "serendip";
+import { ServerServiceInterface, DbService, Server, DbCollection, ServerEndpointActionInterface, ServerError } from "../../../serendip";
 import { CrmModel, CrmMemberModel } from "../models";
 import * as _ from 'underscore';
 import { ObjectId } from "bson";

@@ -11,6 +11,7 @@ export interface CrmModelInterface {
 
   lastChange?: number;
 
+
   /**
    * model validation
    */

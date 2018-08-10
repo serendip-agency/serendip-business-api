@@ -5,7 +5,7 @@ export * from './InteractionController'
 export * from './ManageController'
 export * from './MiscController'
 
-export * from './PersonController'
+export * from './PeopleController'
 
 export * from './ProductController'
 

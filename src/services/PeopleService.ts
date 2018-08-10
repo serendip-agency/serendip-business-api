@@ -1,11 +1,11 @@
 import { ServerServiceInterface, DbService, Server, DbCollection } from "serendip";
-import { PersonModel } from "../models";
+import { PeopleModel } from "../models";
 import { ObjectId } from "bson";
 
-export class PersonService implements ServerServiceInterface {
+export class PeopleService implements ServerServiceInterface {
 
     _dbService: DbService;
-    collection: DbCollection<PersonModel>;
+    collection: DbCollection<PeopleModel>;
 
     static dependencies = ["CrmService", "DbService"];
 
@@ -16,15 +16,15 @@ export class PersonService implements ServerServiceInterface {
 
     async start() {
 
-        this.collection = await this._dbService.collection<PersonModel>('CrmPersons', true);
+        this.collection = await this._dbService.collection<PeopleModel>('CrmPeoples', true);
 
     }
 
-    async insert(model: PersonModel) {
+    async insert(model: PeopleModel) {
         return this.collection.insertOne(model);
     }
 
-    async update(model: PersonModel) {
+    async update(model: PeopleModel) {
         return this.collection.updateOne(model);
     }
 

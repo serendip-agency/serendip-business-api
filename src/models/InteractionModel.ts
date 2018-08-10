@@ -1,6 +1,6 @@
 import { SaleModel } from "./SaleModel";
 import { ServiceModel, ComplaintModel } from ".";
-import { PersonModel } from "./PersonModel";
+import { PeopleModel } from "./PeopleModel";
 import { CrmModelInterface, ValidationErrorInterface } from "../interfaces";
 
 export class InteractionModel implements CrmModelInterface {
