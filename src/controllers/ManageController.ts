@@ -22,7 +22,7 @@ export class ManageController {
         actions: [
             async (req, res, next, done) => {
 
-                var model = await this.crmService.findCrmByMember(req.user._id);
+                var model = await this.crmService.findCrmByMember(req.user._id.toString());
                 res.json(model);
 
             }
@@ -37,7 +37,7 @@ export class ManageController {
 
                 var model: CrmModel = req.body;
 
-                model.owner = req.user._id;
+                model.owner = req.user._id.toString();
 
                 try {
                     await CrmModel.validate(model);
@@ -50,8 +50,6 @@ export class ManageController {
                 } catch (e) {
                     return next(new ServerError(500, e.message));
                 }
-
-
                 res.json(model);
 
             }

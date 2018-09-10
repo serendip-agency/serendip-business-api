@@ -7,7 +7,6 @@ export class CrmModel {
     owner: string;
     subDomain: string;
     domain: string;
-
     members: CrmMemberModel[];
 
     static async validate(model: CrmModel) {
@@ -18,10 +17,8 @@ export class CrmModel {
         if (!model.title)
             throw new Error('model.title required');
 
-
         if (!model.owner)
             throw new Error('model.owner required');
-
 
     }
 }
