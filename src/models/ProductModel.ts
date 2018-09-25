@@ -35,5 +35,4 @@ export class ProductModel implements CrmModelInterface {
     priceCurrency: string;
 
 
-
 }

@@ -14,7 +14,7 @@ export class CrmService implements ServerServiceInterface {
     static dependencies = ["AuthService", "DbService"];
 
     private _dbService: DbService;
-    private crmCollection: DbCollection<CrmModel>;
+    public crmCollection: DbCollection<CrmModel>;
 
     constructor() {
 
@@ -67,6 +67,8 @@ export class CrmService implements ServerServiceInterface {
         });
 
     }
+
+
 
     public static async checkUserAccess(req, res, next, done) {
 

@@ -14,3 +14,5 @@ export * from './ProductCategoryModel'
 export * from './SaleModel'
 export * from './ServiceModel'
 export * from './ServiceTypeModel'
+
+export * from './UserProfileModel'

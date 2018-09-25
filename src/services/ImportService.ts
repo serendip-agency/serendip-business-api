@@ -41,7 +41,7 @@ export class ImportService implements ServerServiceInterface {
             if (query.length == 0) {
                 await collection.updateOne(new CompanyModel({
                     contacts: [{
-                        telephones: [{ type: 'اصلی', value: p.telephone }],
+                        telephones: [p.telephone],
                         faxes: [],
                         peoples: [],
                         name: '',

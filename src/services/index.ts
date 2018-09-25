@@ -10,3 +10,5 @@ export * from './ProductService'
 export * from './SaleService'
 export * from './ServiceService'
 export * from './ExternalService'
+
+export * from './ServiceTypeService'

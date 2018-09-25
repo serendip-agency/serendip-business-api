@@ -7,6 +7,7 @@ export class ServiceService implements ServerServiceInterface {
     _dbService: DbService;
     collection: DbCollection<ServiceModel>;
 
+
     static dependencies = ["CrmService", "DbService"];
 
     constructor() {
@@ -20,7 +21,13 @@ export class ServiceService implements ServerServiceInterface {
 
     }
 
-    async insert(model: ServiceModel) {
+    async insert(model: ServiceModel, opts?: { fillDefaultsFromServiceType?: boolean }) {
+
+        if (opts)
+            if (opts.fillDefaultsFromServiceType) {
+                // TODO
+            }
+
         return this.collection.insertOne(model);
     }
 

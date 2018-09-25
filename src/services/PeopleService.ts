@@ -17,6 +17,10 @@ export class PeopleService implements ServerServiceInterface {
     async start() {
 
         this.collection = await this._dbService.collection<PeopleModel>('CrmPeoples', true);
+        this.collection.createIndex({
+            firstName :'text',
+            lastName : 'text',
+        },{});
 
     }
 

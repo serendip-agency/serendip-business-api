@@ -10,9 +10,29 @@ export class ServiceModel implements CrmModelInterface {
                 this._id = model._id;
 
             this.crm = model.crm;
-            this.date = model.date;
-            this.serviceType = model.serviceType;
+
+            this.submitDate = model.submitDate;
+            this.dueDate = model.dueDate;
+            this.doneDate = model.doneDate;
+
+            this.submitter = model.submitter;
+            this.person = model.person;
+            this.company = model.company;
+
+            this.applicator = model.applicator;
+            this.type = model.type;
             this.products = model.products;
+
+            this.receivedDate = model.receivedDate;
+
+            this.period = model.period;
+            this.periodAbsoluteExpiration = model.periodAbsoluteExpiration;
+            this.periodRelevantExpiration = model.periodRelevantExpiration;
+            this.periodUnit = model.periodUnit;
+            this.periodUntil = model.periodUntil;
+
+
+
         }
     }
 
@@ -21,14 +41,37 @@ export class ServiceModel implements CrmModelInterface {
 
     _id?: string;
 
-    date: number;
 
-    serviceType: string;
+    receivedDate: Date;
+
+    submitDate: Date;
+
+    dueDate: Date;
+
+    doneDate: Date;
+
+    submitter: string;
+
+    person: string;
+
+    company: string;
+
+    applicator: string;
+
+    type: string;
 
     /**
      * related product
      */
     products: string[];
+
+
+    period: number;
+    periodUnit: string;
+    periodUntil: Date;
+
+    periodAbsoluteExpiration: Date;
+    periodRelevantExpiration: Date;
 
     static async validate(model: ServiceModel): Promise<void> {
         var errs: ValidationErrorInterface[] = [];

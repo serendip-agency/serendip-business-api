@@ -1,8 +1,9 @@
 import { PeopleSocialModel } from "./PeopleSocialModel";
 import { CrmModelInterface, ValueTypeInterface, ValidationErrorInterface } from "../interfaces";
+import { ContactModel } from "./ContactModel";
 
 export class PeopleModel implements CrmModelInterface {
- 
+
 
     constructor(model?: PeopleModel) {
 
@@ -11,7 +12,7 @@ export class PeopleModel implements CrmModelInterface {
 
             if (model._id)
                 this._id = model._id;
-                
+
             this.firstName = model.firstName;
             this.lastName = model.lastName;
             this.profilePicture = model.profilePicture;
@@ -21,6 +22,7 @@ export class PeopleModel implements CrmModelInterface {
             this.mobiles = model.mobiles;
             this.gender = model.gender;
             this.oid = model.oid;
+            this.contacts = model.contacts;
 
         }
     }
@@ -52,5 +54,8 @@ export class PeopleModel implements CrmModelInterface {
     emails: string[];
 
     gender: boolean;
+
+    contacts: ContactModel[];
+
 
 }

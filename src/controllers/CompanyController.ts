@@ -58,6 +58,25 @@ export class CompanyController {
         ]
     }
 
+    public details: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+
+                var model = await this.companyService.findById(req.body._id);
+
+                if (!model)
+                    return new ServerError(404, "company not found");
+
+                if (model.crm == access.crm._id)
+                    res.json(model);
+                else
+                    return new ServerError(404, "company not found");
+            }
+        ]
+    }
+
     public changes: ServerEndpointInterface = {
         method: 'post',
         actions: [
@@ -126,6 +145,26 @@ export class CompanyController {
         ]
     }
 
+
+
+    public search: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+                //{ '$regex': '.*' + req.body.query + '.*' }
+                var model = await this.companyService.collection.aggregate([
+                    {
+                        $match: {
+                            $or: [{ name: {  $regex : '.*' + req.body.query + '.*' } }]
+                        }
+                    }
+                ]).project({ name: 1 }).limit(req.body.take).toArray();
+                res.json(model);
+            }
+        ]
+    }
+
     public insert: ServerEndpointInterface = {
         method: 'post',
         actions: [
@@ -137,7 +176,7 @@ export class CompanyController {
                 try {
                     await CompanyModel.validate(model);
                 } catch (e) {
-                    return next(new ServerError(400, e.message || e));
+                    return next(new ServerError(400, JSON.stringify(e)));
                 }
 
                 try {

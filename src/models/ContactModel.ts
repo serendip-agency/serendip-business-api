@@ -8,7 +8,7 @@ export class ContactModel {
     // }
     constructor(model: ContactModel) {
 
-        
+
         this.name = model.name;
         this.address = model.address;
         this.faxes = model.faxes;
@@ -24,13 +24,13 @@ export class ContactModel {
 
     address: ContactAddressModel;
 
-    telephones: ValueTypeInterface[];
+    telephones: string[];
 
-    faxes: ValueTypeInterface[];
+    faxes: string[];
 
     /**
      * array of users who are related to this contact address of company
      */
-    peoples: ValueTypeInterface[];
+    peoples: string[];
 
 }

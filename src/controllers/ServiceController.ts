@@ -140,7 +140,7 @@ export class ServiceController {
                 }
 
                 try {
-                    model = await this.serviceService.insert(model);
+                    model = await this.serviceService.insert(model, req.body.opts || {});
                 } catch (e) {
                     return next(new ServerError(500, e.message || e));
                 }

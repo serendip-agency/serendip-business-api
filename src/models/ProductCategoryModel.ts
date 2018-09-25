@@ -1,12 +1,22 @@
-import { CrmModelInterface } from '../interfaces';
+import { CrmModelInterface, ValidationErrorInterface } from '../interfaces';
 export class ProductCategoryModel implements CrmModelInterface {
+
+    static async validate(model: ProductCategoryModel): Promise<void> {
+        var errs: ValidationErrorInterface[] = [];
+
+        if (errs && errs.length > 0)
+            throw errs;
+    }
+
+    constructor(model : ProductCategoryModel){
+        
+    }
 
     _id?: string;
     crm: string;
-    validate(): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
+
 
     name: string;
+    assuranceTemplate: string;
 
 }

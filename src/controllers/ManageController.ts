@@ -1,18 +1,23 @@
 import { ServerEndpointInterface, Server, ServerError, AuthService } from "serendip";
 import { CrmService, CrmCheckAccessResultInterface } from "../services/CrmService";
-import { CrmMemberModel, CrmModel } from "../models";
+import { CrmMemberModel, CrmModel, UserProfileModel } from "../models";
 import * as _ from 'underscore'
+import { UserProfileService } from "../services/UserProfileService";
 
 export class ManageController {
 
     static apiPrefix = "CRM";
     private crmService: CrmService;
     private authService: AuthService;
+    private userProfileService: UserProfileService;
+
 
     constructor() {
 
         this.crmService = Server.services["CrmService"];
         this.authService = Server.services["AuthService"];
+
+
 
     }
 
@@ -29,8 +34,45 @@ export class ManageController {
         ]
     }
 
+    public members: ServerEndpointInterface = {
+        method: 'post',
+        actions: [
+            CrmService.checkUserAccess,
+            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
 
-    public createCrm: ServerEndpointInterface = {
+                var members = access.crm.members;
+
+                members.push({ role: 'owner', userId: access.crm.owner });
+
+                var model = [];
+
+                await Promise.all(_.map(members, (item) => {
+                    return new Promise(async (resolve, reject) => {
+
+                        var memberProfile = await this.userProfileService.findById(item.userId);
+
+                        if (memberProfile == undefined)
+                            return resolve(new UserProfileModel({ firstName: '', lastName: '', profilePicture: '' }));
+                        else
+                            return resolve(memberProfile);
+
+                    });
+                }));
+
+                if (req.body.query)
+                    model = _.filter(model as any, (item: { firstName: string, lastName: string }) => {
+                        return item.firstName.indexOf(req.body.query) != -1 || item.lastName.indexOf(req.body.query) != -1;
+                    });
+
+                res.json(model);
+            }
+        ]
+    }
+
+
+
+
+    public saveCrm: ServerEndpointInterface = {
         method: 'post',
         actions: [
             async (req, res, next, done) => {
