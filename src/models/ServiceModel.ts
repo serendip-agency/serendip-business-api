@@ -31,6 +31,7 @@ export class ServiceModel implements CrmModelInterface {
             this.periodUnit = model.periodUnit;
             this.periodUntil = model.periodUntil;
 
+            this.assurance = model.assurance;
 
 
         }
@@ -72,6 +73,9 @@ export class ServiceModel implements CrmModelInterface {
 
     periodAbsoluteExpiration: Date;
     periodRelevantExpiration: Date;
+
+    assurance: any;
+
 
     static async validate(model: ServiceModel): Promise<void> {
         var errs: ValidationErrorInterface[] = [];
