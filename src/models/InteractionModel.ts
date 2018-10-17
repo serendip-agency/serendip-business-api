@@ -46,6 +46,9 @@ export class InteractionModel implements CrmModelInterface {
     // related person id in database
     person: string;
 
+
+    user: string;
+
     // array of related sales id in database
     sales: string[];
 
@@ -55,17 +58,16 @@ export class InteractionModel implements CrmModelInterface {
     // array of related complaints
     complaints: string[];
 
-    // utm_campaign should be campaign id of existing record in database
-    campaign: string;
-
-    // utm_source ex: google, newsletter
-    source: string;
-
-    // utm_medium ex: banner, cpc, email
-    medium: string;
-
-    // utm_content will be used for A/B testing ex: google-ad-1, logoWeb 
-    content: string;
+    campaignTrees: {
+        // utm_campaign should be campaign id of existing record in database
+        campaign: string,
+        // utm_source ex: google, newsletter
+        source: string,
+        // utm_medium ex: banner, cpc, email
+        medium: string,
+        // utm_content will be used for A/B testing ex: google-ad-1, logoWeb 
+        content: string
+    }
 
     // Date when interaction inserted in our database
     submitDate: Date;

@@ -55,7 +55,7 @@ export class PeopleModel implements CrmModelInterface {
 
     gender: boolean;
 
-    contacts: ContactModel[];
+    contacts?: ContactModel[];
 
 
 }

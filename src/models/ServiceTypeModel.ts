@@ -34,7 +34,8 @@ export class ServiceTypeModel implements CrmModelInterface {
 
         this.periodUnit = model.periodUnit;
 
-
+        this.periodAbsoluteExpiration = model.periodAbsoluteExpiration;
+        this.periodRelevantExpiration = model.periodRelevantExpiration;
 
     }
 

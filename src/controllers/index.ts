@@ -14,3 +14,7 @@ export * from './SaleController'
 
 export * from './ServiceController'
 
+export * from './ServiceTypeController'
+
+
+export * from './ProductCategoryController'
