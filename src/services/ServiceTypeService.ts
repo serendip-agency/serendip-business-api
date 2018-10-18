@@ -16,7 +16,7 @@ export class ServiceTypeService implements ServerServiceInterface {
 
     async start() {
 
-        this.collection = await this._dbService.collection<ServiceTypeModel>('ServiceTypes', true);
+        this.collection = await this._dbService.collection<ServiceTypeModel>('CrmServiceTypes', true);
 
     }
 
