@@ -33,7 +33,6 @@ export class ServiceModel implements CrmModelInterface {
 
             this.assurance = model.assurance;
 
-
         }
     }
 

@@ -18,6 +18,13 @@ export class InteractionModel implements CrmModelInterface {
             this.sales = model.sales;
             this.services = model.services;
             this.complaints = model.complaints;
+
+            this.path = model.path;
+            this.campaignTrees = model.campaignTrees;
+
+            this.submitDate = model.submitDate;
+
+            this.interactDate = model.interactDate;
         }
 
     }
