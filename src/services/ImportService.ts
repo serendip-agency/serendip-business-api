@@ -1,9 +1,9 @@
-import { CompanyModel } from '../models/CompanyModel';
+import { CompanyModel } from '../models';
 import { ServerServiceInterface, Server, DbService } from "serendip";
 import * as fs from 'fs'
 import { join } from "path";
 import * as _ from 'underscore';
-import { PeopleModel } from '..';
+import { PeopleModel } from '../models';
 
 export class ImportService implements ServerServiceInterface {
 
@@ -23,10 +23,9 @@ export class ImportService implements ServerServiceInterface {
 
         this.data = JSON.parse(fs.readFileSync(join(Server.dir, '..', 'export-mvc.json')).toString());
 
-     //   this.importPeoples();
+        //   this.importPeoples();
 
-
-      //  this.importCompanies();
+        //  this.importCompanies();
 
 
     }
