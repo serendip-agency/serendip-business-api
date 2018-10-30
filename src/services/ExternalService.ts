@@ -1,5 +1,5 @@
 import { ServerServiceInterface, DbService, Server, DbCollection, ServerEndpointActionInterface, ServerError } from "../../../serendip";
-import { CrmModel, CrmMemberModel } from "../models";
+import { BusinessModel, BusinessMemberModel } from "../models";
 import * as _ from 'underscore';
 import { ObjectId } from "bson";
 

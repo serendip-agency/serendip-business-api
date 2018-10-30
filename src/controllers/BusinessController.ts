@@ -1,20 +1,18 @@
 import { ServerEndpointInterface, Server, ServerError, AuthService } from "serendip";
-import { CrmService, CrmCheckAccessResultInterface } from "../services/CrmService";
-import { CrmMemberModel, CrmModel, UserProfileModel } from "../models";
+import { BusinessService, BusinessCheckAccessResultInterface } from "../services/BusinessService";
+import { BusinessMemberModel, BusinessModel, UserProfileModel } from "../models";
 import * as _ from 'underscore'
 import { UserProfileService } from "../services/UserProfileService";
 
-export class ManageController {
+export class BusinessController {
 
-    static apiPrefix = "CRM";
-    private crmService: CrmService;
+    private businessService: BusinessService;
     private authService: AuthService;
     private userProfileService: UserProfileService;
 
-
     constructor() {
 
-        this.crmService = Server.services["CrmService"];
+        this.businessService = Server.services["BusinessService"];
         this.authService = Server.services["AuthService"];
 
 
@@ -27,7 +25,7 @@ export class ManageController {
         actions: [
             async (req, res, next, done) => {
 
-                var model = await this.crmService.findCrmByMember(req.user._id.toString());
+                var model = await this.businessService.findBusinessByMember(req.user._id.toString());
                 res.json(model);
 
             }
@@ -37,12 +35,12 @@ export class ManageController {
     public members: ServerEndpointInterface = {
         method: 'post',
         actions: [
-            CrmService.checkUserAccess,
-            async (req, res, next, done, access: CrmCheckAccessResultInterface) => {
+            BusinessService.checkUserAccess,
+            async (req, res, next, done, access: BusinessCheckAccessResultInterface) => {
 
-                var members = access.crm.members;
+                var members = access.business.members;
 
-                members.push({ role: 'owner', userId: access.crm.owner });
+                members.push({ role: 'owner', userId: access.business.owner });
 
                 var model = [];
 
@@ -72,23 +70,23 @@ export class ManageController {
 
 
 
-    public saveCrm: ServerEndpointInterface = {
+    public saveBusiness: ServerEndpointInterface = {
         method: 'post',
         actions: [
             async (req, res, next, done) => {
 
-                var model: CrmModel = req.body;
+                var model: BusinessModel = req.body;
 
                 model.owner = req.user._id.toString();
 
                 try {
-                    await CrmModel.validate(model);
+                    await BusinessModel.validate(model);
                 } catch (e) {
                     return next(new ServerError(400, e.message));
                 }
 
                 try {
-                    model = await this.crmService.insert(model);
+                    model = await this.businessService.insert(model);
                 } catch (e) {
                     return next(new ServerError(500, e.message));
                 }
@@ -102,8 +100,8 @@ export class ManageController {
     public deleteMember: ServerEndpointInterface = {
         method: 'post',
         actions: [
-            CrmService.checkUserAccess,
-            async (req, res, next, done, model: CrmCheckAccessResultInterface) => {
+            BusinessService.checkUserAccess,
+            async (req, res, next, done, model: BusinessCheckAccessResultInterface) => {
 
 
                 var userId = req.body.userId;
@@ -111,17 +109,17 @@ export class ManageController {
                 if (!userId)
                     return next(new ServerError(400, 'userId field missing'));
 
-                model.crm.members = _.reject(model.crm.members, (item) => {
+                model.business.members = _.reject(model.business.members, (item) => {
                     return item.userId == userId;
                 });
 
                 try {
-                    await this.crmService.update(model.crm);
+                    await this.businessService.update(model.business);
                 } catch (e) {
                     return next(new ServerError(500, e.message));
                 }
 
-                res.json(model.crm);
+                res.json(model.business);
 
             }
         ]
@@ -130,10 +128,10 @@ export class ManageController {
     public addMember: ServerEndpointInterface = {
         method: 'post',
         actions: [
-            CrmService.checkUserAccess,
-            async (req, res, next, done, model: CrmCheckAccessResultInterface) => {
+            BusinessService.checkUserAccess,
+            async (req, res, next, done, model: BusinessCheckAccessResultInterface) => {
 
-                var member: CrmMemberModel = req.body;
+                var member: BusinessMemberModel = req.body;
 
                 if (!member.role || !member.userId)
                     return next(new ServerError(400, 'role or userId field missing'));
@@ -143,15 +141,15 @@ export class ManageController {
                 if (!user)
                     return next(new ServerError(400, 'user not found'));
 
-                model.crm.members.push(member);
+                model.business.members.push(member);
 
                 try {
-                    await this.crmService.update(model.crm);
+                    await this.businessService.update(model.business);
                 } catch (e) {
                     return next(new ServerError(500, e.message));
                 }
 
-                res.json(model.crm);
+                res.json(model.business);
 
             }
         ]

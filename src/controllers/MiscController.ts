@@ -1,16 +1,11 @@
 import { ServerEndpointInterface, Server, ServerError, ServerRequestInterface, ServerResponseInterface, DbService, Validator } from "serendip";
-import { CompanyService, CrmService, CrmCheckAccessResultInterface, ExternalService } from "../services";
-import { CompanyModel } from "../models";
-import * as archiver from 'archiver';
-import * as fs from 'fs';
-import { join } from "path";
+import { ExternalService } from "../services";
 import * as _ from 'underscore'
-import { ObjectID, ObjectId } from "bson";
 
 export class MiscController {
 
 
-    static apiPrefix = "CRM";
+    static apiPrefix = "etc";
 
     private externalService: ExternalService;
 

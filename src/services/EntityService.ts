@@ -1,13 +1,13 @@
 import { ServerServiceInterface, DbService, Server, DbCollection } from "serendip";
-import { ComplaintModel } from "../models";
+import { EntityModel } from "../models";
 import { ObjectId } from "bson";
 
-export class ComplaintService implements ServerServiceInterface {
+export class EntityService implements ServerServiceInterface {
 
     _dbService: DbService;
-    collection: DbCollection<ComplaintModel>;
+    collection: DbCollection<EntityModel>;
 
-    static dependencies = ["CrmService", "DbService"];
+    static dependencies = ["BusinessService", "DbService"];
 
     constructor() {
 
@@ -15,14 +15,16 @@ export class ComplaintService implements ServerServiceInterface {
     }
 
     async start() {
-        this.collection = await this._dbService.collection<ComplaintModel>('CrmComplaints', true);
+
+        this.collection = await this._dbService.collection<EntityModel>('Entities', true);
+
     }
 
-    async insert(model: ComplaintModel) {
+    async insert(model: EntityModel) {
         return this.collection.insertOne(model);
     }
 
-    async update(model: ComplaintModel) {
+    async update(model: EntityModel) {
         return this.collection.updateOne(model);
     }
 
@@ -41,9 +43,9 @@ export class ComplaintService implements ServerServiceInterface {
 
     }
 
-    async findByCrmId(id: string, skip?: number, limit?: number) {
+    async findByBusinessId(id: string, skip?: number, limit?: number) {
 
-        return this.collection.find({ "crm": id.toString() }, skip, limit);
+        return this.collection.find({ "_business": id.toString() }, skip, limit);
 
     }
 
@@ -55,9 +57,9 @@ export class ComplaintService implements ServerServiceInterface {
     }
 
 
-    async count(crmId: string): Promise<Number> {
+    async count(businessId: string): Promise<Number> {
 
-        return this.collection.count({ "crm": crmId.toString() });
+        return this.collection.count({ "business": businessId.toString() });
 
     }
 

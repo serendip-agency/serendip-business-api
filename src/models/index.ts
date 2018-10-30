@@ -1,2 +1,3 @@
 
-export * from 'serendip-crm-model';
+export * from 'serendip-business-model';
+

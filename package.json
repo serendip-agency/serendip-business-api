@@ -1,18 +1,14 @@
 {
-  "name": "serendip-crm-api",
+  "name": "serendip-business-api",
   "version": "1.0.0",
-  "description": "CRM",
+  "description": "serendip business api on nodejs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/m-esm/serendip"
-  },
   "author": "Mohsen Esmaeili <m-esm@hotmail.com>",
   "license": "ISC",
-  "homepage": "https://github.com/m-esm/serendip#readme",
+  "homepage": "https://serendip.agency",
   "devDependencies": {
     "@types/mongodb": "^3.1.2",
     "@types/underscore": "^1.8.8",

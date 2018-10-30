@@ -1,20 +1,9 @@
-export * from './CompanyController'
-export * from './ComplaintController'
-export * from './InteractionController'
 
-export * from './ManageController'
+export * from './BusinessController'
 export * from './MiscController'
-
-export * from './PeopleController'
-
-export * from './ProductController'
+export * from './EntityController'
 
 
-export * from './SaleController'
-
-export * from './ServiceController'
-
-export * from './ServiceTypeController'
 
 
-export * from './ProductCategoryController'
+
