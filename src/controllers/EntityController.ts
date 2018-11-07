@@ -111,6 +111,7 @@ export class EntityController {
 
                     var changedRecords = _.map(await this.entityService.find({
                         _business: access.business._id.toString(),
+                        _entity: req.params.entity,
                         _vdate: {
                             $gt: range.from, $lt: range.to
                         }
@@ -137,8 +138,11 @@ export class EntityController {
             BusinessService.checkUserAccess,
             async (req, res, next, done, access: BusinessCheckAccessResultInterface) => {
 
-                var model = await this.entityService.findByBusinessId(
-                    access.business._id,
+                var model = await this.entityService.find(
+                    {
+                        _business: access.business._id.toString(),
+                        _entity: req.params.entity
+                    },
                     req.body.skip,
                     req.body.limit);
 
@@ -181,15 +185,19 @@ export class EntityController {
             async (req, res, next, done, access: BusinessCheckAccessResultInterface) => {
                 //{ '$regex': '.*' + req.body.query + '.*' }
 
+
+                var reportId = req.body.reportId;
+                var reportName = req.body.reportName;
+                var reportSave: boolean = req.body.reportSave;
+
+                
                 var reportQueries: ReportQueryInterface[] = req.body.queries;
                 var reportSkip = req.body.skip || 0;
                 var reportLimit = req.body.limit;
-                var reportId = req.body.reportId;
-                var reportName = req.body.reportName;
+              
                 var zipRequested = req.body.zip;
                 var reportEntity = req.body.entity;
                 var reportFields: ReportFieldInterface[] = req.body.fields || [];
-                var reportSave: boolean = req.body.reportSave;
 
 
                 var model: ReportModel = null;
@@ -241,23 +249,11 @@ export class EntityController {
                         });
                     }));
 
-                    model = await this.reportService.insert({
-                        data: queriedData,
-                        entity: reportEntity,
-                        fields: reportFields,
-                        queries: reportQueries,
-                        createDate: new Date(),
-                        user: access.member.userId
-                    });
-
-                    queriedData = _.rest(queriedData, reportSkip);
-
-
-                    if (reportLimit)
-                        queriedData = _.take(queriedData, reportLimit);
 
 
                     model = {
+                        name: reportName,
+                        count: queriedData.length,
                         data: queriedData,
                         entity: reportEntity,
                         fields: reportFields,
@@ -272,6 +268,15 @@ export class EntityController {
 
                 }
 
+
+                var result = _.rest(model.data, reportSkip);
+
+
+                if (reportLimit)
+                    result = _.take(result, reportLimit);
+
+
+                model.data = result;
 
                 if (zipRequested) {
 

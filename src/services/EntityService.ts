@@ -52,14 +52,14 @@ export class EntityService implements ServerServiceInterface {
 
     async find(query, skip?: number, limit?: number) {
 
-        return this.collection.find(query);
+        return this.collection.find(query,skip,limit);
 
     }
 
 
     async count(businessId: string): Promise<Number> {
 
-        return this.collection.count({ "business": businessId.toString() });
+        return this.collection.count({ "_business": businessId.toString() });
 
     }
 

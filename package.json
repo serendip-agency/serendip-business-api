@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/mongodb": "^3.1.2",
     "@types/underscore": "^1.8.8",
+    "@types/ws": "^6.0.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
     "gulp-deploy-ftp": "^1.0.1",
@@ -27,7 +28,10 @@
     "mongodb": "^3.1.1",
     "node-zip": "^1.1.1",
     "serendip": "github:m-esm/serendip",
+    "serendip-business-model": "^1.0.2",
+    "serendip-crm-model": "^1.0.0",
     "underscore": "^1.9.1",
-    "weather-js": "^2.0.0"
+    "weather-js": "^2.0.0",
+    "ws": "^6.1.0"
   }
 }

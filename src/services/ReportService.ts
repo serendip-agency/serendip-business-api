@@ -90,20 +90,18 @@ export class ReportService implements ServerServiceInterface {
         var results = await Promise.all(queries.map((query) => {
             return new Promise(async (resolve, reject) => {
 
-                if (query.condition == 'method')
-                    if (queryMethods[query.method])
-                        resolve(await queryMethods[query.method](record, query));
-                    else {
-                        resolve(false);
-                        console.error('query-method-notfound', query);
-                    }
-                else
-                    if (common[query.condition])
-                        resolve(common[query.condition](record[query.property], query.value));
-                    else {
-                        resolve(false);
-                        console.error('query-common-method-notfound', query);
-                    }
+
+                if (common[query.method])
+                    return resolve(await common[query.method](record[query.property], query.value));
+
+
+                if (queryMethods[query.method])
+                    resolve(await queryMethods[query.method](record, query));
+                else {
+                    resolve(false);
+                    console.error('query-method-notfound', query);
+                }
+
 
             });
         }));

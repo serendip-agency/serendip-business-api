@@ -68,8 +68,6 @@ export class BusinessController {
     }
 
 
-
-
     public saveBusiness: ServerEndpointInterface = {
         method: 'post',
         actions: [
