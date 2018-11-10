@@ -1,121 +1,116 @@
 import { ServerServiceInterface, Server, DbService } from "serendip";
-import * as fs from 'fs'
+import * as fs from "fs";
 import { join } from "path";
-import * as _ from 'underscore';
+import * as _ from "underscore";
 import { EntityService } from "./EntityService";
 import { CompanyModel } from "../models";
 
 export class ImportService implements ServerServiceInterface {
+  static dependencies = ["EntityService", "DbService"];
 
+  private dbService: DbService;
+  private entityService: EntityService;
 
-    static dependencies = ["EntityService", "DbService"];
+  private data: any;
 
-    private dbService: DbService;
-    private entityService: EntityService;
+  constructor() {
+    this.dbService = Server.services["DbService"];
+    this.entityService = Server.services["EntityService"];
+  }
 
-    private data: any;
+  _business = "5bdfdefeb3c75029a8a0dab6";
 
-    constructor() {
+  async start() {
+    this.data = JSON.parse(
+      fs.readFileSync(join(Server.dir, "..", "export-mvc.json")).toString()
+    );
 
-        this.dbService = Server.services["DbService"];
-        this.entityService = Server.services["EntityService"];
+    //   this.importPeoples();
 
-    }
+    this.importCompanies();
+  }
 
-    _business = "5bd5254e65a0f95a6dea2faf";
+  async importCompanies() {
+    this.data.clients.forEach(async p => {
+      var query = await this.entityService.find({
+        _business: this._business,
+        _entity: "company",
+        oid: p.Id
+      });
+      if (query.length == 0) {
+        await this.entityService.insert(
+          new CompanyModel({
+            contacts: [
+              {
+                telephones: [p.telephone],
+                faxes: [],
+                peoples: [],
+                name: "",
+                address: { text: p.address }
+              }
+            ],
+            name: p.name,
+            type: [],
+            oid: p.Id,
+            _business: this._business
+          })
+        );
 
-    async start() {
+        console.log(p.Id);
+      }
+    });
+  }
 
-        this.data = JSON.parse(fs.readFileSync(join(Server.dir, '..', 'export-mvc.json')).toString());
+  // async importServices() {
+  //     var collection = await this.dbService.collection("CrmServices");
 
-        //   this.importPeoples();
+  //     console.log(Object.keys(this.data));
 
-        this.importCompanies();
+  //     console.log(this.data.services[0]);
 
+  //     this.data.clients.forEach(async client => {
 
-    }
+  //         // await collection.updateOne(new CompanyModel({
+  //         //     contacts: [{
+  //         //         telephones: [],
+  //         //         faxes: [],
+  //         //         Peoples: [],
+  //         //         name: '',
+  //         //         address: { text: client.address }
+  //         //     }],
+  //         //     name: client.name,
+  //         //     crm: '5ad3da917e73503cd4bd5d1f',
+  //         //     type: []
+  //         // }));
 
-    async importCompanies() {
+  //     });
+  // }
 
-        this.data.clients.forEach(async p => {
+  // async importPeoples() {
 
-            var query = await this.entityService.find({ _business: this._business, _entity: 'company', oid: p.Id });
-            if (query.length == 0) {
-                await this.entityService.insert(new CompanyModel({
-                    contacts: [{
-                        telephones: [p.telephone],
-                        faxes: [],
-                        peoples: [],
-                        name: '',
-                        address: { text: p.address }
-                    }],
-                    name: p.name,
-                    type: [],
-                    oid: p.Id,
-                    _business: this._business
-                }));
+  //     var collection = await this.dbService.collection("CrmPeoples");
 
-                console.log(p.Id);
-            }
+  //     this.data.Peoples.forEach(async (p: any) => {
 
-        });
-    }
+  //         var query = await collection.find({ oid: p.Id });
 
+  //         if (query.length == 0)
+  //             await collection.updateOne(new PeopleModel({
+  //                 crm: '5ad3da917e73503cd4bd5d1f',
+  //                 gender: p.gender == 1,
+  //                 firstName: p.name.split(' ')[0],
+  //                 lastName: p.name.split(' ')[1],
+  //                 birthDate: p.birthDate,
+  //                 mobiles: [p.mobile],
+  //                 socials: [],
+  //                 profilePicture: '',
+  //                 emails: [],
+  //                 oid: p.Id
+  //             }));
 
+  //         console.log(p.Id);
 
-    // async importServices() {
-    //     var collection = await this.dbService.collection("CrmServices");
+  //     });
 
-    //     console.log(Object.keys(this.data));
-
-    //     console.log(this.data.services[0]);
-
-    //     this.data.clients.forEach(async client => {
-
-    //         // await collection.updateOne(new CompanyModel({
-    //         //     contacts: [{
-    //         //         telephones: [],
-    //         //         faxes: [],
-    //         //         Peoples: [],
-    //         //         name: '',
-    //         //         address: { text: client.address }
-    //         //     }],
-    //         //     name: client.name,
-    //         //     crm: '5ad3da917e73503cd4bd5d1f',
-    //         //     type: []
-    //         // }));
-
-    //     });
-    // }
-
-
-
-    // async importPeoples() {
-
-    //     var collection = await this.dbService.collection("CrmPeoples");
-
-    //     this.data.Peoples.forEach(async (p: any) => {
-
-    //         var query = await collection.find({ oid: p.Id });
-
-    //         if (query.length == 0)
-    //             await collection.updateOne(new PeopleModel({
-    //                 crm: '5ad3da917e73503cd4bd5d1f',
-    //                 gender: p.gender == 1,
-    //                 firstName: p.name.split(' ')[0],
-    //                 lastName: p.name.split(' ')[1],
-    //                 birthDate: p.birthDate,
-    //                 mobiles: [p.mobile],
-    //                 socials: [],
-    //                 profilePicture: '',
-    //                 emails: [],
-    //                 oid: p.Id
-    //             }));
-
-    //         console.log(p.Id);
-
-    //     });
-
-    // }
-
+  // }
 }
