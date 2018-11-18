@@ -24,7 +24,10 @@ import * as fs from "fs";
 import { join } from "path";
 import * as _ from "underscore";
 import { ObjectID, ObjectId } from "bson";
-import { ReportService } from "../services/ReportService";
+import {
+  ReportService,
+  ReportOptionsInterface
+} from "../services/ReportService";
 
 export class EntityController {
   private entityService: EntityService;
@@ -269,103 +272,18 @@ export class EntityController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
-        //{ '$regex': '.*' + req.body.query + '.*' }
+        var opts: ReportOptionsInterface = {
+          save: req.body.save,
+          report: req.body.report,
+          skip: req.body.skip || 0,
+          limit: req.body.limit,
+          access: access,
+          zip: req.body.zip
+        };
 
-        var reqReport: ReportInterface = req.body.report || {};
+        var model = await this.reportService.report(opts);
 
-        var reportSave: boolean = req.body.save;
-
-        var reportSkip = req.body.skip || 0;
-        var reportLimit = req.body.limit;
-
-        var zipRequested = req.body.zip;
-        var reportEntity = req.body.entity;
-        var reportFields: ReportFieldInterface[] = reqReport.fields || [];
-        var model: ReportModel = null;
-        console.log(reqReport);
-        if (reqReport._id) {
-          var reportsInDb = await this.reportService
-            .aggregate([])
-            .match({
-              _id: new ObjectID(reqReport._id),
-              _business: access.business._id.toString()
-            })
-            .toArray();
-
-          if (reportsInDb[0]) model = reportsInDb[0];
-
-          console.log(model.fields);
-        }
-
-        if (!model) {
-          var dataQuery = this.entityService.collection.aggregate([
-            {
-              $match: {
-                $and: [{ _business: access.business._id.toString() }]
-              }
-            }
-          ]);
-
-          if (
-            _.filter(reportFields, item => {
-              return item.name.indexOf("__") != 0;
-            }).length > 0
-          )
-            dataQuery = dataQuery.project(
-              _.extend(
-                {},
-                ...reportFields.map(item => {
-                  var temp = {};
-                  if (item.name.indexOf("__") != 0 && item.enabled)
-                    temp[item.name] = 1;
-                  return temp;
-                })
-              )
-            );
-
-          var data = await dataQuery.toArray();
-          data = await Promise.all(
-            data.map((document, index) => {
-              return this.reportService.formatDocument(document, reportFields);
-            })
-          );
-
-          var queriedData = [];
-          await Promise.all(
-            data.map((document, index) => {
-              return new Promise(async (resolve, reject) => {
-                var isMatch = await this.reportService.documentMatchFieldQueries(
-                  document,
-                  reportFields
-                );
-                if (isMatch) queriedData.push(document);
-                resolve();
-              });
-            })
-          );
-
-          model = {
-            entityName: reportEntity,
-            name: reqReport.name,
-            count: queriedData.length,
-            data: queriedData,
-            fields: reportFields,
-            createDate: new Date(),
-            label: reqReport.label,
-            user: access.member.userId,
-            _business: access.business._id.toString()
-          };
-
-          if (reportSave) model = await this.reportService.insert(model);
-        }
-
-        var result = _.rest(model.data, reportSkip);
-
-        if (reportLimit) result = _.take(result, reportLimit);
-
-        model.data = result;
-
-        if (zipRequested) {
+        if (opts.zip) {
           res.setHeader("content-type", "application/zip");
 
           var zip = archiver("zip", {

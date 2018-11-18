@@ -1,158 +1,196 @@
-import { ServerEndpointInterface, Server, ServerError, AuthService } from "serendip";
-import { BusinessService, BusinessCheckAccessResultInterface } from "../services/BusinessService";
-import { BusinessMemberModel, BusinessModel, UserProfileModel } from "../models";
-import * as _ from 'underscore'
+import {
+  ServerEndpointInterface,
+  Server,
+  ServerError,
+  AuthService
+} from "serendip";
+import {
+  BusinessService,
+  BusinessCheckAccessResultInterface
+} from "../services/BusinessService";
+import {
+  BusinessMemberModel,
+  BusinessModel,
+  UserProfileModel
+} from "../models";
+import * as _ from "underscore";
 import { UserProfileService } from "../services/UserProfileService";
 
 export class BusinessController {
+  private businessService: BusinessService;
+  private authService: AuthService;
+  private userProfileService: UserProfileService;
 
-    private businessService: BusinessService;
-    private authService: AuthService;
-    private userProfileService: UserProfileService;
+  constructor() {
+    this.businessService = Server.services["BusinessService"];
+    this.authService = Server.services["AuthService"];
+  }
 
-    constructor() {
+  public list: ServerEndpointInterface = {
+    method: "get",
+    actions: [
+      async (req, res, next, done) => {
+        var model = await this.businessService.findBusinessByMember(
+          req.user._id.toString()
+        );
+        res.json(model);
+      }
+    ]
+  };
 
-        this.businessService = Server.services["BusinessService"];
-        this.authService = Server.services["AuthService"];
+  public grid: ServerEndpointInterface = {
+    method: "get",
+    actions: [
+      async (req, res, next, done) => {
+        res.json({});
+      }
+    ]
+  };
 
+  public members: ServerEndpointInterface = {
+    method: "post",
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        var members = access.business.members;
 
+        var model = [];
 
-    }
+        await Promise.all(
+          _.map(members, item => {
+            return new Promise(async (resolve, reject) => {
+              var memberProfile = await this.userProfileService.findById(
+                item.userId
+              );
 
+              if (memberProfile == undefined)
+                return resolve(
+                  new UserProfileModel({
+                    firstName: "",
+                    lastName: "",
+                    profilePicture: ""
+                  })
+                );
+              else return resolve(memberProfile);
+            });
+          })
+        );
 
-    public list: ServerEndpointInterface = {
-        method: 'get',
-        actions: [
-            async (req, res, next, done) => {
-
-                var model = await this.businessService.findBusinessByMember(req.user._id.toString());
-                res.json(model);
-
+        if (req.body.query)
+          model = _.filter(
+            model as any,
+            (item: { firstName: string; lastName: string }) => {
+              return (
+                item.firstName.indexOf(req.body.query) != -1 ||
+                item.lastName.indexOf(req.body.query) != -1
+              );
             }
-        ]
-    }
+          );
 
-    public members: ServerEndpointInterface = {
-        method: 'post',
-        actions: [
-            BusinessService.checkUserAccess,
-            async (req, res, next, done, access: BusinessCheckAccessResultInterface) => {
+        res.json(model);
+      }
+    ]
+  };
 
-                var members = access.business.members;
+  public saveBusiness: ServerEndpointInterface = {
+    method: "post",
+    actions: [
+      async (req, res, next, done) => {
+        var model: BusinessModel = req.body;
 
-                members.push({ role: 'owner', userId: access.business.owner });
+        model.owner = req.user._id.toString();
 
-                var model = [];
+        if (!model.members) model.members = [];
 
-                await Promise.all(_.map(members, (item) => {
-                    return new Promise(async (resolve, reject) => {
+        if (_.where(model.members, { userId: model.owner }).length == 0)
+          model.members.push({
+            userId: model.owner,
+            crmails: [],
+            groups: [],
+            scope: []
+          });
+        try {
+          await BusinessModel.validate(model);
+        } catch (e) {
+          return next(new ServerError(400, e.message));
+        }
 
-                        var memberProfile = await this.userProfileService.findById(item.userId);
+        try {
+          model = await this.businessService.insert(model);
+        } catch (e) {
+          return next(new ServerError(500, e.message));
+        }
+        res.json(model);
+      }
+    ]
+  };
 
-                        if (memberProfile == undefined)
-                            return resolve(new UserProfileModel({ firstName: '', lastName: '', profilePicture: '' }));
-                        else
-                            return resolve(memberProfile);
+  public deleteMember: ServerEndpointInterface = {
+    method: "post",
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        model: BusinessCheckAccessResultInterface
+      ) => {
+        var userId = req.body.userId;
 
-                    });
-                }));
+        if (!userId) return next(new ServerError(400, "userId field missing"));
 
-                if (req.body.query)
-                    model = _.filter(model as any, (item: { firstName: string, lastName: string }) => {
-                        return item.firstName.indexOf(req.body.query) != -1 || item.lastName.indexOf(req.body.query) != -1;
-                    });
+        model.business.members = _.reject(model.business.members, item => {
+          return item.userId == userId;
+        });
 
-                res.json(model);
-            }
-        ]
-    }
+        try {
+          await this.businessService.update(model.business);
+        } catch (e) {
+          return next(new ServerError(500, e.message));
+        }
 
+        res.json(model.business);
+      }
+    ]
+  };
 
-    public saveBusiness: ServerEndpointInterface = {
-        method: 'post',
-        actions: [
-            async (req, res, next, done) => {
+  public addMember: ServerEndpointInterface = {
+    method: "post",
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        model: BusinessCheckAccessResultInterface
+      ) => {
+        var member: BusinessMemberModel = req.body;
 
-                var model: BusinessModel = req.body;
+        if (!member.scope || !member.userId)
+          return next(new ServerError(400, "scope or userId field missing"));
 
-                model.owner = req.user._id.toString();
+        var user = await this.authService.findUserById(member.userId);
 
-                try {
-                    await BusinessModel.validate(model);
-                } catch (e) {
-                    return next(new ServerError(400, e.message));
-                }
+        if (!user) return next(new ServerError(400, "user not found"));
 
-                try {
-                    model = await this.businessService.insert(model);
-                } catch (e) {
-                    return next(new ServerError(500, e.message));
-                }
-                res.json(model);
+        model.business.members.push(member);
 
-            }
-        ]
-    }
+        try {
+          await this.businessService.update(model.business);
+        } catch (e) {
+          return next(new ServerError(500, e.message));
+        }
 
-
-    public deleteMember: ServerEndpointInterface = {
-        method: 'post',
-        actions: [
-            BusinessService.checkUserAccess,
-            async (req, res, next, done, model: BusinessCheckAccessResultInterface) => {
-
-
-                var userId = req.body.userId;
-
-                if (!userId)
-                    return next(new ServerError(400, 'userId field missing'));
-
-                model.business.members = _.reject(model.business.members, (item) => {
-                    return item.userId == userId;
-                });
-
-                try {
-                    await this.businessService.update(model.business);
-                } catch (e) {
-                    return next(new ServerError(500, e.message));
-                }
-
-                res.json(model.business);
-
-            }
-        ]
-    }
-
-    public addMember: ServerEndpointInterface = {
-        method: 'post',
-        actions: [
-            BusinessService.checkUserAccess,
-            async (req, res, next, done, model: BusinessCheckAccessResultInterface) => {
-
-                var member: BusinessMemberModel = req.body;
-
-                if (!member.role || !member.userId)
-                    return next(new ServerError(400, 'role or userId field missing'));
-
-                var user = await this.authService.findUserById(member.userId);
-
-                if (!user)
-                    return next(new ServerError(400, 'user not found'));
-
-                model.business.members.push(member);
-
-                try {
-                    await this.businessService.update(model.business);
-                } catch (e) {
-                    return next(new ServerError(500, e.message));
-                }
-
-                res.json(model.business);
-
-            }
-        ]
-    }
-
-
-
+        res.json(model.business);
+      }
+    ]
+  };
 }

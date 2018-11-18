@@ -5,7 +5,7 @@ import * as _ from 'underscore'
 export class MiscController {
 
 
-    static apiPrefix = "etc";
+    static apiPrefix = "";
 
     private externalService: ExternalService;
 
