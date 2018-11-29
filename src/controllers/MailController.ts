@@ -2,7 +2,7 @@ import { AuthService, Server, ServerEndpointInterface } from 'serendip';
 
 import { BusinessService } from '../services/BusinessService';
 import { UserProfileService } from '../services/UserProfileService';
-
+import * as request from 'req'
 export class MailController {
   private businessService: BusinessService;
   private authService: AuthService;

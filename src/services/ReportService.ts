@@ -97,14 +97,17 @@ export class ReportService implements ServerServiceInterface {
 
       if (reportsInDb[0]) model = reportsInDb[0];
 
-      console.log(model.fields);
+    
     }
 
     if (!model) {
       var dataQuery = this._entityService.collection.aggregate([
         {
           $match: {
-            $and: [{ _business: opts.access.business._id.toString() }]
+            $and: [
+              { _business: opts.access.business._id.toString() },
+              { _entity: opts.report.entityName }
+            ]
           }
         }
       ]);

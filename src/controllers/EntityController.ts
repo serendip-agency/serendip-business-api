@@ -1,33 +1,26 @@
+import * as archiver from "archiver";
 import {
-  ServerEndpointInterface,
+  DbService,
   Server,
+  ServerEndpointInterface,
   ServerError,
   ServerRequestInterface,
   ServerResponseInterface,
-  DbService,
   Validator
 } from "serendip";
+import * as _ from "underscore";
+
+import { EntityModel } from "../models";
 import {
-  EntityService,
+  BusinessCheckAccessResultInterface,
   BusinessService,
-  BusinessCheckAccessResultInterface
+  EntityService
 } from "../services";
 import {
-  EntityModel,
-  ReportModel,
-  ReportFieldQueryInterface,
-  ReportFieldInterface,
-  ReportInterface
-} from "../models";
-import * as archiver from "archiver";
-import * as fs from "fs";
-import { join } from "path";
-import * as _ from "underscore";
-import { ObjectID, ObjectId } from "bson";
-import {
-  ReportService,
-  ReportOptionsInterface
+  ReportOptionsInterface,
+  ReportService
 } from "../services/ReportService";
+import { entityChangeType } from "serendip/src";
 
 export class EntityController {
   private entityService: EntityService;
@@ -118,7 +111,7 @@ export class EntityController {
   };
 
   public changes: ServerEndpointInterface = {
-    route: "/api/entity/:entity/changes",
+    route: "/api/entity/changes",
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -129,58 +122,115 @@ export class EntityController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
-        var range = {
-          from:
-            req.body.from && Validator.isNumeric(req.body.from)
-              ? req.body.from
-              : 0,
-          to:
-            req.body.to && Validator.isNumeric(req.body.to)
-              ? req.body.to
-              : Date.now()
-        };
+        const possibleQueryFields = [
+          "_id",
+          "model._id",
+          "model._rdate",
+          "model._udate",
+          "model._vdate",
+          "model._cdate",
+          "model._ruser",
+          "model._uuser",
+          "model._vuser",
+          "model._cuser",
+          "model._entity",
+          "type"
+        ];
 
-        if (req.body._id) {
-          var actualRecord = await this.entityService.findById(req.body._id);
-          if (!actualRecord)
-            return next(new ServerError(400, "record not found"));
+        var query = _.extend(
+          {
+            "model._business": access.business._id.toString()
+          },
+          _.pick(req.body, possibleQueryFields)
+        );
 
-          var recordChanges = await this.dbService.entityCollection.find({
-            entityId: actualRecord._id
+      
+
+        if (req.body.count) {
+          res.json(await this.dbService.entityChangeCollection.count(query));
+        } else {
+          var project = {};
+
+          possibleQueryFields.forEach(value => {
+            project[value] = 1;
           });
 
-          res.json(recordChanges);
-        } else {
-          var changedRecords = _.map(
-            await this.entityService.find({
-              _business: access.business._id.toString(),
-              _entity: req.params.entity,
-              _vdate: {
-                $gt: range.from,
-                $lt: range.to
-              }
-            }),
-            (item: EntityModel) => {
-              return item._id;
-            }
-          );
+          var changes = await this.dbService.entityChangeCollection
+            .aggregate([])
+            .match(query)
+            .project(project)
+            .group({ _id: "$type" }).toArray();
 
-          var deletedRecords = _.map(
-            await this.dbService.entityCollection.find({
-              "model.business": access.business._id.toString(),
-              type: 0,
-              date: { $gt: range.from, $lt: range.to }
-            }),
-            item => {
-              return item.entityId;
-            }
-          );
-
-          res.json({ changed: changedRecords, deleted: deletedRecords });
+          res.json(changes);
         }
       }
     ]
   };
+
+  // public entityChanges: ServerEndpointInterface = {
+  //   route: "/api/entity/:entity/changes",
+  //   method: "post",
+  //   actions: [
+  //     BusinessService.checkUserAccess,
+  //     async (
+  //       req,
+  //       res,
+  //       next,
+  //       done,
+  //       access: BusinessCheckAccessResultInterface
+  //     ) => {
+  //       var range = {
+  //         from:
+  //           req.body.from && Validator.isNumeric(req.body.from)
+  //             ? req.body.from
+  //             : 0,
+  //         to:
+  //           req.body.to && Validator.isNumeric(req.body.to)
+  //             ? req.body.to
+  //             : Date.now()
+  //       };
+
+  //       if (req.body._id) {
+  //         var actualRecord = await this.entityService.findById(req.body._id);
+  //         if (!actualRecord)
+  //           return next(new ServerError(400, "record not found"));
+
+  //         var recordChanges = await this.dbService.entityChangeCollection.find({
+  //           entityId: actualRecord._id
+  //         });
+
+  //         res.json(recordChanges);
+  //       } else {
+  //         var changedRecords = _.map(
+  //           await this.entityService.find({
+  //             _business: access.business._id.toString(),
+  //             _entity: req.params.entity,
+  //             _vdate: {
+  //               $gt: range.from,
+  //               $lt: range.to
+  //             }
+  //           }),
+  //           (item: EntityModel) => {
+  //             return item._id;
+  //           }
+  //         );
+
+  //         var deletedRecords = _.map(
+  //           await this.dbService.entityChangeCollection.find({
+  //             "model.business": access.business._id.toString(),
+  //             type: 0,
+  //             date: { $gt: range.from, $lt: range.to }
+  //           }),
+  //           item => {
+  //             return item.entityId;
+  //           }
+  //         );
+
+  //         res.json({ changed: changedRecords, deleted: deletedRecords });
+  //       }
+  //     }
+  //   ]
+  // };
 
   public list: ServerEndpointInterface = {
     route: "/api/entity/:entity/list",
@@ -244,6 +294,7 @@ export class EntityController {
             .aggregate([])
             .match({
               user: access.member.userId.toString(),
+              entityName: req.body.entityName,
               _business: access.business._id.toString()
             })
             .project({
@@ -311,17 +362,33 @@ export class EntityController {
         access: BusinessCheckAccessResultInterface
       ) => {
         //{ '$regex': '.*' + req.body.query + '.*' }
+
+        var properties = req.body.properties;
+        var propertiesSearchMode = req.body.propertiesSearchMode;
+
+        var project: any = {};
+        var q = req.body.query || "";
+        properties.forEach(element => {
+          project[element] = 1;
+        });
+
+        if (!project._id) project._id = 1;
+
         var model = await this.entityService.collection
           .aggregate([
             {
               $match: {
-                $or: [{ name: { $regex: ".*" + req.body.query + ".*" } }]
+                _entity: req.params.entity,
+                _business: access.business._id.toString(),
+                $text: { $search: q }
               }
-            }
+            },
+            { $sort: { score: { $meta: "textScore" } } },
+            { $project: project }
           ])
-          .project({ name: 1 })
-          .limit(req.body.take)
+          .limit(req.body.limit || 30)
           .toArray();
+
         res.json(model);
       }
     ]
@@ -340,6 +407,8 @@ export class EntityController {
         access: BusinessCheckAccessResultInterface
       ) => {
         var model: EntityModel = req.body;
+
+        if (!model._entity) model._entity = req.params.entity;
 
         try {
           await EntityModel.validate(model);
@@ -372,6 +441,8 @@ export class EntityController {
         access: BusinessCheckAccessResultInterface
       ) => {
         var model: EntityModel = req.body;
+
+        if (!model._entity) model._entity = req.params.entity;
 
         try {
           await EntityModel.validate(model);
@@ -409,6 +480,9 @@ export class EntityController {
 
         var entity = await this.entityService.findById(_id);
         if (!entity) return next(new ServerError(400, "entity not found"));
+
+        if (entity._business.toString() != access.business._id.toString())
+          return next(new ServerError(400, "access mismatch"));
 
         try {
           await this.entityService.delete(_id, req.user._id);

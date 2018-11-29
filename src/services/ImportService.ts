@@ -3,7 +3,7 @@ import * as fs from "fs";
 import { join } from "path";
 import * as _ from "underscore";
 import { EntityService } from "./EntityService";
-import { CompanyModel } from "../models";
+import { CompanyModel, PeopleModel } from "../models";
 
 export class ImportService implements ServerServiceInterface {
   static dependencies = ["EntityService", "DbService"];
@@ -27,11 +27,13 @@ export class ImportService implements ServerServiceInterface {
 
     //   this.importPeoples();
 
-    this.importCompanies();
+   //  this.importCompanies();
   }
 
   async importCompanies() {
     this.data.clients.forEach(async p => {
+      console.log(p);
+
       var query = await this.entityService.find({
         _business: this._business,
         _entity: "company",
@@ -52,7 +54,8 @@ export class ImportService implements ServerServiceInterface {
             name: p.name,
             type: [],
             oid: p.Id,
-            _business: this._business
+            _business: this._business,
+            _entity: "company"
           })
         );
 
@@ -86,31 +89,38 @@ export class ImportService implements ServerServiceInterface {
   //     });
   // }
 
-  // async importPeoples() {
+  async importPeoples() {
+    this.data.persons.forEach(async (p: any) => {
+      var query = await this.entityService.find({
+        _business: this._business,
+        _entity: "people",
+        oid: p.Id
+      });
+      if (query.length == 0) {
+        await this.entityService.insert(
+          new PeopleModel({
+            contacts: [
+              {
+                telephones: [""],
+                faxes: [],
+                peoples: [],
+                name: "",
+                address: { text: "" }
+              }
+            ],
+            firstName: p.name ? p.name.split(" ")[0] : "",
+            lastName: p.name ? p.name.split(" ")[1] : "",
+            gender: p.gender == 1 ? "male" : p.gender == 2 ? "female" : "",
+            birthDate: p.birthDate,
+            mobiles: [p.mobile || ""],
+            oid: p.Id,
+            _entity: "people",
+            _business: this._business
+          })
+        );
 
-  //     var collection = await this.dbService.collection("CrmPeoples");
-
-  //     this.data.Peoples.forEach(async (p: any) => {
-
-  //         var query = await collection.find({ oid: p.Id });
-
-  //         if (query.length == 0)
-  //             await collection.updateOne(new PeopleModel({
-  //                 crm: '5ad3da917e73503cd4bd5d1f',
-  //                 gender: p.gender == 1,
-  //                 firstName: p.name.split(' ')[0],
-  //                 lastName: p.name.split(' ')[1],
-  //                 birthDate: p.birthDate,
-  //                 mobiles: [p.mobile],
-  //                 socials: [],
-  //                 profilePicture: '',
-  //                 emails: [],
-  //                 oid: p.Id
-  //             }));
-
-  //         console.log(p.Id);
-
-  //     });
-
-  // }
+        console.log(p.Id);
+      }
+    });
+  }
 }

@@ -27,11 +27,12 @@
     "moment": "^2.22.2",
     "mongodb": "^3.1.1",
     "node-zip": "^1.1.1",
+    "request": "^2.88.0",
     "serendip": "github:m-esm/serendip",
     "serendip-business-model": "^1.0.2",
     "serendip-crm-model": "^1.0.0",
     "underscore": "^1.9.1",
     "weather-js": "^2.0.0",
-    "ws": "^6.1.0"
+    "ws": "^6.1.2"
   }
 }
