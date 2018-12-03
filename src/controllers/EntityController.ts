@@ -20,7 +20,7 @@ import {
   ReportOptionsInterface,
   ReportService
 } from "../services/ReportService";
-import { entityChangeType } from "serendip/src";
+import { entityChangeType, EntityChangeModel } from "serendip";
 
 export class EntityController {
   private entityService: EntityService;
@@ -144,24 +144,37 @@ export class EntityController {
           _.pick(req.body, possibleQueryFields)
         );
 
-      
-
         if (req.body.count) {
           res.json(await this.dbService.entityChangeCollection.count(query));
         } else {
           var project = {};
 
-          possibleQueryFields.forEach(value => {
-            project[value] = 1;
-          });
-
           var changes = await this.dbService.entityChangeCollection
             .aggregate([])
             .match(query)
-            .project(project)
-            .group({ _id: "$type" }).toArray();
+            .project({ type: 1, _id: "$model._id" })
+            .toArray();
 
-          res.json(changes);
+          res.json({
+            created: _.filter(
+              changes,
+              (change: EntityChangeModel) =>
+                change.type == entityChangeType.Create
+            ).length,
+            updated: _.filter(
+              changes,
+              (change: EntityChangeModel) =>
+                change.type == entityChangeType.Update
+            ).length,
+            deleted: _.map(
+              _.filter(
+                changes,
+                (change: EntityChangeModel) =>
+                  change.type == entityChangeType.Delete
+              ),
+              item => item._id
+            )
+          });
         }
       }
     ]

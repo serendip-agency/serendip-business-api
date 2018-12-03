@@ -6,7 +6,6 @@ import {
 } from "serendip";
 import {
   ReportModel,
-  ReportFieldQueryInterface,
   ReportFieldInterface,
   EntityModel,
   ReportInterface
@@ -185,7 +184,7 @@ export class ReportService implements ServerServiceInterface {
 
             if (formatMethods[field.method])
               value = await formatMethods[field.method](document._id, field);
-            else value = document[field.name];
+            else value = field.method + ' not found';
 
             var fieldToSet = {};
             fieldToSet[field.name] = value;
