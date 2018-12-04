@@ -95,8 +95,6 @@ export class ReportService implements ServerServiceInterface {
         .toArray();
 
       if (reportsInDb[0]) model = reportsInDb[0];
-
-    
     }
 
     if (!model) {
@@ -135,6 +133,9 @@ export class ReportService implements ServerServiceInterface {
         })
       );
 
+      if (!data) {
+        data = [];
+      }
       var queriedData = [];
       await Promise.all(
         data.map((document, index) => {
@@ -184,7 +185,7 @@ export class ReportService implements ServerServiceInterface {
 
             if (formatMethods[field.method])
               value = await formatMethods[field.method](document._id, field);
-            else value = field.method + ' not found';
+            else value = field.method + " not found";
 
             var fieldToSet = {};
             fieldToSet[field.name] = value;

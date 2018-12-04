@@ -46,7 +46,6 @@ export class EntityController {
 
   public zip: ServerEndpointInterface = {
     route: "/api/entity/:entity/zip",
-
     method: "post",
     isStream: true,
     actions: [
@@ -75,6 +74,12 @@ export class EntityController {
           _vdate: { $gt: range.from, $lt: range.to }
         });
 
+        var bigObject = {};
+
+        model.forEach(doc => {
+          bigObject[doc._id] = doc;
+        });
+
         res.setHeader("content-type", "application/zip");
 
         var zip = archiver("zip", {
@@ -82,7 +87,7 @@ export class EntityController {
         });
 
         zip.pipe(res);
-        zip.append(JSON.stringify(model), { name: "data.json" });
+        zip.append(JSON.stringify(bigObject), { name: "data.json" });
         zip.finalize();
       }
     ]
