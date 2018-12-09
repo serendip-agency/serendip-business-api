@@ -4,7 +4,8 @@
   "description": "serendip business api on nodejs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/app.js"
   },
   "author": "Mohsen Esmaeili <m-esm@hotmail.com>",
   "license": "ISC",
@@ -29,7 +30,7 @@
     "node-zip": "^1.1.1",
     "request": "^2.88.0",
     "serendip": "github:m-esm/serendip",
-    "serendip-business-model": "^1.0.2",
+    "serendip-business-model": "^1.0.4",
     "serendip-crm-model": "^1.0.0",
     "underscore": "^1.9.1",
     "weather-js": "^2.0.0",

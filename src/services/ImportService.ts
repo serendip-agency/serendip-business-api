@@ -21,9 +21,9 @@ export class ImportService implements ServerServiceInterface {
   _business = "5bdfdefeb3c75029a8a0dab6";
 
   async start() {
-    this.data = JSON.parse(
-      fs.readFileSync(join(Server.dir, "..", "export-mvc.json")).toString()
-    );
+    // this.data = JSON.parse(
+    //   fs.readFileSync(join(Server.dir, "..", "export-mvc.json")).toString()
+    // );
 
     //   this.importPeoples();
 
