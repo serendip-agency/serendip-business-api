@@ -3,7 +3,6 @@ import * as fs from "fs";
 import { join } from "path";
 import * as _ from "underscore";
 import { EntityService } from "./EntityService";
-import { CompanyModel, PeopleModel } from "../models";
 
 export class ImportService implements ServerServiceInterface {
   static dependencies = ["EntityService", "DbService"];
@@ -27,7 +26,7 @@ export class ImportService implements ServerServiceInterface {
 
     //   this.importPeoples();
 
-   //  this.importCompanies();
+    //  this.importCompanies();
   }
 
   async importCompanies() {
@@ -41,7 +40,7 @@ export class ImportService implements ServerServiceInterface {
       });
       if (query.length == 0) {
         await this.entityService.insert(
-          new CompanyModel({
+          {
             contacts: [
               {
                 telephones: [p.telephone],
@@ -56,7 +55,7 @@ export class ImportService implements ServerServiceInterface {
             oid: p.Id,
             _business: this._business,
             _entity: "company"
-          })
+          } as any
         );
 
         console.log(p.Id);
@@ -98,7 +97,7 @@ export class ImportService implements ServerServiceInterface {
       });
       if (query.length == 0) {
         await this.entityService.insert(
-          new PeopleModel({
+          {
             contacts: [
               {
                 telephones: [""],
@@ -116,7 +115,7 @@ export class ImportService implements ServerServiceInterface {
             oid: p.Id,
             _entity: "people",
             _business: this._business
-          })
+          } as any
         );
 
         console.log(p.Id);

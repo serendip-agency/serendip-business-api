@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
-const models_1 = require("../models");
 class ImportService {
     constructor() {
         this._business = "5bdfdefeb3c75029a8a0dab6";
@@ -24,7 +23,7 @@ class ImportService {
                 oid: p.Id
             });
             if (query.length == 0) {
-                await this.entityService.insert(new models_1.CompanyModel({
+                await this.entityService.insert({
                     contacts: [
                         {
                             telephones: [p.telephone],
@@ -39,7 +38,7 @@ class ImportService {
                     oid: p.Id,
                     _business: this._business,
                     _entity: "company"
-                }));
+                });
                 console.log(p.Id);
             }
         });
@@ -71,7 +70,7 @@ class ImportService {
                 oid: p.Id
             });
             if (query.length == 0) {
-                await this.entityService.insert(new models_1.PeopleModel({
+                await this.entityService.insert({
                     contacts: [
                         {
                             telephones: [""],
@@ -89,7 +88,7 @@ class ImportService {
                     oid: p.Id,
                     _entity: "people",
                     _business: this._business
-                }));
+                });
                 console.log(p.Id);
             }
         });

@@ -26,6 +26,7 @@ export class BusinessController {
     this.authService = Server.services["AuthService"];
   }
 
+
   public list: ServerEndpointInterface = {
     method: "get",
     actions: [
@@ -37,6 +38,7 @@ export class BusinessController {
       }
     ]
   };
+
 
   public grid: ServerEndpointInterface = {
     method: "get",
@@ -110,8 +112,8 @@ export class BusinessController {
 
         if (_.where(model.members, { userId: model.owner }).length == 0)
           model.members.push({
+            mails: [],
             userId: model.owner,
-            crmails: [],
             groups: [],
             scope: []
           });

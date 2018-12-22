@@ -62,8 +62,8 @@ class BusinessController {
                         model.members = [];
                     if (_.where(model.members, { userId: model.owner }).length == 0)
                         model.members.push({
+                            mails: [],
                             userId: model.owner,
-                            crmails: [],
                             groups: [],
                             scope: []
                         });
