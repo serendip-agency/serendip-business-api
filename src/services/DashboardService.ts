@@ -24,7 +24,9 @@ export class DashboardService {
       "/dashboard",
       (input: string, ws: WebSocketInterface) => {
         var msg: { command: "sync_grid"; data: any } = JSON.parse(input);
-       
+
+
+
         if (msg.command == "sync_grid") {
           this.wsService.sendToUser(
             ws.token.userId,

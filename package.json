@@ -11,6 +11,7 @@
   "license": "ISC",
   "homepage": "https://serendip.agency",
   "devDependencies": {
+    "@types/fs-extra": "^5.0.4",
     "@types/handlebars": "^4.0.40",
     "@types/mongodb": "^3.1.2",
     "@types/underscore": "^1.8.8",
@@ -26,6 +27,7 @@
     "@types/archiver": "^2.1.2",
     "archiver": "^2.1.1",
     "dotenv": "^6.2.0",
+    "fs-extra": "^7.0.1",
     "handlebars": "^4.0.12",
     "iranian-calendar-events": "^0.2.0",
     "moment": "^2.22.2",
