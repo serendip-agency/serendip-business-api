@@ -4,8 +4,10 @@ const serendip_1 = require("serendip");
 const path_1 = require("path");
 const fs = require("fs-extra");
 const _ = require("underscore");
+const glob = require("glob");
 const promise_serial = require("promise-serial");
 const bson_1 = require("bson");
+const mime = require("mime-types");
 class StorageService {
     constructor() {
         this.dbService = serendip_1.Server.services["DbService"];
@@ -71,14 +73,16 @@ class StorageService {
                 return part.start;
             });
     }
-    async uploadPercent(filePath, userId) {
+    async uploadPercent(filePath) {
         var parts = await this.getFilePartsInfo(filePath);
+        if (parts.length == 0)
+            return 0;
         var total = parts[0].total;
         var done = _.reduce(parts, (mem, item) => {
             return mem + item.end - item.start;
         }, 0);
-        var p = (done / total) * 100;
-        console.log("uploaded parts of " + filePath, p.toFixed(2) + "%");
+        var p = parseFloat(((done / total) * 100).toFixed(2));
+        console.log("uploaded parts of " + filePath, p + "%");
         return p;
     }
     async checkPartsBeforeUpload(command) {
@@ -86,7 +90,7 @@ class StorageService {
     }
     async assemblePartsIfPossible(filePath, userId) {
         console.log("assemblePartsIfPossible", filePath);
-        if ((await this.uploadPercent(filePath, userId)) < 100)
+        if ((await this.uploadPercent(filePath)) < 100)
             return;
         fs.writeFileSync(filePath, "");
         var parts = await this.getFilePartsInfo(filePath);
@@ -109,11 +113,43 @@ class StorageService {
         var pathDir = pathSplit.join("/");
         return pathDir;
     }
+    async list(storagePath) {
+        return promise_serial(_.map(await new Promise((resolve, reject) => {
+            glob(path_1.join(this.dataPath, storagePath), (err, matches) => {
+                resolve(matches.filter(subPath => {
+                    return (!subPath.endsWith(".part") &&
+                        subPath !=
+                            path_1.join(this.dataPath, this.getDirectoryOfPath(storagePath)));
+                }));
+            });
+        }), subPath => {
+            return async () => {
+                var stat = await fs.stat(subPath);
+                var model = {
+                    path: subPath.replace(this.dataPath + "/", ""),
+                    isFile: stat.isFile(),
+                    isLink: stat.isSymbolicLink(),
+                    isDirectory: stat.isDirectory(),
+                    size: stat.size,
+                    basename: path_1.basename(subPath),
+                    mime: mime.lookup(subPath),
+                    ext: subPath
+                        .split(".")
+                        .reverse()[0]
+                        .toLowerCase(),
+                    sizeInMB: parseFloat((stat.size / 1024 / 1024).toFixed(2))
+                };
+                if (stat.size == 0) {
+                    model.uploadPercent = await this.uploadPercent(subPath);
+                }
+                return model;
+            };
+        }), { parallelize: 1 });
+    }
     async start() {
         this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
-        console.log(this.dataPath);
         fs.ensureDirSync(this.dataPath);
-        console.log(this.dataPath);
+        console.log(await this.list("users/5c1ebd3118fd58469acdd0aa/**"));
         this.usersCollection = await this.dbService.collection("Users");
         this.businessesCollection = await this.dbService.collection("Businesses");
         var ensureDirPromises = [];

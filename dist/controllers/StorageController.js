@@ -17,7 +17,6 @@ class StorageController {
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return;
                     await fs.ensureFile(path_1.join(this.storageService.dataPath, command.path));
-                    console.log(command.type, command.path, command.start, command.end, command.total);
                     if (!command.total) {
                         await this.storageService.writeBase64AsFile(command.data, command.path);
                         done();
@@ -67,6 +66,35 @@ class StorageController {
                         exists,
                         missing
                     });
+                }
+            ]
+        };
+        this.list = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return;
+                    if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
+                        return;
+                    res.json(await this.storageService.list(command.path));
+                }
+            ]
+        };
+        this.assemble = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return;
+                    if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
+                        return;
+                    await this.storageService.assemblePartsIfPossible(path_1.join(this.storageService.dataPath, command.path), req.user._id);
+                    done();
                 }
             ]
         };

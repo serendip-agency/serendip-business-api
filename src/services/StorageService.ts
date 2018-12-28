@@ -9,10 +9,10 @@ import {
 import { join, basename } from "path";
 import * as fs from "fs-extra";
 import * as _ from "underscore";
-
+import * as glob from "glob";
 import * as promise_serial from "promise-serial";
 import { ObjectID } from "bson";
-
+import * as mime from "mime-types";
 export interface StorageCommandInterface {
   type: "upload" | "download" | "assemble";
   path: string;
@@ -140,9 +140,10 @@ export class StorageService {
       });
   }
 
-  async uploadPercent(filePath, userId) {
+  async uploadPercent(filePath) {
     var parts = await this.getFilePartsInfo(filePath);
 
+    if (parts.length == 0) return 0;
     var total = parts[0].total;
 
     var done = _.reduce(
@@ -153,9 +154,9 @@ export class StorageService {
       0
     );
 
-    var p = (done / total) * 100;
+    var p = parseFloat(((done / total) * 100).toFixed(2));
 
-    console.log("uploaded parts of " + filePath, p.toFixed(2) + "%");
+    console.log("uploaded parts of " + filePath, p + "%");
 
     return p;
   }
@@ -165,7 +166,7 @@ export class StorageService {
 
   async assemblePartsIfPossible(filePath, userId) {
     console.log("assemblePartsIfPossible", filePath);
-    if ((await this.uploadPercent(filePath, userId)) < 100) return;
+    if ((await this.uploadPercent(filePath)) < 100) return;
 
     fs.writeFileSync(filePath, "");
 
@@ -206,12 +207,57 @@ export class StorageService {
 
     return pathDir;
   }
+
+  async list(storagePath: string) {
+    return promise_serial(
+      _.map(
+        await new Promise<string[]>((resolve, reject) => {
+          glob(join(this.dataPath, storagePath), (err, matches) => {
+            resolve(
+              matches.filter(subPath => {
+                return (
+                  !subPath.endsWith(".part") &&
+                  subPath !=
+                    join(this.dataPath, this.getDirectoryOfPath(storagePath))
+                );
+              })
+            );
+          });
+        }),
+        subPath => {
+          return async () => {
+            var stat = await fs.stat(subPath);
+
+            var model: any = {
+              path: subPath.replace(this.dataPath + "/", ""),
+              isFile: stat.isFile(),
+              isLink: stat.isSymbolicLink(),
+              isDirectory: stat.isDirectory(),
+              size: stat.size,
+              basename: basename(subPath),
+              mime: mime.lookup(subPath),
+              ext: subPath
+                .split(".")
+                .reverse()[0]
+                .toLowerCase(),
+              sizeInMB: parseFloat((stat.size / 1024 / 1024).toFixed(2))
+            };
+
+            if (stat.size == 0) {
+              model.uploadPercent = await this.uploadPercent(subPath);
+            }
+            return model;
+          };
+        }
+      ),
+      { parallelize: 1 }
+    );
+  }
   async start() {
     this.dataPath = join(Server.dir, "..", "data");
-    console.log(this.dataPath);
     fs.ensureDirSync(this.dataPath);
 
-    console.log(this.dataPath);
+    console.log(await this.list("users/5c1ebd3118fd58469acdd0aa/**"));
 
     this.usersCollection = await this.dbService.collection("Users");
 
