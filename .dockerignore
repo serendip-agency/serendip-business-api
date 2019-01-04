@@ -2,3 +2,5 @@ src
 .vscode
 .sonarlint
 .env
+data
+logs

@@ -3,3 +3,4 @@
 .sonarlint
 .env
 data
+logs
