@@ -16,10 +16,27 @@ class BusinessController {
             ]
         };
         this.grid = {
-            method: "get",
+            method: "post",
             actions: [
-                async (req, res, next, done) => {
-                    res.json({});
+                BusinessService_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var query = await this.entityService.collection
+                        .aggregate([])
+                        .match({
+                        _business: access.business._id.toString(),
+                        _cuser: access.member.userId.toString(),
+                        "data.section": req.body.section
+                    })
+                        .sort({
+                        _cdate: -1
+                    })
+                        .limit(1)
+                        .toArray();
+                    if (query[0]) {
+                        res.json(query[0].data);
+                    }
+                    else
+                        res.json(null);
                 }
             ]
         };
@@ -74,7 +91,10 @@ class BusinessController {
                         return next(new serendip_1.ServerError(400, e.message));
                     }
                     try {
-                        model = await this.businessService.insert(model);
+                        if (model._id)
+                            await this.businessService.update(model);
+                        else
+                            model = await this.businessService.insert(model);
                     }
                     catch (e) {
                         return next(new serendip_1.ServerError(500, e.message));
@@ -127,6 +147,7 @@ class BusinessController {
             ]
         };
         this.businessService = serendip_1.Server.services["BusinessService"];
+        this.entityService = serendip_1.Server.services["EntityService"];
         this.authService = serendip_1.Server.services["AuthService"];
     }
 }

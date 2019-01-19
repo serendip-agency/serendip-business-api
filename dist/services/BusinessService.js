@@ -40,24 +40,29 @@ class BusinessService {
             ]
         });
     }
+    async userHasAccessToBusiness(userId, businessId) {
+        return ((await this.findBusinessByMember(userId)).filter(x => x._id == businessId)
+            .length == 1);
+    }
     static async checkUserAccess(req, res, next, done) {
         if (!req.body._business)
-            return next(new serendip_1.ServerError(400, "_business field missing"));
+            return done(400, "_business field missing");
         var business;
         try {
             business = await serendip_1.Server.services["BusinessService"].findById(req.body._business);
         }
         catch (e) { }
-        if (!business)
-            return next(new serendip_1.ServerError(400, "business invalid"));
+        if (!business) {
+            return done(400, "business invalid");
+        }
         var businessMember;
         if (!business.members || business.members.length == 0)
-            return next(new serendip_1.ServerError(400, "business has no members"));
+            return done(400, "business has no members");
         businessMember = _.findWhere(business.members, {
             userId: req.user._id.toString()
         });
         if (!businessMember)
-            return next(new serendip_1.ServerError(400, "you are not member of this business"));
+            return done(400, "you are not member of this business");
         var result = {
             business: business,
             member: businessMember

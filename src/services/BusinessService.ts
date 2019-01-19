@@ -66,9 +66,14 @@ export class BusinessService implements ServerServiceInterface {
     });
   }
 
+  public async userHasAccessToBusiness(userId, businessId) {
+    return (
+      (await this.findBusinessByMember(userId)).filter(x => x._id == businessId)
+        .length == 1
+    );
+  }
   public static async checkUserAccess(req, res, next, done) {
-    if (!req.body._business)
-      return next(new ServerError(400, "_business field missing"));
+    if (!req.body._business) return done(400, "_business field missing");
 
     var business: BusinessModel;
     try {
@@ -77,19 +82,21 @@ export class BusinessService implements ServerServiceInterface {
       );
     } catch (e) {}
 
-    if (!business) return next(new ServerError(400, "business invalid"));
+    if (!business) {
+      return done(400, "business invalid");
+    }
 
     var businessMember: BusinessMemberModel;
 
     if (!business.members || business.members.length == 0)
-      return next(new ServerError(400, "business has no members"));
+      return done(400, "business has no members");
 
     businessMember = _.findWhere(business.members, {
       userId: req.user._id.toString()
     });
 
     if (!businessMember)
-      return next(new ServerError(400, "you are not member of this business"));
+      return done(400, "you are not member of this business");
 
     var result: BusinessCheckAccessResultInterface = {
       business: business,

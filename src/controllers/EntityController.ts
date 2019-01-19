@@ -428,6 +428,14 @@ export class EntityController {
 
         if (!model._entity) model._entity = req.params.entity;
 
+        if (!model._business) model._business = access.business._id.toString();
+
+        model._cuser = model._vuser = access.member.userId.toString();
+
+        if (!model._vdate) model._vdate = Date.now();
+
+        if (!model._cdate) model._cdate = Date.now();
+
         try {
           await EntityModel.validate(model);
         } catch (e) {
@@ -462,6 +470,9 @@ export class EntityController {
 
         if (!model._entity) model._entity = req.params.entity;
 
+        model._vuser = model._uuser = access.member.userId.toString();
+        model._vdate = model._udate = Date.now();
+
         try {
           await EntityModel.validate(model);
         } catch (e) {
@@ -481,7 +492,6 @@ export class EntityController {
 
   public delete: ServerEndpointInterface = {
     route: "/api/entity/:entity/delete",
-
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -501,6 +511,12 @@ export class EntityController {
 
         if (entity._business.toString() != access.business._id.toString())
           return next(new ServerError(400, "access mismatch"));
+
+        entity._vdate = entity._rdate = Date.now();
+
+        entity._ruser = entity._vuser = access.member.userId.toString();
+
+        await this.entityService.update(entity);
 
         try {
           await this.entityService.delete(_id, req.user._id);

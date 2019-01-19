@@ -27,6 +27,10 @@ export class EntityService implements ServerServiceInterface {
   }
 
   async insert(model: EntityModel) {
+
+    if(!model._cdate)
+    model._cdate = Date.now();
+
     return this.collection.insertOne(model);
   }
 
@@ -34,7 +38,7 @@ export class EntityService implements ServerServiceInterface {
     return this.collection.updateOne(model);
   }
 
-  async delete(id, userId) {
+  async delete(id: string | ObjectId, userId?: string) {
     return this.collection.deleteOne(id, userId);
   }
 

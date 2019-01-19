@@ -256,8 +256,7 @@ export class StorageService {
   async start() {
     this.dataPath = join(Server.dir, "..", "data");
     fs.ensureDirSync(this.dataPath);
-
-    console.log(await this.list("users/5c1ebd3118fd58469acdd0aa/**"));
+ 
 
     this.usersCollection = await this.dbService.collection("Users");
 

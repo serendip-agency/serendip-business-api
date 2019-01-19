@@ -15,17 +15,19 @@ import {
 } from "../models";
 import * as _ from "underscore";
 import { UserProfileService } from "../services/UserProfileService";
+import { EntityService } from "../services";
 
 export class BusinessController {
   private businessService: BusinessService;
   private authService: AuthService;
   private userProfileService: UserProfileService;
+  private entityService: EntityService;
 
   constructor() {
     this.businessService = Server.services["BusinessService"];
+    this.entityService = Server.services["EntityService"];
     this.authService = Server.services["AuthService"];
   }
-
 
   public list: ServerEndpointInterface = {
     method: "get",
@@ -39,12 +41,33 @@ export class BusinessController {
     ]
   };
 
-
   public grid: ServerEndpointInterface = {
-    method: "get",
+    method: "post",
     actions: [
-      async (req, res, next, done) => {
-        res.json({});
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        var query = await this.entityService.collection
+          .aggregate([])
+          .match({
+            _business: access.business._id.toString(),
+            _cuser: access.member.userId.toString(),
+            "data.section" : req.body.section
+          })
+          .sort({
+            _cdate: -1
+          })
+          .limit(1)
+          .toArray();
+
+        if (query[0]) {
+          res.json(query[0].data);
+        } else res.json(null);
       }
     ]
   };
@@ -124,7 +147,8 @@ export class BusinessController {
         }
 
         try {
-          model = await this.businessService.insert(model);
+          if (model._id) await this.businessService.update(model);
+          else model = await this.businessService.insert(model);
         } catch (e) {
           return next(new ServerError(500, e.message));
         }

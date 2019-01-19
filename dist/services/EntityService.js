@@ -11,6 +11,8 @@ class EntityService {
         this.collection.createIndex({ "$**": "text" }, {});
     }
     async insert(model) {
+        if (!model._cdate)
+            model._cdate = Date.now();
         return this.collection.insertOne(model);
     }
     async update(model) {

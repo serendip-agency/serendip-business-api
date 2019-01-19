@@ -149,7 +149,6 @@ class StorageService {
     async start() {
         this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
         fs.ensureDirSync(this.dataPath);
-        console.log(await this.list("users/5c1ebd3118fd58469acdd0aa/**"));
         this.usersCollection = await this.dbService.collection("Users");
         this.businessesCollection = await this.dbService.collection("Businesses");
         var ensureDirPromises = [];
