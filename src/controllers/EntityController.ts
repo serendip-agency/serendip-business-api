@@ -296,7 +296,7 @@ export class EntityController {
   };
 
   public reportList: ServerEndpointInterface = {
-    route: "/api/entity/reports",
+    route: "/api/reports",
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -330,7 +330,7 @@ export class EntityController {
   };
 
   public report: ServerEndpointInterface = {
-    route: "/api/entity/report",
+    route: "/api/report",
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -424,6 +424,7 @@ export class EntityController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
+        console.log("insert");
         var model: EntityModel = req.body;
 
         if (!model._entity) model._entity = req.params.entity;
@@ -437,15 +438,9 @@ export class EntityController {
         if (!model._cdate) model._cdate = Date.now();
 
         try {
-          await EntityModel.validate(model);
-        } catch (e) {
-          return next(new ServerError(400, JSON.stringify(e)));
-        }
-
-        try {
           model = await this.entityService.insert(model);
         } catch (e) {
-          return next(new ServerError(500, e.message || e));
+          return done(500, e.message || e);
         }
 
         res.json(model);

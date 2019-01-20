@@ -73,6 +73,8 @@ export class BusinessService implements ServerServiceInterface {
     );
   }
   public static async checkUserAccess(req, res, next, done) {
+
+
     if (!req.body._business) return done(400, "_business field missing");
 
     var business: BusinessModel;
@@ -98,11 +100,14 @@ export class BusinessService implements ServerServiceInterface {
     if (!businessMember)
       return done(400, "you are not member of this business");
 
+
+
     var result: BusinessCheckAccessResultInterface = {
       business: business,
       member: businessMember
     };
 
     next(result);
+
   }
 }

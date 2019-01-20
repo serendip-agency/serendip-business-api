@@ -185,7 +185,7 @@ class EntityController {
             ]
         };
         this.reportList = {
-            route: "/api/entity/reports",
+            route: "/api/reports",
             method: "post",
             actions: [
                 services_1.BusinessService.checkUserAccess,
@@ -210,7 +210,7 @@ class EntityController {
             ]
         };
         this.report = {
-            route: "/api/entity/report",
+            route: "/api/report",
             method: "post",
             actions: [
                 services_1.BusinessService.checkUserAccess,
@@ -278,6 +278,7 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
+                    console.log("insert");
                     var model = req.body;
                     if (!model._entity)
                         model._entity = req.params.entity;
@@ -289,16 +290,10 @@ class EntityController {
                     if (!model._cdate)
                         model._cdate = Date.now();
                     try {
-                        await models_1.EntityModel.validate(model);
-                    }
-                    catch (e) {
-                        return next(new serendip_1.ServerError(400, JSON.stringify(e)));
-                    }
-                    try {
                         model = await this.entityService.insert(model);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(500, e.message || e));
+                        return done(500, e.message || e);
                     }
                     res.json(model);
                 }
