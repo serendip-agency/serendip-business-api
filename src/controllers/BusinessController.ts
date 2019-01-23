@@ -16,6 +16,7 @@ import {
 import * as _ from "underscore";
 import { UserProfileService } from "../services/UserProfileService";
 import { EntityService } from "../services";
+import { UserModel } from "serendip/src";
 
 export class BusinessController {
   private businessService: BusinessService;
@@ -27,15 +28,52 @@ export class BusinessController {
     this.businessService = Server.services["BusinessService"];
     this.entityService = Server.services["EntityService"];
     this.authService = Server.services["AuthService"];
+    this.userProfileService = Server.services["UserProfileService"];
   }
 
-  public list: ServerEndpointInterface = {
+  public list = {
     method: "get",
     actions: [
       async (req, res, next, done) => {
-        var model = await this.businessService.findBusinessByMember(
+        var model = await this.businessService.findBusinessesByUserId(
           req.user._id.toString()
         );
+
+        for (let i = 0; i < model.length; i++) {
+          let business = model[i];
+          for (let mi = 0; mi < business.members.length; mi++) {
+            let member = business.members[mi];
+            let queryUser;
+
+            if (!member.userId && member.mobile) {
+              queryUser = await this.authService.findUserByMobile(
+                member.mobile,
+                member.mobileCountryCode
+              );
+
+              if (queryUser) {
+                member.userId = queryUser._id.toString();
+                await this.businessService.update(business);
+              }
+            }
+
+            if (member.userId && !queryUser)
+              queryUser = await this.authService.findUserById(member.userId);
+
+            if (!member.mobile && queryUser) {
+              member.mobile = queryUser.mobile;
+              member.mobileCountryCode = queryUser.mobileCountryCode;
+            }
+
+            member.profile = await this.userProfileService.findProfileByUserId(
+              member.userId
+            );
+
+            business.members[mi] = member;
+          }
+          model[i] = business;
+        }
+
         res.json(model);
       }
     ]
@@ -57,7 +95,7 @@ export class BusinessController {
           .match({
             _business: access.business._id.toString(),
             _cuser: access.member.userId.toString(),
-            "data.section" : req.body.section
+            "data.section": req.body.section
           })
           .sort({
             _cdate: -1
@@ -71,58 +109,6 @@ export class BusinessController {
       }
     ]
   };
-
-  public members: ServerEndpointInterface = {
-    method: "post",
-    actions: [
-      BusinessService.checkUserAccess,
-      async (
-        req,
-        res,
-        next,
-        done,
-        access: BusinessCheckAccessResultInterface
-      ) => {
-        var members = access.business.members;
-
-        var model = [];
-
-        await Promise.all(
-          _.map(members, item => {
-            return new Promise(async (resolve, reject) => {
-              var memberProfile = await this.userProfileService.findById(
-                item.userId
-              );
-
-              if (memberProfile == undefined)
-                return resolve(
-                  new UserProfileModel({
-                    firstName: "",
-                    lastName: "",
-                    profilePicture: ""
-                  })
-                );
-              else return resolve(memberProfile);
-            });
-          })
-        );
-
-        if (req.body.query)
-          model = _.filter(
-            model as any,
-            (item: { firstName: string; lastName: string }) => {
-              return (
-                item.firstName.indexOf(req.body.query) != -1 ||
-                item.lastName.indexOf(req.body.query) != -1
-              );
-            }
-          );
-
-        res.json(model);
-      }
-    ]
-  };
-
   public saveBusiness: ServerEndpointInterface = {
     method: "post",
     actions: [
@@ -198,16 +184,35 @@ export class BusinessController {
         done,
         model: BusinessCheckAccessResultInterface
       ) => {
-        var member: BusinessMemberModel = req.body;
+        if (!req.body.mobile || !parseInt(req.body.mobile)) {
+          return next(new ServerError(400, "enter mobile"));
+        }
 
-        if (!member.scope || !member.userId)
-          return next(new ServerError(400, "scope or userId field missing"));
+        let toAdd = {
+          mobile: parseInt(req.body.mobile).toString(),
+          mobileCountryCode: req.body.mobileCountryCode || "+98"
+        };
 
-        var user = await this.authService.findUserById(member.userId);
+        var user = await this.authService.findUserByMobile(
+          toAdd.mobile,
+          toAdd.mobileCountryCode
+        );
 
-        if (!user) return next(new ServerError(400, "user not found"));
+        if (user) {
+          const userBusinesses = await this.businessService.findBusinessesByUserId(
+            user._id.toString()
+          );
 
-        model.business.members.push(member);
+          if (
+            userBusinesses.filter(
+              b => b._id.toString() == model.business._id.toString()
+            ).length != 0
+          ) {
+            return next(new ServerError(400, "duplicate"));
+          }
+        }
+
+        model.business.members.push(toAdd as any);
 
         try {
           await this.businessService.update(model.business);

@@ -14,15 +14,5 @@ export class SmsController {
     
   }
 
-  public counts: ServerEndpointInterface = {
-    method: "get",
-    actions: [
-      async (req, res, next, done) => {
-        var model = await this.businessService.findBusinessByMember(
-          req.user._id.toString()
-        );
-        res.json(model);
-      }
-    ]
-  };
+ 
 }

@@ -5,10 +5,11 @@ const _ = require("underscore");
 const bson_1 = require("bson");
 class BusinessService {
     constructor() {
-        this._dbService = serendip_1.Server.services["DbService"];
+        this.dbService = serendip_1.Server.services["DbService"];
+        this.authService = serendip_1.Server.services["AuthService"];
     }
     async start() {
-        this.businessCollection = await this._dbService.collection("Businesses", true);
+        this.businessCollection = await this.dbService.collection("Businesses", true);
     }
     async insert(model) {
         return this.businessCollection.insertOne(model);
@@ -26,23 +27,32 @@ class BusinessService {
         else
             return query[0];
     }
-    async findBusinessByMember(userId) {
-        return this.businessCollection.find({
+    async findBusinessesByUserId(userId) {
+        var user = await this.authService.findUserById(userId);
+        return this.businessCollection
+            .aggregate([])
+            .match({
             $or: [
                 {
+                    members: { $elemMatch: { userId: userId } }
+                },
+                {
                     members: {
-                        $elemMatch: { userId: userId }
+                        $elemMatch: {
+                            mobile: user.mobile,
+                            mobileCountryCode: user.mobileCountryCode
+                        }
                     }
                 },
                 {
                     owner: userId
                 }
             ]
-        });
+        })
+            .toArray();
     }
     async userHasAccessToBusiness(userId, businessId) {
-        return ((await this.findBusinessByMember(userId)).filter(x => x._id == businessId)
-            .length == 1);
+        return ((await this.findBusinessesByUserId(userId)).filter(x => x._id == businessId).length == 1);
     }
     static async checkUserAccess(req, res, next, done) {
         if (!req.body._business)
@@ -61,6 +71,11 @@ class BusinessService {
         businessMember = _.findWhere(business.members, {
             userId: req.user._id.toString()
         });
+        if (!businessMember)
+            businessMember = _.findWhere(business.members, {
+                mobile: parseInt(req.user.mobile),
+                mobileCountryCode: req.user.mobileCountryCode
+            });
         if (!businessMember)
             return done(400, "you are not member of this business");
         var result = {

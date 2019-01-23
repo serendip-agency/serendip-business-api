@@ -10,7 +10,30 @@ class BusinessController {
             method: "get",
             actions: [
                 async (req, res, next, done) => {
-                    var model = await this.businessService.findBusinessByMember(req.user._id.toString());
+                    var model = await this.businessService.findBusinessesByUserId(req.user._id.toString());
+                    for (let i = 0; i < model.length; i++) {
+                        let business = model[i];
+                        for (let mi = 0; mi < business.members.length; mi++) {
+                            let member = business.members[mi];
+                            let queryUser;
+                            if (!member.userId && member.mobile) {
+                                queryUser = await this.authService.findUserByMobile(member.mobile, member.mobileCountryCode);
+                                if (queryUser) {
+                                    member.userId = queryUser._id.toString();
+                                    await this.businessService.update(business);
+                                }
+                            }
+                            if (member.userId && !queryUser)
+                                queryUser = await this.authService.findUserById(member.userId);
+                            if (!member.mobile && queryUser) {
+                                member.mobile = queryUser.mobile;
+                                member.mobileCountryCode = queryUser.mobileCountryCode;
+                            }
+                            member.profile = await this.userProfileService.findProfileByUserId(member.userId);
+                            business.members[mi] = member;
+                        }
+                        model[i] = business;
+                    }
                     res.json(model);
                 }
             ]
@@ -37,35 +60,6 @@ class BusinessController {
                     }
                     else
                         res.json(null);
-                }
-            ]
-        };
-        this.members = {
-            method: "post",
-            actions: [
-                BusinessService_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
-                    var members = access.business.members;
-                    var model = [];
-                    await Promise.all(_.map(members, item => {
-                        return new Promise(async (resolve, reject) => {
-                            var memberProfile = await this.userProfileService.findById(item.userId);
-                            if (memberProfile == undefined)
-                                return resolve(new models_1.UserProfileModel({
-                                    firstName: "",
-                                    lastName: "",
-                                    profilePicture: ""
-                                }));
-                            else
-                                return resolve(memberProfile);
-                        });
-                    }));
-                    if (req.body.query)
-                        model = _.filter(model, (item) => {
-                            return (item.firstName.indexOf(req.body.query) != -1 ||
-                                item.lastName.indexOf(req.body.query) != -1);
-                        });
-                    res.json(model);
                 }
             ]
         };
@@ -129,13 +123,21 @@ class BusinessController {
             actions: [
                 BusinessService_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, model) => {
-                    var member = req.body;
-                    if (!member.scope || !member.userId)
-                        return next(new serendip_1.ServerError(400, "scope or userId field missing"));
-                    var user = await this.authService.findUserById(member.userId);
-                    if (!user)
-                        return next(new serendip_1.ServerError(400, "user not found"));
-                    model.business.members.push(member);
+                    if (!req.body.mobile || !parseInt(req.body.mobile)) {
+                        return next(new serendip_1.ServerError(400, "enter mobile"));
+                    }
+                    let toAdd = {
+                        mobile: parseInt(req.body.mobile).toString(),
+                        mobileCountryCode: req.body.mobileCountryCode || "+98"
+                    };
+                    var user = await this.authService.findUserByMobile(toAdd.mobile, toAdd.mobileCountryCode);
+                    if (user) {
+                        const userBusinesses = await this.businessService.findBusinessesByUserId(user._id.toString());
+                        if (userBusinesses.filter(b => b._id.toString() == model.business._id.toString()).length != 0) {
+                            return next(new serendip_1.ServerError(400, "duplicate"));
+                        }
+                    }
+                    model.business.members.push(toAdd);
                     try {
                         await this.businessService.update(model.business);
                     }
@@ -149,6 +151,7 @@ class BusinessController {
         this.businessService = serendip_1.Server.services["BusinessService"];
         this.entityService = serendip_1.Server.services["EntityService"];
         this.authService = serendip_1.Server.services["AuthService"];
+        this.userProfileService = serendip_1.Server.services["UserProfileService"];
     }
 }
 exports.BusinessController = BusinessController;

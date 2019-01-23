@@ -9,6 +9,7 @@ import {
 import { BusinessModel, BusinessMemberModel } from "../models";
 import * as _ from "underscore";
 import { ObjectId } from "bson";
+import { ServerRequestInterface, AuthService } from "serendip/src";
 
 export interface BusinessCheckAccessResultInterface {
   member: BusinessMemberModel;
@@ -18,15 +19,17 @@ export interface BusinessCheckAccessResultInterface {
 export class BusinessService implements ServerServiceInterface {
   static dependencies = ["AuthService", "DbService"];
 
-  private _dbService: DbService;
+  private dbService: DbService;
+  private authService: AuthService;
   public businessCollection: DbCollection<BusinessModel>;
 
   constructor() {
-    this._dbService = Server.services["DbService"];
+    this.dbService = Server.services["DbService"];
+    this.authService = Server.services["AuthService"];
   }
 
   async start() {
-    this.businessCollection = await this._dbService.collection<BusinessModel>(
+    this.businessCollection = await this.dbService.collection<BusinessModel>(
       "Businesses",
       true
     );
@@ -51,30 +54,45 @@ export class BusinessService implements ServerServiceInterface {
     else return query[0];
   }
 
-  async findBusinessByMember(userId: string): Promise<BusinessModel[]> {
-    return this.businessCollection.find({
-      $or: [
-        {
-          members: {
-            $elemMatch: { userId: userId }
+  async findBusinessesByUserId(userId: string): Promise<BusinessModel[]> {
+    var user = await this.authService.findUserById(userId);
+
+    return this.businessCollection
+      .aggregate([])
+      .match({
+        $or: [
+          {
+            members: { $elemMatch: { userId: userId } }
+          },
+          {
+            members: {
+              $elemMatch: {
+                mobile: user.mobile,
+                mobileCountryCode: user.mobileCountryCode
+              }
+            }
+          },
+          {
+            owner: userId
           }
-        },
-        {
-          owner: userId
-        }
-      ]
-    });
+        ]
+      })
+      .toArray();
   }
 
   public async userHasAccessToBusiness(userId, businessId) {
     return (
-      (await this.findBusinessByMember(userId)).filter(x => x._id == businessId)
-        .length == 1
+      (await this.findBusinessesByUserId(userId)).filter(
+        x => x._id == businessId
+      ).length == 1
     );
   }
-  public static async checkUserAccess(req, res, next, done) {
-
-
+  public static async checkUserAccess(
+    req: ServerRequestInterface,
+    res,
+    next,
+    done
+  ) {
     if (!req.body._business) return done(400, "_business field missing");
 
     var business: BusinessModel;
@@ -98,9 +116,13 @@ export class BusinessService implements ServerServiceInterface {
     });
 
     if (!businessMember)
+      businessMember = _.findWhere(business.members, {
+        mobile: parseInt(req.user.mobile),
+        mobileCountryCode: req.user.mobileCountryCode
+      });
+
+    if (!businessMember)
       return done(400, "you are not member of this business");
-
-
 
     var result: BusinessCheckAccessResultInterface = {
       business: business,
@@ -108,6 +130,5 @@ export class BusinessService implements ServerServiceInterface {
     };
 
     next(result);
-
   }
 }
