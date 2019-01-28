@@ -4,3 +4,5 @@ logs
 .sonarlint
 .env
 data
+*.zip
+*.rar

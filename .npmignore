@@ -4,3 +4,5 @@
 .env
 data
 logs
+*.zip
+*.rar
