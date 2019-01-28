@@ -1,6 +1,8 @@
-src
+.git
 .vscode
 .sonarlint
 .env
 data
 logs
+*.zip
+*.rar
