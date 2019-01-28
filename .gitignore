@@ -1,8 +1,10 @@
-node_modules
-logs
+.git
 .vscode
 .sonarlint
 .env
 data
+logs
 *.zip
 *.rar
+npm-debug.log
+node_modules
