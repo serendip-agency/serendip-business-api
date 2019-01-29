@@ -105,7 +105,7 @@ export class BusinessController {
 
         if (query[0]) {
           res.json(query[0].data);
-        } else res.json(null);
+        } else done(400, "no gird found");
       }
     ]
   };
@@ -113,7 +113,6 @@ export class BusinessController {
     method: "post",
     actions: [
       async (req, res, next, done) => {
-        
         var model: BusinessModel = req.body;
 
         model.owner = req.user._id.toString();

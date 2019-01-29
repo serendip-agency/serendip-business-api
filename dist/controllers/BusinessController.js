@@ -59,7 +59,7 @@ class BusinessController {
                         res.json(query[0].data);
                     }
                     else
-                        res.json(null);
+                        done(400, "no gird found");
                 }
             ]
         };
