@@ -93,6 +93,7 @@ export class BusinessController {
         var query = await this.entityService.collection
           .aggregate([])
           .match({
+            _entity: 'grid',
             _business: access.business._id.toString(),
             _cuser: access.member.userId.toString(),
             "data.section": req.body.section
@@ -102,10 +103,10 @@ export class BusinessController {
           })
           .limit(1)
           .toArray();
-
+ 
         if (query[0]) {
           res.json(query[0].data);
-        } else done(400, "no gird found");
+        } else done(400, "no grid found");
       }
     ]
   };
