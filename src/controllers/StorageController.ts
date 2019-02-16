@@ -1,9 +1,9 @@
 import {
-  ServerEndpointInterface,
+  HttpEndpointInterface,
   Server,
-  ServerError,
-  ServerRequestInterface,
-  ServerResponseInterface,
+  HttpError,
+  HttpRequestInterface,
+  HttpResponseInterface,
   DbService,
   Validator
 } from "serendip";
@@ -29,15 +29,15 @@ export class StorageController {
   }
 
   public async onRequest(
-    req: ServerRequestInterface,
-    res: ServerResponseInterface,
+    req: HttpRequestInterface,
+    res: HttpResponseInterface,
     next,
     done
   ) {
     next();
   }
 
-  public upload: ServerEndpointInterface = {
+  public upload: HttpEndpointInterface = {
     method: "POST",
     actions: [
       BusinessService.checkUserAccess,
@@ -85,7 +85,7 @@ export class StorageController {
     ]
   };
 
-  public parts: ServerEndpointInterface = {
+  public parts: HttpEndpointInterface = {
     method: "POST",
     actions: [
       BusinessService.checkUserAccess,
@@ -143,7 +143,7 @@ export class StorageController {
     ]
   };
 
-  public list: ServerEndpointInterface = {
+  public list: HttpEndpointInterface = {
     method: "POST",
     actions: [
       BusinessService.checkUserAccess,
@@ -171,7 +171,7 @@ export class StorageController {
     ]
   };
 
-  public assemble: ServerEndpointInterface = {
+  public assemble: HttpEndpointInterface = {
     method: "POST",
     actions: [
       BusinessService.checkUserAccess,

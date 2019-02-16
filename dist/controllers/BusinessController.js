@@ -83,7 +83,7 @@ class BusinessController {
                         await models_1.BusinessModel.validate(model);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(400, e.message));
+                        return next(new serendip_1.HttpError(400, e.message));
                     }
                     try {
                         if (model._id)
@@ -92,7 +92,7 @@ class BusinessController {
                             model = await this.businessService.insert(model);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(500, e.message));
+                        return next(new serendip_1.HttpError(500, e.message));
                     }
                     res.json(model);
                 }
@@ -105,7 +105,7 @@ class BusinessController {
                 async (req, res, next, done, model) => {
                     var userId = req.body.userId;
                     if (!userId)
-                        return next(new serendip_1.ServerError(400, "userId field missing"));
+                        return next(new serendip_1.HttpError(400, "userId field missing"));
                     model.business.members = _.reject(model.business.members, item => {
                         return item.userId == userId;
                     });
@@ -113,7 +113,7 @@ class BusinessController {
                         await this.businessService.update(model.business);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(500, e.message));
+                        return next(new serendip_1.HttpError(500, e.message));
                     }
                     res.json(model.business);
                 }
@@ -125,7 +125,7 @@ class BusinessController {
                 BusinessService_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, model) => {
                     if (!req.body.mobile || !parseInt(req.body.mobile)) {
-                        return next(new serendip_1.ServerError(400, "enter mobile"));
+                        return next(new serendip_1.HttpError(400, "enter mobile"));
                     }
                     let toAdd = {
                         mobile: parseInt(req.body.mobile).toString(),
@@ -135,7 +135,7 @@ class BusinessController {
                     if (user) {
                         const userBusinesses = await this.businessService.findBusinessesByUserId(user._id.toString());
                         if (userBusinesses.filter(b => b._id.toString() == model.business._id.toString()).length != 0) {
-                            return next(new serendip_1.ServerError(400, "duplicate"));
+                            return next(new serendip_1.HttpError(400, "duplicate"));
                         }
                     }
                     model.business.members.push(toAdd);
@@ -143,7 +143,7 @@ class BusinessController {
                         await this.businessService.update(model.business);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(500, e.message));
+                        return next(new serendip_1.HttpError(500, e.message));
                     }
                     res.json(model.business);
                 }

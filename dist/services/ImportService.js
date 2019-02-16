@@ -3,16 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
 class ImportService {
     constructor() {
-        this._business = "5bdfdefeb3c75029a8a0dab6";
+        this._business = "5c3731c0227df05a6a429674";
         this.dbService = serendip_1.Server.services["DbService"];
         this.entityService = serendip_1.Server.services["EntityService"];
     }
     async start() {
         // this.data = JSON.parse(
-        //   fs.readFileSync(join(Server.dir, "..", "export-mvc.json")).toString()
+        //   fs.readFileSync(join(Server.dir, "..", "ignore.json")).toString()
         // );
-        //   this.importPeoples();
-        //  this.importCompanies();
+        // this.importPeoples();
+        // this.importCompanies();
     }
     async importCompanies() {
         this.data.clients.forEach(async (p) => {

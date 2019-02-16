@@ -17,16 +17,16 @@ export class ImportService implements ServerServiceInterface {
     this.entityService = Server.services["EntityService"];
   }
 
-  _business = "5bdfdefeb3c75029a8a0dab6";
+  _business = "5c3731c0227df05a6a429674";
 
   async start() {
     // this.data = JSON.parse(
-    //   fs.readFileSync(join(Server.dir, "..", "export-mvc.json")).toString()
+    //   fs.readFileSync(join(Server.dir, "..", "ignore.json")).toString()
     // );
 
-    //   this.importPeoples();
+     // this.importPeoples();
 
-    //  this.importCompanies();
+    // this.importCompanies();
   }
 
   async importCompanies() {

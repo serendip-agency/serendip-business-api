@@ -2,10 +2,10 @@ import * as archiver from "archiver";
 import {
   DbService,
   Server,
-  ServerEndpointInterface,
-  ServerError,
-  ServerRequestInterface,
-  ServerResponseInterface,
+  HttpEndpointInterface,
+  HttpError,
+  HttpRequestInterface,
+  HttpResponseInterface,
   Validator
 } from "serendip";
 import * as _ from "underscore";
@@ -21,6 +21,7 @@ import {
   ReportService
 } from "../services/ReportService";
 import { entityChangeType, EntityChangeModel } from "serendip";
+import { ObjectID } from "bson";
 
 export class EntityController {
   private entityService: EntityService;
@@ -36,15 +37,15 @@ export class EntityController {
   }
 
   public async onRequest(
-    req: ServerRequestInterface,
-    res: ServerResponseInterface,
+    req: HttpRequestInterface,
+    res: HttpResponseInterface,
     next,
     done
   ) {
     next();
   }
 
-  public zip: ServerEndpointInterface = {
+  public zip: HttpEndpointInterface = {
     route: "/api/entity/:entity/zip",
     method: "post",
     isStream: true,
@@ -93,7 +94,7 @@ export class EntityController {
     ]
   };
 
-  public details: ServerEndpointInterface = {
+  public details: HttpEndpointInterface = {
     route: "/api/entity/:entity/details",
     method: "post",
     actions: [
@@ -107,15 +108,15 @@ export class EntityController {
       ) => {
         var model = await this.entityService.findById(req.body._id);
 
-        if (!model) return new ServerError(404, "entity not found");
+        if (!model) return done(404, "entity not found");
 
         if (model._business == access.business._id) res.json(model);
-        else return new ServerError(404, "entity not found");
+        else return done(404, "entity not found");
       }
     ]
   };
 
-  public changes: ServerEndpointInterface = {
+  public changes: HttpEndpointInterface = {
     route: "/api/entity/changes",
     method: "post",
     actions: [
@@ -185,7 +186,7 @@ export class EntityController {
     ]
   };
 
-  // public entityChanges: ServerEndpointInterface = {
+  // public entityChanges: HttpEndpointInterface = {
   //   route: "/api/entity/:entity/changes",
   //   method: "post",
   //   actions: [
@@ -211,7 +212,7 @@ export class EntityController {
   //       if (req.body._id) {
   //         var actualRecord = await this.entityService.findById(req.body._id);
   //         if (!actualRecord)
-  //           return next(new ServerError(400, "record not found"));
+  //           return next(new HttpError(400, "record not found"));
 
   //         var recordChanges = await this.dbService.entityChangeCollection.find({
   //           entityId: actualRecord._id
@@ -250,7 +251,7 @@ export class EntityController {
   //   ]
   // };
 
-  public list: ServerEndpointInterface = {
+  public list: HttpEndpointInterface = {
     route: "/api/entity/:entity/list",
 
     method: "post",
@@ -277,7 +278,7 @@ export class EntityController {
     ]
   };
 
-  public count: ServerEndpointInterface = {
+  public count: HttpEndpointInterface = {
     route: "/api/entity/:entity/count",
     method: "post",
     actions: [
@@ -295,7 +296,7 @@ export class EntityController {
     ]
   };
 
-  public reportList: ServerEndpointInterface = {
+  public reportList: HttpEndpointInterface = {
     route: "/api/reports",
     method: "post",
     actions: [
@@ -329,7 +330,7 @@ export class EntityController {
     ]
   };
 
-  public report: ServerEndpointInterface = {
+  public report: HttpEndpointInterface = {
     route: "/api/report",
     method: "post",
     actions: [
@@ -367,7 +368,7 @@ export class EntityController {
     ]
   };
 
-  public search: ServerEndpointInterface = {
+  public search: HttpEndpointInterface = {
     route: "/api/entity/:entity/search",
     method: "post",
     actions: [
@@ -412,7 +413,7 @@ export class EntityController {
     ]
   };
 
-  public insert: ServerEndpointInterface = {
+  public insert: HttpEndpointInterface = {
     route: "/api/entity/:entity/insert",
     method: "post",
     actions: [
@@ -424,7 +425,6 @@ export class EntityController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
-        console.log("insert");
         var model: EntityModel = req.body;
 
         if (!model._entity) model._entity = req.params.entity;
@@ -448,7 +448,7 @@ export class EntityController {
     ]
   };
 
-  public update: ServerEndpointInterface = {
+  public update: HttpEndpointInterface = {
     route: "/api/entity/:entity/update",
 
     method: "post",
@@ -471,13 +471,13 @@ export class EntityController {
         try {
           await EntityModel.validate(model);
         } catch (e) {
-          return next(new ServerError(400, e.message || e));
+          return next(new HttpError(400, e.message || e));
         }
 
         try {
           await this.entityService.update(model);
         } catch (e) {
-          return next(new ServerError(500, e.message || e));
+          return next(new HttpError(500, e.message || e));
         }
 
         res.json(model);
@@ -485,7 +485,7 @@ export class EntityController {
     ]
   };
 
-  public delete: ServerEndpointInterface = {
+  public delete: HttpEndpointInterface = {
     route: "/api/entity/:entity/delete",
     method: "post",
     actions: [
@@ -499,13 +499,13 @@ export class EntityController {
       ) => {
         var _id = req.body._id;
 
-        if (!_id) return next(new ServerError(400, "_id is missing"));
+        if (!_id) return next(new HttpError(400, "_id is missing"));
 
         var entity = await this.entityService.findById(_id);
-        if (!entity) return next(new ServerError(400, "entity not found"));
+        if (!entity) return next(new HttpError(400, "entity not found"));
 
         if (entity._business.toString() != access.business._id.toString())
-          return next(new ServerError(400, "access mismatch"));
+          return next(new HttpError(400, "access mismatch"));
 
         entity._vdate = entity._rdate = Date.now();
 
@@ -516,7 +516,7 @@ export class EntityController {
         try {
           await this.entityService.delete(_id, req.user._id);
         } catch (e) {
-          return next(new ServerError(500, e.message || e));
+          return next(new HttpError(500, e.message || e));
         }
 
         res.json(entity);

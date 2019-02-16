@@ -66,14 +66,14 @@ export class DashboardService {
             .then(() => {})
             .catch(() => {});
 
-          console.log(
-            "grid sync from",
-            ws.token.username,
-            "to",
-            msg.business,
-            "section",
-            msg.data.section
-          );
+          // console.log(
+          //   "grid sync from",
+          //   ws.token.username,
+          //   "to",
+          //   msg.business,
+          //   "section",
+          //   msg.data.section
+          // );
 
           this.wsService.sendToUser(
             ws.token.userId,

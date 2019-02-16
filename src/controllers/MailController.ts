@@ -1,4 +1,4 @@
-import { AuthService, Server, ServerEndpointInterface } from "serendip";
+import { AuthService, Server, HttpEndpointInterface } from "serendip";
 
 import { BusinessService } from "../services/BusinessService";
 import { UserProfileService } from "../services/UserProfileService";

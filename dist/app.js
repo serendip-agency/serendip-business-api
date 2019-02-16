@@ -44,12 +44,10 @@ serendip_1.SmsIrService.configure({
     verifyTemplate: process.env["smsIr.verifyTemplate"],
     verifyTemplateWithIpAndUseragent: process.env["smsIr.verifyTemplateWithIpAndUseragent"]
 });
-serendip_1.start({
+serendip_1.HttpService.configure({
     cors: "*",
-    logging: process.env["core.logging"] || "info",
     httpPort: process.env.PORT || process.env["core.httpPort"] || 2040,
     staticPath: path_1.join(__dirname, "../", "files", "public"),
-    cpuCores: process.env["core.cpuCores"] || 1,
     controllers: [
         serendip_1.AuthController,
         serendip_1.ServerController,
@@ -57,8 +55,13 @@ serendip_1.start({
         EntityController_1.EntityController,
         serendip_1.ServerController,
         StorageController_1.StorageController
-    ],
+    ]
+});
+serendip_1.start({
+    logging: process.env["core.logging"] || "info",
+    cpuCores: process.env["core.cpuCores"] || 1,
     services: [
+        serendip_1.HttpService,
         serendip_1.SmsIrService,
         serendip_1.EmailService,
         serendip_1.FaxService,

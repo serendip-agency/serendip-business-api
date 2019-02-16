@@ -50,11 +50,11 @@ class EntityController {
                 async (req, res, next, done, access) => {
                     var model = await this.entityService.findById(req.body._id);
                     if (!model)
-                        return new serendip_1.ServerError(404, "entity not found");
+                        return done(404, "entity not found");
                     if (model._business == access.business._id)
                         res.json(model);
                     else
-                        return new serendip_1.ServerError(404, "entity not found");
+                        return done(404, "entity not found");
                 }
             ]
         };
@@ -100,7 +100,7 @@ class EntityController {
                 }
             ]
         };
-        // public entityChanges: ServerEndpointInterface = {
+        // public entityChanges: HttpEndpointInterface = {
         //   route: "/api/entity/:entity/changes",
         //   method: "post",
         //   actions: [
@@ -125,7 +125,7 @@ class EntityController {
         //       if (req.body._id) {
         //         var actualRecord = await this.entityService.findById(req.body._id);
         //         if (!actualRecord)
-        //           return next(new ServerError(400, "record not found"));
+        //           return next(new HttpError(400, "record not found"));
         //         var recordChanges = await this.dbService.entityChangeCollection.find({
         //           entityId: actualRecord._id
         //         });
@@ -278,7 +278,6 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    console.log("insert");
                     var model = req.body;
                     if (!model._entity)
                         model._entity = req.params.entity;
@@ -314,13 +313,13 @@ class EntityController {
                         await models_1.EntityModel.validate(model);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(400, e.message || e));
+                        return next(new serendip_1.HttpError(400, e.message || e));
                     }
                     try {
                         await this.entityService.update(model);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(500, e.message || e));
+                        return next(new serendip_1.HttpError(500, e.message || e));
                     }
                     res.json(model);
                 }
@@ -334,12 +333,12 @@ class EntityController {
                 async (req, res, next, done, access) => {
                     var _id = req.body._id;
                     if (!_id)
-                        return next(new serendip_1.ServerError(400, "_id is missing"));
+                        return next(new serendip_1.HttpError(400, "_id is missing"));
                     var entity = await this.entityService.findById(_id);
                     if (!entity)
-                        return next(new serendip_1.ServerError(400, "entity not found"));
+                        return next(new serendip_1.HttpError(400, "entity not found"));
                     if (entity._business.toString() != access.business._id.toString())
-                        return next(new serendip_1.ServerError(400, "access mismatch"));
+                        return next(new serendip_1.HttpError(400, "access mismatch"));
                     entity._vdate = entity._rdate = Date.now();
                     entity._ruser = entity._vuser = access.member.userId.toString();
                     await this.entityService.update(entity);
@@ -347,7 +346,7 @@ class EntityController {
                         await this.entityService.delete(_id, req.user._id);
                     }
                     catch (e) {
-                        return next(new serendip_1.ServerError(500, e.message || e));
+                        return next(new serendip_1.HttpError(500, e.message || e));
                     }
                     res.json(entity);
                 }

@@ -8,3 +8,4 @@ logs
 *.rar
 npm-debug.log
 node_modules
+ignore.json

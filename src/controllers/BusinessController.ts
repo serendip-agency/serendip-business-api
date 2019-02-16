@@ -1,7 +1,7 @@
 import {
-  ServerEndpointInterface,
+  HttpEndpointInterface,
   Server,
-  ServerError,
+  HttpError,
   AuthService
 } from "serendip";
 import {
@@ -79,7 +79,7 @@ export class BusinessController {
     ]
   };
 
-  public grid: ServerEndpointInterface = {
+  public grid: HttpEndpointInterface = {
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -110,7 +110,7 @@ export class BusinessController {
       }
     ]
   };
-  public saveBusiness: ServerEndpointInterface = {
+  public saveBusiness: HttpEndpointInterface = {
     method: "post",
     actions: [
       async (req, res, next, done) => {
@@ -130,21 +130,21 @@ export class BusinessController {
         try {
           await BusinessModel.validate(model);
         } catch (e) {
-          return next(new ServerError(400, e.message));
+          return next(new HttpError(400, e.message));
         }
 
         try {
           if (model._id) await this.businessService.update(model);
           else model = await this.businessService.insert(model);
         } catch (e) {
-          return next(new ServerError(500, e.message));
+          return next(new HttpError(500, e.message));
         }
         res.json(model);
       }
     ]
   };
 
-  public deleteMember: ServerEndpointInterface = {
+  public deleteMember: HttpEndpointInterface = {
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -157,7 +157,7 @@ export class BusinessController {
       ) => {
         var userId = req.body.userId;
 
-        if (!userId) return next(new ServerError(400, "userId field missing"));
+        if (!userId) return next(new HttpError(400, "userId field missing"));
 
         model.business.members = _.reject(model.business.members, item => {
           return item.userId == userId;
@@ -166,7 +166,7 @@ export class BusinessController {
         try {
           await this.businessService.update(model.business);
         } catch (e) {
-          return next(new ServerError(500, e.message));
+          return next(new HttpError(500, e.message));
         }
 
         res.json(model.business);
@@ -174,7 +174,7 @@ export class BusinessController {
     ]
   };
 
-  public addMember: ServerEndpointInterface = {
+  public addMember: HttpEndpointInterface = {
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -186,7 +186,7 @@ export class BusinessController {
         model: BusinessCheckAccessResultInterface
       ) => {
         if (!req.body.mobile || !parseInt(req.body.mobile)) {
-          return next(new ServerError(400, "enter mobile"));
+          return next(new HttpError(400, "enter mobile"));
         }
 
         let toAdd = {
@@ -209,7 +209,7 @@ export class BusinessController {
               b => b._id.toString() == model.business._id.toString()
             ).length != 0
           ) {
-            return next(new ServerError(400, "duplicate"));
+            return next(new HttpError(400, "duplicate"));
           }
         }
 
@@ -218,7 +218,7 @@ export class BusinessController {
         try {
           await this.businessService.update(model.business);
         } catch (e) {
-          return next(new ServerError(500, e.message));
+          return next(new HttpError(500, e.message));
         }
 
         res.json(model.business);

@@ -8,7 +8,8 @@ import {
   ServerController,
   start,
   Server,
-  SmsIrService
+  SmsIrService,
+  HttpService
 } from "serendip";
 
 import { join } from "path";
@@ -67,13 +68,11 @@ SmsIrService.configure({
   ] as any
 });
 
-start({
+HttpService.configure({
   cors: "*",
-  logging: (process.env["core.logging"] as any) || "info",
   httpPort:
     (process.env.PORT as any) || (process.env["core.httpPort"] as any) || 2040,
   staticPath: join(__dirname, "../", "files", "public"),
-  cpuCores: (process.env["core.cpuCores"] as any) || 1,
   controllers: [
     AuthController,
     ServerController,
@@ -81,8 +80,16 @@ start({
     EntityController,
     ServerController,
     StorageController
-  ],
+  ]
+});
+
+start({
+  logging: (process.env["core.logging"] as any) || "info",
+
+  cpuCores: (process.env["core.cpuCores"] as any) || 1,
+
   services: [
+    HttpService,
     SmsIrService,
     EmailService,
     FaxService,

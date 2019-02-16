@@ -3,13 +3,12 @@ import {
   DbService,
   Server,
   DbCollection,
-  ServerEndpointActionInterface,
-  ServerError
+  HttpError
 } from "serendip";
 import { BusinessModel, BusinessMemberModel } from "../models";
 import * as _ from "underscore";
 import { ObjectId } from "bson";
-import { ServerRequestInterface, AuthService } from "serendip/src";
+import { HttpRequestInterface, AuthService } from "serendip/src";
 
 export interface BusinessCheckAccessResultInterface {
   member: BusinessMemberModel;
@@ -88,7 +87,7 @@ export class BusinessService implements ServerServiceInterface {
     );
   }
   public static async checkUserAccess(
-    req: ServerRequestInterface,
+    req: HttpRequestInterface,
     res,
     next,
     done
