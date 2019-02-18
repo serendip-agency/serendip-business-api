@@ -43,19 +43,14 @@ class BusinessController {
             actions: [
                 BusinessService_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    var query = await this.entityService.collection
-                        .aggregate([])
-                        .match({
-                        _entity: 'grid',
+                    var query = (await this.entityService.collection.find({
+                        _entity: "grid",
                         _business: access.business._id.toString(),
                         _cuser: access.member.userId.toString(),
                         "data.section": req.body.section
-                    })
-                        .sort({
-                        _cdate: -1
-                    })
-                        .limit(1)
-                        .toArray();
+                    })).sort((a, b) => {
+                        return a._cdate - b._cdate;
+                    });
                     if (query[0]) {
                         res.json(query[0].data);
                     }

@@ -29,9 +29,7 @@ class BusinessService {
     }
     async findBusinessesByUserId(userId) {
         var user = await this.authService.findUserById(userId);
-        return this.businessCollection
-            .aggregate([])
-            .match({
+        return this.businessCollection.find({
             $or: [
                 {
                     members: { $elemMatch: { userId: userId } }
@@ -48,8 +46,7 @@ class BusinessService {
                     owner: userId
                 }
             ]
-        })
-            .toArray();
+        });
     }
     async userHasAccessToBusiness(userId, businessId) {
         return ((await this.findBusinessesByUserId(userId)).filter(x => x._id == businessId).length == 1);

@@ -26,9 +26,10 @@ import { ReportService } from "./services/ReportService";
 import { TaskService } from "./services/TaskService";
 import { WebSocketService } from "serendip";
 import { DashboardService } from "./services/DashboardService";
-import * as dotenv from "dotenv";
 import { StorageService } from "./services/StorageService";
 import { StorageController } from "./controllers/StorageController";
+import { MongodbProvider } from "serendip";
+import * as dotenv from "dotenv";
 
 dotenv.config();
 
@@ -40,11 +41,18 @@ AuthService.configure({
 });
 
 DbService.configure({
-  mongoDb: process.env["db.mongoDb"],
-  mongoUrl: process.env["db.mongoUrl"],
-  authSource: process.env["db.authSource"],
-  user: process.env["db.user"],
-  password: process.env["db.password"]
+  providers: {
+    Mongodb: {
+      object: new MongodbProvider(),
+      options: {
+        mongoDb: process.env["db.mongoDb"],
+        mongoUrl: process.env["db.mongoUrl"],
+        authSource: process.env["db.authSource"],
+        user: process.env["db.user"],
+        password: process.env["db.password"]
+      }
+    }
+  }
 });
 
 EmailService.configure({

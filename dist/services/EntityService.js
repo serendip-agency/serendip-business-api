@@ -19,7 +19,7 @@ class EntityService {
     }
     async start() {
         this.collection = await this.dbService.collection("Entities", true);
-        this.collection.createIndex({ "$**": "text" }, {});
+        //this.collection.createIndex({ "$**": "text" }, {});
         this.wsService.messageEmitter.on("/entity", async (input, ws) => { });
     }
     async insert(model) {

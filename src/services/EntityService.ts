@@ -48,7 +48,7 @@ export class EntityService implements ServerServiceInterface {
       true
     );
 
-    this.collection.createIndex({ "$**": "text" }, {});
+    //this.collection.createIndex({ "$**": "text" }, {});
 
     this.wsService.messageEmitter.on(
       "/entity",

@@ -56,27 +56,24 @@ export class BusinessService implements ServerServiceInterface {
   async findBusinessesByUserId(userId: string): Promise<BusinessModel[]> {
     var user = await this.authService.findUserById(userId);
 
-    return this.businessCollection
-      .aggregate([])
-      .match({
-        $or: [
-          {
-            members: { $elemMatch: { userId: userId } }
-          },
-          {
-            members: {
-              $elemMatch: {
-                mobile: user.mobile,
-                mobileCountryCode: user.mobileCountryCode
-              }
+    return this.businessCollection.find({
+      $or: [
+        {
+          members: { $elemMatch: { userId: userId } }
+        },
+        {
+          members: {
+            $elemMatch: {
+              mobile: user.mobile,
+              mobileCountryCode: user.mobileCountryCode
             }
-          },
-          {
-            owner: userId
           }
-        ]
-      })
-      .toArray();
+        },
+        {
+          owner: userId
+        }
+      ]
+    });
   }
 
   public async userHasAccessToBusiness(userId, businessId) {

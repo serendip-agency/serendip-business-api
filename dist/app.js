@@ -11,9 +11,10 @@ const ReportService_1 = require("./services/ReportService");
 const TaskService_1 = require("./services/TaskService");
 const serendip_2 = require("serendip");
 const DashboardService_1 = require("./services/DashboardService");
-const dotenv = require("dotenv");
 const StorageService_1 = require("./services/StorageService");
 const StorageController_1 = require("./controllers/StorageController");
+const serendip_3 = require("serendip");
+const dotenv = require("dotenv");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
@@ -21,11 +22,18 @@ serendip_1.AuthService.configure({
     smsProvider: "SmsIrService"
 });
 serendip_1.DbService.configure({
-    mongoDb: process.env["db.mongoDb"],
-    mongoUrl: process.env["db.mongoUrl"],
-    authSource: process.env["db.authSource"],
-    user: process.env["db.user"],
-    password: process.env["db.password"]
+    providers: {
+        Mongodb: {
+            object: new serendip_3.MongodbProvider(),
+            options: {
+                mongoDb: process.env["db.mongoDb"],
+                mongoUrl: process.env["db.mongoUrl"],
+                authSource: process.env["db.authSource"],
+                user: process.env["db.user"],
+                password: process.env["db.password"]
+            }
+        }
+    }
 });
 serendip_1.EmailService.configure({
     smtp: {

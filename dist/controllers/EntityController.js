@@ -28,16 +28,12 @@ class EntityController {
                         _entity: req.params.entity,
                         _vdate: { $gt: range.from, $lt: range.to }
                     });
-                    var bigObject = {};
-                    model.forEach(doc => {
-                        bigObject[doc._id] = doc;
-                    });
                     res.setHeader("content-type", "application/zip");
                     var zip = archiver("zip", {
                         zlib: { level: 9 } // Sets the compression level.
                     });
                     zip.pipe(res);
-                    zip.append(JSON.stringify(bigObject), { name: "data.json" });
+                    zip.append(JSON.stringify(model), { name: "data.json" });
                     zip.finalize();
                 }
             ]
@@ -78,23 +74,27 @@ class EntityController {
                         "model._entity",
                         "type"
                     ];
+                    const changesCollection = await this.dbService.collection("EntityChanges");
                     var query = _.extend({
                         "model._business": access.business._id.toString()
                     }, _.pick(req.body, possibleQueryFields));
+                    console.log(query);
                     if (req.body.count) {
-                        res.json(await this.dbService.entityChangeCollection.count(query));
+                        res.json(await changesCollection.count(query));
                     }
                     else {
-                        var project = {};
-                        var changes = await this.dbService.entityChangeCollection
-                            .aggregate([])
-                            .match(query)
-                            .project({ type: 1, _id: "$model._id" })
-                            .toArray();
+                        const changesQuery = (await changesCollection.find(query)).map((p) => {
+                            return { type: p.type, _id: p.model._id };
+                        });
+                        console.log(changesQuery);
                         res.json({
-                            created: _.filter(changes, (change) => change.type == serendip_2.entityChangeType.Create).length,
-                            updated: _.filter(changes, (change) => change.type == serendip_2.entityChangeType.Update).length,
-                            deleted: _.map(_.filter(changes, (change) => change.type == serendip_2.entityChangeType.Delete), item => item._id)
+                            created: changesQuery.filter(p => p.type == serendip_2.EntityChangeType.Create)
+                                .length,
+                            updated: changesQuery.filter(p => p.type == serendip_2.EntityChangeType.Update)
+                                .length,
+                            deleted: changesQuery
+                                .filter(p => p.type == serendip_2.EntityChangeType.Create)
+                                .map(item => item._id)
                         });
                     }
                 }
@@ -238,40 +238,45 @@ class EntityController {
                 }
             ]
         };
-        this.search = {
-            route: "/api/entity/:entity/search",
-            method: "post",
-            actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
-                    //{ '$regex': '.*' + req.body.query + '.*' }
-                    var properties = req.body.properties;
-                    var propertiesSearchMode = req.body.propertiesSearchMode;
-                    var project = {};
-                    var q = req.body.query || "";
-                    properties.forEach(element => {
-                        project[element] = 1;
-                    });
-                    if (!project._id)
-                        project._id = 1;
-                    var model = await this.entityService.collection
-                        .aggregate([
-                        {
-                            $match: {
-                                _entity: req.params.entity,
-                                _business: access.business._id.toString(),
-                                $text: { $search: q }
-                            }
-                        },
-                        { $sort: { score: { $meta: "textScore" } } },
-                        { $project: project }
-                    ])
-                        .limit(req.body.limit || 30)
-                        .toArray();
-                    res.json(model);
-                }
-            ]
-        };
+        // public search: HttpEndpointInterface = {
+        //   route: "/api/entity/:entity/search",
+        //   method: "post",
+        //   actions: [
+        //     BusinessService.checkUserAccess,
+        //     async (
+        //       req,
+        //       res,
+        //       next,
+        //       done,
+        //       access: BusinessCheckAccessResultInterface
+        //     ) => {
+        //       //{ '$regex': '.*' + req.body.query + '.*' }
+        //       var properties = req.body.properties;
+        //       var propertiesSearchMode = req.body.propertiesSearchMode;
+        //       var project: any = {};
+        //       var q = req.body.query || "";
+        //       properties.forEach(element => {
+        //         project[element] = 1;
+        //       });
+        //       if (!project._id) project._id = 1;
+        //       var model = await this.entityService.collection
+        //         .aggregate([
+        //           {
+        //             $match: {
+        //               _entity: req.params.entity,
+        //               _business: access.business._id.toString(),
+        //               $text: { $search: q }
+        //             }
+        //           },
+        //           { $sort: { score: { $meta: "textScore" } } },
+        //           { $project: project }
+        //         ])
+        //         .limit(req.body.limit || 30)
+        //         .toArray();
+        //       res.json(model);
+        //     }
+        //   ]
+        // };
         this.insert = {
             route: "/api/entity/:entity/insert",
             method: "post",
