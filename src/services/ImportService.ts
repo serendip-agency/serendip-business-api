@@ -23,9 +23,7 @@ export class ImportService implements ServerServiceInterface {
     // this.data = JSON.parse(
     //   fs.readFileSync(join(Server.dir, "..", "ignore.json")).toString()
     // );
-
-     // this.importPeoples();
-
+    // this.importPeoples();
     // this.importCompanies();
   }
 
@@ -39,24 +37,22 @@ export class ImportService implements ServerServiceInterface {
         oid: p.Id
       });
       if (query.length == 0) {
-        await this.entityService.insert(
-          {
-            contacts: [
-              {
-                telephones: [p.telephone],
-                faxes: [],
-                peoples: [],
-                name: "",
-                address: { text: p.address }
-              }
-            ],
-            name: p.name,
-            type: [],
-            oid: p.Id,
-            _business: this._business,
-            _entity: "company"
-          } as any
-        );
+        await this.entityService.insert({
+          contacts: [
+            {
+              telephones: [p.telephone],
+              faxes: [],
+              peoples: [],
+              name: "",
+              address: { text: p.address }
+            }
+          ],
+          name: p.name,
+          type: [],
+          oid: p.Id,
+          _business: this._business,
+          _entity: "company"
+        } as any);
 
         console.log(p.Id);
       }
@@ -96,27 +92,25 @@ export class ImportService implements ServerServiceInterface {
         oid: p.Id
       });
       if (query.length == 0) {
-        await this.entityService.insert(
-          {
-            contacts: [
-              {
-                telephones: [""],
-                faxes: [],
-                peoples: [],
-                name: "",
-                address: { text: "" }
-              }
-            ],
-            firstName: p.name ? p.name.split(" ")[0] : "",
-            lastName: p.name ? p.name.split(" ")[1] : "",
-            gender: p.gender == 1 ? "male" : p.gender == 2 ? "female" : "",
-            birthDate: p.birthDate,
-            mobiles: [p.mobile || ""],
-            oid: p.Id,
-            _entity: "people",
-            _business: this._business
-          } as any
-        );
+        await this.entityService.insert({
+          contacts: [
+            {
+              telephones: [""],
+              faxes: [],
+              peoples: [],
+              name: "",
+              address: { text: "" }
+            }
+          ],
+          firstName: p.name ? p.name.split(" ")[0] : "",
+          lastName: p.name ? p.name.split(" ")[1] : "",
+          gender: p.gender == 1 ? "male" : p.gender == 2 ? "female" : "",
+          birthDate: p.birthDate,
+          mobiles: [p.mobile || ""],
+          oid: p.Id,
+          _entity: "people",
+          _business: this._business
+        } as any);
 
         console.log(p.Id);
       }

@@ -3,8 +3,7 @@ import {
   AuthService,
   WebSocketService,
   WebSocketInterface,
-  DbService,
-  DbCollection
+  DbService
 } from "serendip";
 import { join, basename } from "path";
 import * as fs from "fs-extra";
@@ -13,6 +12,12 @@ import * as glob from "glob";
 import * as promise_serial from "promise-serial";
 import { ObjectID } from "bson";
 import * as mime from "mime-types";
+import {
+  UserModel,
+  BusinessModel,
+  DbCollectionInterface
+} from "serendip-business-model";
+
 export interface StorageCommandInterface {
   type: "upload" | "download" | "assemble";
   path: string;
@@ -30,20 +35,14 @@ export interface StorageFilePartInfoInterface {
 }
 
 export class StorageService {
-  static dependencies = ["AuthService", "DbService", "WebSocketService"];
-
-  private dbService: DbService;
-  private authService: AuthService;
-  private wsService: WebSocketService;
-  usersCollection: DbCollection<{}>;
-  businessesCollection: DbCollection<{}>;
+  usersCollection: DbCollectionInterface<UserModel>;
+  businessesCollection: DbCollectionInterface<BusinessModel>;
   dataPath: string;
 
-  constructor() {
-    this.dbService = Server.services["DbService"];
-    this.authService = Server.services["AuthService"];
-    this.wsService = Server.services["WebSocketService"];
-  }
+  constructor(
+    private dbService: DbService,
+    private webSocketService: WebSocketService
+  ) {}
 
   async userHasAccessToPath(userId: string, path: string): Promise<boolean> {
     if (!path.startsWith("users/") && !path.startsWith("businesses/"))
@@ -94,7 +93,11 @@ export class StorageService {
       path: string;
     }
   ) {
-    await this.wsService.sendToUser(userId, "/storage", JSON.stringify(model));
+    await this.webSocketService.sendToUser(
+      userId,
+      "/storage",
+      JSON.stringify(model)
+    );
   }
 
   async getFilePartsInfo(
@@ -256,11 +259,12 @@ export class StorageService {
   async start() {
     this.dataPath = join(Server.dir, "..", "data");
     fs.ensureDirSync(this.dataPath);
- 
 
-    this.usersCollection = await this.dbService.collection("Users");
+    this.usersCollection = await this.dbService.collection<UserModel>("Users");
 
-    this.businessesCollection = await this.dbService.collection("Businesses");
+    this.businessesCollection = await this.dbService.collection<BusinessModel>(
+      "Businesses"
+    );
 
     var ensureDirPromises = [];
 
@@ -278,7 +282,7 @@ export class StorageService {
 
     await promise_serial(ensureDirPromises, { parallelize: 100 });
 
-    this.wsService.messageEmitter.on(
+    this.webSocketService.messageEmitter.on(
       "/storage",
       async (input: string, ws: WebSocketInterface) => {
         var command: StorageCommandInterface;

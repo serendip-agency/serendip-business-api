@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const archiver = require("archiver");
 const serendip_1 = require("serendip");
+const serendip_business_model_1 = require("serendip-business-model");
 const _ = require("underscore");
-const models_1 = require("../models");
 const services_1 = require("../services");
-const serendip_2 = require("serendip");
 class EntityController {
-    constructor() {
+    constructor(entityService, dbService) {
+        this.entityService = entityService;
+        this.dbService = dbService;
         this.zip = {
             route: "/api/entity/:entity/zip",
             method: "post",
@@ -88,12 +89,12 @@ class EntityController {
                         });
                         console.log(changesQuery);
                         res.json({
-                            created: changesQuery.filter(p => p.type == serendip_2.EntityChangeType.Create)
+                            created: changesQuery.filter(p => p.type == serendip_business_model_1.EntityChangeType.Create)
                                 .length,
-                            updated: changesQuery.filter(p => p.type == serendip_2.EntityChangeType.Update)
+                            updated: changesQuery.filter(p => p.type == serendip_business_model_1.EntityChangeType.Update)
                                 .length,
                             deleted: changesQuery
-                                .filter(p => p.type == serendip_2.EntityChangeType.Create)
+                                .filter(p => p.type == serendip_business_model_1.EntityChangeType.Create)
                                 .map(item => item._id)
                         });
                     }
@@ -184,60 +185,6 @@ class EntityController {
                 }
             ]
         };
-        this.reportList = {
-            route: "/api/reports",
-            method: "post",
-            actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
-                    res.json(await this.reportService
-                        .aggregate([])
-                        .match({
-                        user: access.member.userId.toString(),
-                        entityName: req.body.entityName,
-                        _business: access.business._id.toString()
-                    })
-                        .project({
-                        _id: 1,
-                        label: 1,
-                        fields: 1,
-                        createDate: 1,
-                        user: 1,
-                        _business: 1
-                    })
-                        .toArray());
-                }
-            ]
-        };
-        this.report = {
-            route: "/api/report",
-            method: "post",
-            actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
-                    var opts = {
-                        save: req.body.save,
-                        report: req.body.report,
-                        skip: req.body.skip || 0,
-                        limit: req.body.limit,
-                        access: access,
-                        zip: req.body.zip
-                    };
-                    var model = await this.reportService.report(opts);
-                    if (opts.zip) {
-                        res.setHeader("content-type", "application/zip");
-                        var zip = archiver("zip", {
-                            zlib: { level: 9 } // Sets the compression level.
-                        });
-                        zip.pipe(res);
-                        zip.append(JSON.stringify(model), { name: "data.json" });
-                        zip.finalize();
-                    }
-                    else
-                        res.json(model);
-                }
-            ]
-        };
         // public search: HttpEndpointInterface = {
         //   route: "/api/entity/:entity/search",
         //   method: "post",
@@ -315,7 +262,7 @@ class EntityController {
                     model._vuser = model._uuser = access.member.userId.toString();
                     model._vdate = model._udate = Date.now();
                     try {
-                        await models_1.EntityModel.validate(model);
+                        await serendip_business_model_1.EntityModel.validate(model);
                     }
                     catch (e) {
                         return next(new serendip_1.HttpError(400, e.message || e));
@@ -357,10 +304,6 @@ class EntityController {
                 }
             ]
         };
-        this.entityService = serendip_1.Server.services["EntityService"];
-        this.businessService = serendip_1.Server.services["BusinessService"];
-        this.dbService = serendip_1.Server.services["DbService"];
-        this.reportService = serendip_1.Server.services["ReportService"];
     }
     async onRequest(req, res, next, done) {
         next();

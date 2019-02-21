@@ -2,26 +2,21 @@ import {
   ServerServiceInterface,
   DbService,
   Server,
-  DbCollection,
   WebSocketService,
   WebSocketInterface
 } from "serendip";
-import { EntityModel } from "../models";
+import { DbCollectionInterface, EntityModel } from "serendip-business-model";
 import { ObjectId } from "bson";
 import { BusinessService } from "./BusinessService";
 
 export class EntityService implements ServerServiceInterface {
-  collection: DbCollection<EntityModel>;
-  private dbService: DbService;
-  private wsService: WebSocketService;
-  private businessService: BusinessService;
-  static dependencies = ["BusinessService", "WebSocketService", "DbService"];
+  collection: DbCollectionInterface<EntityModel>;
 
-  constructor() {
-    this.wsService = Server.services["WebSocketService"];
-    this.dbService = Server.services["DbService"];
-    this.businessService = Server.services["BusinessService"];
-  }
+  constructor(
+    private dbService: DbService,
+    private webSocketService: WebSocketService,
+    private businessService: BusinessService
+  ) {}
 
   async notifyUsers(event: "insert" | "update" | "delete", model: EntityModel) {
     let business = await this.businessService.findById(model._business);
@@ -30,7 +25,7 @@ export class EntityService implements ServerServiceInterface {
       business.members
         .filter(m => m)
         .map(m =>
-          this.wsService.sendToUser(
+          this.webSocketService.sendToUser(
             m.userId,
             "/entity",
             JSON.stringify({
@@ -50,7 +45,7 @@ export class EntityService implements ServerServiceInterface {
 
     //this.collection.createIndex({ "$**": "text" }, {});
 
-    this.wsService.messageEmitter.on(
+    this.webSocketService.messageEmitter.on(
       "/entity",
       async (input: string, ws: WebSocketInterface) => {}
     );
@@ -68,7 +63,7 @@ export class EntityService implements ServerServiceInterface {
     return this.collection.updateOne(model);
   }
 
-  async delete(id: string | ObjectId, userId?: string) {
+  async delete(id: string, userId?: string) {
     return this.collection.deleteOne(id, userId).then(async model => {
       await this.notifyUsers("delete", model);
     });

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
 const _ = require("underscore");
-const bson_1 = require("bson");
 class BusinessService {
     constructor() {
         this.dbService = serendip_1.Server.services["DbService"];
@@ -21,7 +20,7 @@ class BusinessService {
         return this.businessCollection.deleteOne(model._id);
     }
     async findById(id) {
-        var query = await this.businessCollection.find({ _id: new bson_1.ObjectId(id) });
+        var query = await this.businessCollection.find({ _id: id });
         if (query.length == 0)
             return undefined;
         else

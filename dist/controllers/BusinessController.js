@@ -2,10 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
 const BusinessService_1 = require("../services/BusinessService");
-const models_1 = require("../models");
+const serendip_business_model_1 = require("serendip-business-model");
 const _ = require("underscore");
 class BusinessController {
-    constructor() {
+    constructor(businessService, authService, profileService, entityService) {
+        this.businessService = businessService;
+        this.authService = authService;
+        this.profileService = profileService;
+        this.entityService = entityService;
         this.list = {
             method: "get",
             actions: [
@@ -29,7 +33,7 @@ class BusinessController {
                                 member.mobile = queryUser.mobile;
                                 member.mobileCountryCode = queryUser.mobileCountryCode;
                             }
-                            member.profile = await this.userProfileService.findProfileByUserId(member.userId);
+                            member.profile = await this.profileService.findProfileByUserId(member.userId);
                             business.members[mi] = member;
                         }
                         model[i] = business;
@@ -75,7 +79,7 @@ class BusinessController {
                             scope: []
                         });
                     try {
-                        await models_1.BusinessModel.validate(model);
+                        await serendip_business_model_1.BusinessModel.validate(model);
                     }
                     catch (e) {
                         return next(new serendip_1.HttpError(400, e.message));
@@ -101,7 +105,7 @@ class BusinessController {
                     var userId = req.body.userId;
                     if (!userId)
                         return next(new serendip_1.HttpError(400, "userId field missing"));
-                    model.business.members = _.reject(model.business.members, item => {
+                    model.business.members = _.reject(model.business.members, (item) => {
                         return item.userId == userId;
                     });
                     try {
@@ -144,10 +148,6 @@ class BusinessController {
                 }
             ]
         };
-        this.businessService = serendip_1.Server.services["BusinessService"];
-        this.entityService = serendip_1.Server.services["EntityService"];
-        this.authService = serendip_1.Server.services["AuthService"];
-        this.userProfileService = serendip_1.Server.services["UserProfileService"];
     }
 }
 exports.BusinessController = BusinessController;

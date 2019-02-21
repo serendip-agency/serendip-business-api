@@ -9,10 +9,9 @@ const promise_serial = require("promise-serial");
 const bson_1 = require("bson");
 const mime = require("mime-types");
 class StorageService {
-    constructor() {
-        this.dbService = serendip_1.Server.services["DbService"];
-        this.authService = serendip_1.Server.services["AuthService"];
-        this.wsService = serendip_1.Server.services["WebSocketService"];
+    constructor(dbService, webSocketService) {
+        this.dbService = dbService;
+        this.webSocketService = webSocketService;
     }
     async userHasAccessToPath(userId, path) {
         if (!path.startsWith("users/") && !path.startsWith("businesses/"))
@@ -40,7 +39,7 @@ class StorageService {
         // await fs.writeFile(join(this.dataPath, path), base64, 'base64');
     }
     async notifyUser(userId, model) {
-        await this.wsService.sendToUser(userId, "/storage", JSON.stringify(model));
+        await this.webSocketService.sendToUser(userId, "/storage", JSON.stringify(model));
     }
     async getFilePartsInfo(filePath) {
         var fileName = path_1.basename(filePath);
@@ -159,7 +158,7 @@ class StorageService {
             ensureDirPromises.push(() => fs.ensureDir(path_1.join(this.dataPath, "businesses", item._id.toString())));
         });
         await promise_serial(ensureDirPromises, { parallelize: 100 });
-        this.wsService.messageEmitter.on("/storage", async (input, ws) => {
+        this.webSocketService.messageEmitter.on("/storage", async (input, ws) => {
             var command;
             try {
                 command = JSON.parse(input);
@@ -175,5 +174,4 @@ class StorageService {
         });
     }
 }
-StorageService.dependencies = ["AuthService", "DbService", "WebSocketService"];
 exports.StorageService = StorageService;

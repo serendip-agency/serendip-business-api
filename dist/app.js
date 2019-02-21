@@ -7,13 +7,10 @@ const ImportService_1 = require("./services/ImportService");
 const EntityController_1 = require("./controllers/EntityController");
 const BusinessService_1 = require("./services/BusinessService");
 const services_1 = require("./services");
-const ReportService_1 = require("./services/ReportService");
-const TaskService_1 = require("./services/TaskService");
-const serendip_2 = require("serendip");
 const DashboardService_1 = require("./services/DashboardService");
 const StorageService_1 = require("./services/StorageService");
 const StorageController_1 = require("./controllers/StorageController");
-const serendip_3 = require("serendip");
+const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
 const dotenv = require("dotenv");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
@@ -22,9 +19,10 @@ serendip_1.AuthService.configure({
     smsProvider: "SmsIrService"
 });
 serendip_1.DbService.configure({
+    defaultProvider: "Mongodb",
     providers: {
         Mongodb: {
-            object: new serendip_3.MongodbProvider(),
+            object: new serendip_mongodb_provider_1.MongodbProvider(),
             options: {
                 mongoDb: process.env["db.mongoDb"],
                 mongoUrl: process.env["db.mongoUrl"],
@@ -76,17 +74,14 @@ serendip_1.start({
         serendip_1.DbService,
         serendip_1.AuthService,
         serendip_1.ViewEngineService,
-        services_1.NotificationService,
         BusinessService_1.BusinessService,
         services_1.EntityService,
-        ReportService_1.ReportService,
         ImportService_1.ImportService,
-        TaskService_1.TaskService,
-        serendip_2.WebSocketService,
+        serendip_1.WebSocketService,
         StorageService_1.StorageService,
         DashboardService_1.DashboardService,
         StorageService_1.StorageService,
-        services_1.UserProfileService
+        services_1.ProfileService
     ]
 })
     .then(() => { })

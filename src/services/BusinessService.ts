@@ -1,14 +1,16 @@
 import {
-  ServerServiceInterface,
+  AuthService,
   DbService,
+  HttpRequestInterface,
   Server,
-  DbCollection,
-  HttpError
+  ServerServiceInterface
 } from "serendip";
-import { BusinessModel, BusinessMemberModel } from "../models";
+import {
+  BusinessMemberModel,
+  BusinessModel,
+  DbCollectionInterface
+} from "serendip-business-model";
 import * as _ from "underscore";
-import { ObjectId } from "bson";
-import { HttpRequestInterface, AuthService } from "serendip/src";
 
 export interface BusinessCheckAccessResultInterface {
   member: BusinessMemberModel;
@@ -20,7 +22,7 @@ export class BusinessService implements ServerServiceInterface {
 
   private dbService: DbService;
   private authService: AuthService;
-  public businessCollection: DbCollection<BusinessModel>;
+  public businessCollection: DbCollectionInterface<BusinessModel>;
 
   constructor() {
     this.dbService = Server.services["DbService"];
@@ -47,7 +49,7 @@ export class BusinessService implements ServerServiceInterface {
   }
 
   async findById(id: string) {
-    var query = await this.businessCollection.find({ _id: new ObjectId(id) });
+    var query = await this.businessCollection.find({ _id: id });
 
     if (query.length == 0) return undefined;
     else return query[0];

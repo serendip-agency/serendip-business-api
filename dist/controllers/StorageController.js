@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const serendip_1 = require("serendip");
-const path_1 = require("path");
 const fs = require("fs-extra");
+const path_1 = require("path");
+const serendip_1 = require("serendip");
 const services_1 = require("../services");
 class StorageController {
     constructor() {

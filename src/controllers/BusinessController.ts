@@ -8,28 +8,17 @@ import {
   BusinessService,
   BusinessCheckAccessResultInterface
 } from "../services/BusinessService";
-import {
-  BusinessMemberModel,
-  BusinessModel,
-  UserProfileModel
-} from "../models";
+import { BusinessModel, BusinessMemberModel } from "serendip-business-model";
 import * as _ from "underscore";
-import { UserProfileService } from "../services/UserProfileService";
-import { EntityService } from "../services";
-import { UserModel } from "serendip/src";
+import { EntityService, ProfileService } from "../services";
 
 export class BusinessController {
-  private businessService: BusinessService;
-  private authService: AuthService;
-  private userProfileService: UserProfileService;
-  private entityService: EntityService;
-
-  constructor() {
-    this.businessService = Server.services["BusinessService"];
-    this.entityService = Server.services["EntityService"];
-    this.authService = Server.services["AuthService"];
-    this.userProfileService = Server.services["UserProfileService"];
-  }
+  constructor(
+    private businessService: BusinessService,
+    private authService: AuthService,
+    private profileService: ProfileService,
+    private entityService: EntityService
+  ) {}
 
   public list = {
     method: "get",
@@ -65,7 +54,7 @@ export class BusinessController {
               member.mobileCountryCode = queryUser.mobileCountryCode;
             }
 
-            member.profile = await this.userProfileService.findProfileByUserId(
+            member.profile = await this.profileService.findProfileByUserId(
               member.userId
             );
 
@@ -154,9 +143,12 @@ export class BusinessController {
 
         if (!userId) return next(new HttpError(400, "userId field missing"));
 
-        model.business.members = _.reject(model.business.members, item => {
-          return item.userId == userId;
-        });
+        model.business.members = _.reject(
+          model.business.members,
+          (item: BusinessMemberModel) => {
+            return item.userId == userId;
+          }
+        );
 
         try {
           await this.businessService.update(model.business);

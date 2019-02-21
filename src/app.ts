@@ -9,7 +9,8 @@ import {
   start,
   Server,
   SmsIrService,
-  HttpService
+  HttpService,
+  WebSocketService
 } from "serendip";
 
 import { join } from "path";
@@ -17,18 +18,11 @@ import { BusinessController } from "./controllers";
 import { ImportService } from "./services/ImportService";
 import { EntityController } from "./controllers/EntityController";
 import { BusinessService } from "./services/BusinessService";
-import {
-  NotificationService,
-  EntityService,
-  UserProfileService
-} from "./services";
-import { ReportService } from "./services/ReportService";
-import { TaskService } from "./services/TaskService";
-import { WebSocketService } from "serendip";
+import { EntityService, ProfileService } from "./services";
 import { DashboardService } from "./services/DashboardService";
 import { StorageService } from "./services/StorageService";
 import { StorageController } from "./controllers/StorageController";
-import { MongodbProvider } from "serendip";
+import { MongodbProvider } from "serendip-mongodb-provider";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -41,6 +35,7 @@ AuthService.configure({
 });
 
 DbService.configure({
+  defaultProvider: "Mongodb",
   providers: {
     Mongodb: {
       object: new MongodbProvider(),
@@ -104,17 +99,14 @@ start({
     DbService,
     AuthService,
     ViewEngineService,
-    NotificationService,
     BusinessService,
     EntityService,
-    ReportService,
     ImportService,
-    TaskService,
     WebSocketService,
     StorageService,
     DashboardService,
     StorageService,
-    UserProfileService
+    ProfileService
   ]
 })
   .then(() => {})

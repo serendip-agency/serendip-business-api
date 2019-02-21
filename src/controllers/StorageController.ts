@@ -1,26 +1,21 @@
+import * as fs from "fs-extra";
+import { join } from "path";
 import {
   HttpEndpointInterface,
-  Server,
-  HttpError,
   HttpRequestInterface,
   HttpResponseInterface,
-  DbService,
-  Validator
+  Server
 } from "serendip";
-import {
-  StorageCommandInterface,
-  StorageService
-} from "../services/StorageService";
-import { join, basename } from "path";
-import * as fs from "fs-extra";
-import * as _ from "underscore";
 
-import * as promise_serial from "promise-serial";
-import { ObjectID } from "bson";
 import {
   BusinessCheckAccessResultInterface,
   BusinessService
 } from "../services";
+import {
+  StorageCommandInterface,
+  StorageService
+} from "../services/StorageService";
+
 export class StorageController {
   private storageService: StorageService;
 

@@ -1,18 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const serendip_1 = require("serendip");
 const bson_1 = require("bson");
 class EntityService {
-    constructor() {
-        this.wsService = serendip_1.Server.services["WebSocketService"];
-        this.dbService = serendip_1.Server.services["DbService"];
-        this.businessService = serendip_1.Server.services["BusinessService"];
+    constructor(dbService, webSocketService, businessService) {
+        this.dbService = dbService;
+        this.webSocketService = webSocketService;
+        this.businessService = businessService;
     }
     async notifyUsers(event, model) {
         let business = await this.businessService.findById(model._business);
         await Promise.all(business.members
             .filter(m => m)
-            .map(m => this.wsService.sendToUser(m.userId, "/entity", JSON.stringify({
+            .map(m => this.webSocketService.sendToUser(m.userId, "/entity", JSON.stringify({
             event,
             model
         }))));
@@ -20,7 +19,7 @@ class EntityService {
     async start() {
         this.collection = await this.dbService.collection("Entities", true);
         //this.collection.createIndex({ "$**": "text" }, {});
-        this.wsService.messageEmitter.on("/entity", async (input, ws) => { });
+        this.webSocketService.messageEmitter.on("/entity", async (input, ws) => { });
     }
     async insert(model) {
         if (!model._cdate)
@@ -54,5 +53,4 @@ class EntityService {
         return this.collection.count({ _business: businessId.toString() });
     }
 }
-EntityService.dependencies = ["BusinessService", "WebSocketService", "DbService"];
 exports.EntityService = EntityService;

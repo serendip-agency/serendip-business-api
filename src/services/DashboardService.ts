@@ -1,38 +1,17 @@
-import {
-  Server,
-  AuthService,
-  WebSocketService,
-  WebSocketInterface,
-  DbService
-} from "serendip";
-import { EntityService } from "./EntityService";
-import { EntityModel } from "../models";
+import { WebSocketInterface, WebSocketService } from "serendip";
+
 import { BusinessService } from "./BusinessService";
+import { EntityService } from "./EntityService";
 
 export class DashboardService {
-  static dependencies = [
-    "AuthService",
-    "DbService",
-    "EntityService",
-    "WebSocketService"
-  ];
-
-  private dbService: DbService;
-  private authService: AuthService;
-  private wsService: WebSocketService;
-  private entityService: EntityService;
-  private businessService: BusinessService;
-
-  constructor() {
-    this.dbService = Server.services["DbService"];
-    this.authService = Server.services["AuthService"];
-    this.wsService = Server.services["WebSocketService"];
-    this.entityService = Server.services["EntityService"];
-    this.businessService = Server.services["BusinessService"];
-  }
+  constructor(
+    private webSocketService: WebSocketService,
+    private entityService: EntityService,
+    private businessService: BusinessService
+  ) {}
 
   async start() {
-    this.wsService.messageEmitter.on(
+    this.webSocketService.messageEmitter.on(
       "/dashboard",
       async (input: string, ws: WebSocketInterface) => {
         var msg: {
@@ -75,7 +54,7 @@ export class DashboardService {
           //   msg.data.section
           // );
 
-          this.wsService.sendToUser(
+          this.webSocketService.sendToUser(
             ws.token.userId,
             "/dashboard",
             JSON.stringify({ command: "change_grid", data: msg.data })

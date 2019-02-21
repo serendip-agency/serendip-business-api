@@ -1,40 +1,27 @@
 import * as archiver from "archiver";
 import {
   DbService,
-  Server,
   HttpEndpointInterface,
   HttpError,
   HttpRequestInterface,
   HttpResponseInterface,
+  Server,
   Validator
 } from "serendip";
+import { EntityChangeType, EntityModel } from "serendip-business-model";
 import * as _ from "underscore";
 
-import { EntityModel } from "../models";
 import {
   BusinessCheckAccessResultInterface,
   BusinessService,
   EntityService
 } from "../services";
-import {
-  ReportOptionsInterface,
-  ReportService
-} from "../services/ReportService";
-import { EntityChangeType, EntityChangeModel } from "serendip";
-import { ObjectID } from "bson";
 
 export class EntityController {
-  private entityService: EntityService;
-  private businessService: BusinessService;
-  private dbService: DbService;
-  reportService: ReportService;
-
-  constructor() {
-    this.entityService = Server.services["EntityService"];
-    this.businessService = Server.services["BusinessService"];
-    this.dbService = Server.services["DbService"];
-    this.reportService = Server.services["ReportService"];
-  }
+  constructor(
+    private entityService: EntityService,
+    private dbService: DbService
+  ) {}
 
   public async onRequest(
     req: HttpRequestInterface,
@@ -281,78 +268,6 @@ export class EntityController {
       ) => {
         var model = await this.entityService.count(access.business._id);
         res.json(model);
-      }
-    ]
-  };
-
-  public reportList: HttpEndpointInterface = {
-    route: "/api/reports",
-    method: "post",
-    actions: [
-      BusinessService.checkUserAccess,
-      async (
-        req,
-        res,
-        next,
-        done,
-        access: BusinessCheckAccessResultInterface
-      ) => {
-        res.json(
-          await this.reportService
-            .aggregate([])
-            .match({
-              user: access.member.userId.toString(),
-              entityName: req.body.entityName,
-              _business: access.business._id.toString()
-            })
-            .project({
-              _id: 1,
-              label: 1,
-              fields: 1,
-              createDate: 1,
-              user: 1,
-              _business: 1
-            })
-            .toArray()
-        );
-      }
-    ]
-  };
-
-  public report: HttpEndpointInterface = {
-    route: "/api/report",
-    method: "post",
-    actions: [
-      BusinessService.checkUserAccess,
-      async (
-        req,
-        res,
-        next,
-        done,
-        access: BusinessCheckAccessResultInterface
-      ) => {
-        var opts: ReportOptionsInterface = {
-          save: req.body.save,
-          report: req.body.report,
-          skip: req.body.skip || 0,
-          limit: req.body.limit,
-          access: access,
-          zip: req.body.zip
-        };
-
-        var model = await this.reportService.report(opts);
-
-        if (opts.zip) {
-          res.setHeader("content-type", "application/zip");
-
-          var zip = archiver("zip", {
-            zlib: { level: 9 } // Sets the compression level.
-          });
-
-          zip.pipe(res);
-          zip.append(JSON.stringify(model), { name: "data.json" });
-          zip.finalize();
-        } else res.json(model);
       }
     ]
   };
