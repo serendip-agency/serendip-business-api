@@ -71,7 +71,7 @@ export class EntityService implements ServerServiceInterface {
 
   async findById(id: string, skip?: number, limit?: number) {
     var query = await this.collection.find(
-      { _id: new ObjectId(id) },
+      { _id: id },
       skip,
       limit
     );

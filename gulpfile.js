@@ -44,6 +44,7 @@ gulp.task("prod", function() {
     "package.json",
     "package-lock.json",
     "liara.json",
+    "Dockerfile",
     "README.md"
   ].forEach(file => {
     fs.copySync(file, buildPath + file);
@@ -51,7 +52,6 @@ gulp.task("prod", function() {
 
   return gulp
     .src("dist/**/*.js")
-    .pipe(uglify(/* options */))
     .pipe(gulp.dest(buildPath + "dist/"));
 });
 

@@ -24,6 +24,7 @@ import { StorageService } from "./services/StorageService";
 import { StorageController } from "./controllers/StorageController";
 import { MongodbProvider } from "serendip-mongodb-provider";
 import * as dotenv from "dotenv";
+import { EventEmitter } from "events";
 
 dotenv.config();
 
@@ -109,5 +110,11 @@ start({
     ProfileService
   ]
 })
-  .then(() => {})
+  .then(() => {
+
+    
+  let emitter = new EventEmitter();
+ 
+
+  })
   .catch(msg => console.log(msg));

@@ -32,6 +32,23 @@ export class StorageController {
     next();
   }
 
+  public storage: HttpEndpointInterface = {
+    method: "get",
+    publicAccess: true,
+    route: "storage/:path*",
+    actions: [
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        res.json(req.params.path.join("/"));
+      }
+    ]
+  };
+
   public upload: HttpEndpointInterface = {
     method: "POST",
     actions: [

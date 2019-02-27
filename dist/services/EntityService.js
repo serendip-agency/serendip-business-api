@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const bson_1 = require("bson");
 class EntityService {
     constructor(dbService, webSocketService, businessService) {
         this.dbService = dbService;
@@ -37,7 +36,7 @@ class EntityService {
         });
     }
     async findById(id, skip, limit) {
-        var query = await this.collection.find({ _id: new bson_1.ObjectId(id) }, skip, limit);
+        var query = await this.collection.find({ _id: id }, skip, limit);
         if (query.length == 0)
             return undefined;
         else

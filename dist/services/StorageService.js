@@ -20,12 +20,13 @@ class StorageService {
             return true;
         if (path.startsWith("users/"))
             return false;
-        var businessId = path.split("/")[1];
-        var business, businessQuery = await this.businessesCollection.find({
+        // extract id from paths like businesses/_id
+        const businessId = path.split("/")[1];
+        let business, businessQuery = await this.businessesCollection.find({
             _id: new bson_1.ObjectID(businessId)
         });
         business = businessQuery[0];
-        var hasAccessToBusiness = _.any(business.members, {
+        let hasAccessToBusiness = _.any(business.members, {
             userId: userId.toString()
         });
         return hasAccessToBusiness;
@@ -34,7 +35,6 @@ class StorageService {
         var matches = base64.match(/^data:([0-9A-Za-z-+\/]+);base64,(.+)$/);
         console.log(matches ? matches[2].length : "", base64.slice(0, 100).toString());
         var buffer = new Buffer(matches && matches[2] ? matches[2] : base64, "base64");
-        console.log(path);
         await fs.writeFile(path, buffer);
         // await fs.writeFile(join(this.dataPath, path), base64, 'base64');
     }
@@ -43,7 +43,9 @@ class StorageService {
     }
     async getFilePartsInfo(filePath) {
         var fileName = path_1.basename(filePath);
-        var partFiles = (await fs.readdir(this.getDirectoryOfPath(filePath))).filter(item => item.startsWith(fileName + "."));
+        var partFiles = (await fs.pathExists(this.getDirectoryOfPath(filePath)))
+            ? (await fs.readdir(this.getDirectoryOfPath(filePath))).filter(item => item.startsWith(fileName + "."))
+            : [];
         var parts = [];
         var totalMisMatch = false;
         partFiles.forEach(partFileName => {
@@ -72,6 +74,9 @@ class StorageService {
                 return part.start;
             });
     }
+    /**
+     * calculate upload percent base on uploaded parts divide by total
+     */
     async uploadPercent(filePath) {
         var parts = await this.getFilePartsInfo(filePath);
         if (parts.length == 0)
@@ -87,6 +92,9 @@ class StorageService {
     async checkPartsBeforeUpload(command) {
         this.getFilePartsInfo(path_1.join(this.dataPath, command.path));
     }
+    /**
+     * check .part files for specific filePath if all required files are available it will get assemble the file
+     */
     async assemblePartsIfPossible(filePath, userId) {
         console.log("assemblePartsIfPossible", filePath);
         if ((await this.uploadPercent(filePath)) < 100)
@@ -94,11 +102,9 @@ class StorageService {
         fs.writeFileSync(filePath, "");
         var parts = await this.getFilePartsInfo(filePath);
         console.log("assembling to ", filePath);
-        var packed = "";
         await promise_serial(parts.map(part => {
             return async () => {
                 console.log("assembling   ", part.start, part.end);
-                // packed += fs.readFileSync(part.path).toString();
                 await fs.appendFile(filePath, fs.readFileSync(part.path).toString());
                 await fs.unlink(part.path);
             };

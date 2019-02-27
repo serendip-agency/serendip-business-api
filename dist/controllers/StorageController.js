@@ -6,6 +6,16 @@ const serendip_1 = require("serendip");
 const services_1 = require("../services");
 class StorageController {
     constructor() {
+        this.storage = {
+            method: "get",
+            publicAccess: true,
+            route: "storage/:path*",
+            actions: [
+                async (req, res, next, done, access) => {
+                    res.json(req.params.path.join("/"));
+                }
+            ]
+        };
         this.upload = {
             method: "POST",
             actions: [

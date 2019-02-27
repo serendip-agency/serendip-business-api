@@ -31,9 +31,10 @@
     "handlebars": "^4.1.0",
     "moment": "^2.22.2",
     "request": "^2.88.0",
-    "serendip": "^1.1.2",
+    "serendip": "^1.1.10",
     "serendip-business-model": "^1.1.1",
     "serendip-mongodb-provider": "^1.0.3",
+    "serendip-utility": "^1.1.1",
     "underscore": "^1.9.1"
   }
 }

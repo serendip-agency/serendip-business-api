@@ -85,7 +85,7 @@ export class BusinessController {
           _cuser: access.member.userId.toString(),
           "data.section": req.body.section
         })).sort((a, b) => {
-          return a._cdate - b._cdate;
+          return b._cdate - a._cdate;
         });
 
         if (query[0]) {

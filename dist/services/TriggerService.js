@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class TaskService {
-    constructor() {
-    }
+    constructor() { }
     async start() {
         // try {
         //     var credit = await this._smsIrService.credit();
