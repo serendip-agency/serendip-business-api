@@ -75,6 +75,65 @@ export class EntityController {
     ]
   };
 
+  public export: HttpEndpointInterface = {
+    route: "/api/entity/export",
+    method: "post",
+    isStream: true,
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        var range = {
+          from:
+            req.body.from && Validator.isNumeric(req.body.from)
+              ? req.body.from
+              : 0,
+          to:
+            req.body.to && Validator.isNumeric(req.body.to)
+              ? req.body.to
+              : Date.now()
+        };
+
+        var entities = await this.entityService.find({
+          _business: access.business._id.toString(),
+          _entity: "entity"
+        });
+
+        res.setHeader("content-type", "application/zip");
+
+        var zip = archiver("zip", {
+          zlib: { level: 9 } // Sets the compression level.
+        });
+
+        zip.pipe(res);
+
+        const collections = ["dashboard", "entity", "form", "people", "report"];
+        entities.forEach(item => {
+          if (collections.indexOf(item.name) === -1)
+            collections.push(item.name);
+        });
+
+        for (const entityName of collections) {
+          const entityData = await this.entityService.find({
+            _business: access.business._id.toString(),
+            _vdate: { $gt: range.from, $lt: range.to },
+            _entity: entityName
+          });
+          zip.append(JSON.stringify(entityData), {
+            name: entityName + ".json"
+          });
+        }
+
+        zip.finalize();
+      }
+    ]
+  };
+
   public details: HttpEndpointInterface = {
     route: "/api/entity/:entity/details",
     method: "post",
@@ -134,7 +193,6 @@ export class EntityController {
           _.pick(req.body, possibleQueryFields)
         );
 
-        console.log(query);
 
         if (req.body.count) {
           res.json(await changesCollection.count(query));
@@ -145,8 +203,6 @@ export class EntityController {
           }[] = (await changesCollection.find(query)).map((p: EntityModel) => {
             return { type: p.type, _id: p.model._id };
           });
-
-          console.log(changesQuery);
 
           res.json({
             created: changesQuery.filter(p => p.type == EntityChangeType.Create)

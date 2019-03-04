@@ -33,7 +33,7 @@
     "request": "^2.88.0",
     "serendip": "^1.1.10",
     "serendip-business-model": "^1.1.1",
-    "serendip-mongodb-provider": "^1.0.3",
+    "serendip-mongodb-provider": "^1.0.4",
     "serendip-utility": "^1.1.1",
     "underscore": "^1.9.1"
   }
