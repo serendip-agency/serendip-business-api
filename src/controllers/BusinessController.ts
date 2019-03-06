@@ -117,12 +117,10 @@ export class BusinessController {
           return next(new HttpError(400, e.message));
         }
 
-        try {
-          if (model._id) await this.businessService.update(model);
-          else model = await this.businessService.insert(model);
-        } catch (e) {
-          return next(new HttpError(500, e.message));
-        }
+        if (model._id) {
+          await this.businessService.update(model);
+        } else model = await this.businessService.insert(model);
+
         res.json(model);
       }
     ]

@@ -53,7 +53,8 @@ export class EntityService implements ServerServiceInterface {
 
   async insert(model: EntityModel) {
     if (!model._cdate) model._cdate = Date.now();
-    await this.notifyUsers("insert", model);
+
+    if (model._entity != "grid") await this.notifyUsers("insert", model);
     return this.collection.insertOne(model);
   }
 
@@ -70,11 +71,7 @@ export class EntityService implements ServerServiceInterface {
   }
 
   async findById(id: string, skip?: number, limit?: number) {
-    var query = await this.collection.find(
-      { _id: id },
-      skip,
-      limit
-    );
+    var query = await this.collection.find({ _id: id }, skip, limit);
 
     if (query.length == 0) return undefined;
     else return query[0];
