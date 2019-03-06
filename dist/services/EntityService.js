@@ -23,7 +23,8 @@ class EntityService {
     async insert(model) {
         if (!model._cdate)
             model._cdate = Date.now();
-        await this.notifyUsers("insert", model);
+        if (model._entity != "grid")
+            await this.notifyUsers("insert", model);
         return this.collection.insertOne(model);
     }
     async update(model) {

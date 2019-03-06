@@ -84,15 +84,11 @@ class BusinessController {
                     catch (e) {
                         return next(new serendip_1.HttpError(400, e.message));
                     }
-                    try {
-                        if (model._id)
-                            await this.businessService.update(model);
-                        else
-                            model = await this.businessService.insert(model);
+                    if (model._id) {
+                        await this.businessService.update(model);
                     }
-                    catch (e) {
-                        return next(new serendip_1.HttpError(500, e.message));
-                    }
+                    else
+                        model = await this.businessService.insert(model);
                     res.json(model);
                 }
             ]
