@@ -6,10 +6,10 @@ import {
   SmsIrService
 } from "serendip";
 
-export class TaskService implements ServerServiceInterface {
-  static dependencies = ["DbService", "NotificationService"];
-
+export class TriggerService implements ServerServiceInterface {
   constructor() {}
+
+  checkEvent(type: "form" | "report" | string, subType: string) {}
 
   async start() {
     // try {

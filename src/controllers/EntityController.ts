@@ -156,6 +156,33 @@ export class EntityController {
     ]
   };
 
+  // public groups: HttpEndpointInterface = {
+  //   route: "/api/entity/groups",
+  //   method: "post",
+  //   actions: [
+  //     BusinessService.checkUserAccess,
+  //     async (
+  //       req,
+  //       res,
+  //       next,
+  //       done,
+  //       access: BusinessCheckAccessResultInterface
+  //     ) => {
+  //       (await this.entityService.findByBusinessId(
+  //         access.business._id.toString()
+  //       )).reduce((prev: any, current) => {
+  //         if (!prev) {
+  //           prev = [];
+  //           prev.push(current._entity);
+  //         } else if (prev.indexOf(current._entity) === -1)
+  //           prev.push(current._entity);
+
+  //         return prev;
+  //       });
+  //     }
+  //   ]
+  // };
+
   public changes: HttpEndpointInterface = {
     route: "/api/entity/changes",
     method: "post",
@@ -192,7 +219,6 @@ export class EntityController {
           },
           _.pick(req.body, possibleQueryFields)
         );
-
 
         if (req.body.count) {
           res.json(await changesCollection.count(query));

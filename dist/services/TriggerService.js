@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class TaskService {
+class TriggerService {
     constructor() { }
+    checkEvent(type, subType) { }
     async start() {
         // try {
         //     var credit = await this._smsIrService.credit();
@@ -27,5 +28,4 @@ class TaskService {
         // });
     }
 }
-TaskService.dependencies = ["DbService", "NotificationService"];
-exports.TaskService = TaskService;
+exports.TriggerService = TriggerService;
