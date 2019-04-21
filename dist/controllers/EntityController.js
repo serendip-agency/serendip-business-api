@@ -232,10 +232,11 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    var model = await this.entityService.find({
+                    const query = req.body.query || {};
+                    const model = await this.entityService.find(_.extend(query, {
                         _business: access.business._id.toString(),
                         _entity: req.params.entity
-                    }, req.body.skip, req.body.limit);
+                    }), req.body.skip, req.body.limit);
                     res.json(model);
                 }
             ]
@@ -251,45 +252,40 @@ class EntityController {
                 }
             ]
         };
-        // public search: HttpEndpointInterface = {
-        //   route: "/api/entity/:entity/search",
-        //   method: "post",
-        //   actions: [
-        //     BusinessService.checkUserAccess,
-        //     async (
-        //       req,
-        //       res,
-        //       next,
-        //       done,
-        //       access: BusinessCheckAccessResultInterface
-        //     ) => {
-        //       //{ '$regex': '.*' + req.body.query + '.*' }
-        //       var properties = req.body.properties;
-        //       var propertiesSearchMode = req.body.propertiesSearchMode;
-        //       var project: any = {};
-        //       var q = req.body.query || "";
-        //       properties.forEach(element => {
-        //         project[element] = 1;
-        //       });
-        //       if (!project._id) project._id = 1;
-        //       var model = await this.entityService.collection
-        //         .aggregate([
-        //           {
-        //             $match: {
-        //               _entity: req.params.entity,
-        //               _business: access.business._id.toString(),
-        //               $text: { $search: q }
-        //             }
-        //           },
-        //           { $sort: { score: { $meta: "textScore" } } },
-        //           { $project: project }
-        //         ])
-        //         .limit(req.body.limit || 30)
-        //         .toArray();
-        //       res.json(model);
-        //     }
-        //   ]
-        // };
+        this.search = {
+            route: "/api/entity/:entity/search",
+            method: "post",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    //{ '$regex': '.*' + req.body.query + '.*' }
+                    // var properties = req.body.properties || [];
+                    // var project: any = {};
+                    // var q = req.body.query || "";
+                    // if(properties.indexOf('_id') === -1)
+                    // properties.push('_id');
+                    // var model = await this.entityService.collection.find({
+                    //   _entity: req.params.entity,
+                    //   _business: access.business._id.toString(),
+                    //   $text: { $search: q }
+                    // })
+                    //   .aggregate([
+                    //     {
+                    //       $match: {
+                    //         _entity: req.params.entity,
+                    //         _business: access.business._id.toString(),
+                    //         $text: { $search: q }
+                    //       }
+                    //     },
+                    //     { $sort: { score: { $meta: "textScore" } } },
+                    //     { $project: project }
+                    //   ])
+                    //   .limit(req.body.limit || 30)
+                    //   .toArray();
+                    res.json([]);
+                }
+            ]
+        };
         this.insert = {
             route: "/api/entity/:entity/insert",
             method: "post",

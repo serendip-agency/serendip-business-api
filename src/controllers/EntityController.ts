@@ -322,11 +322,13 @@ export class EntityController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
-        var model = await this.entityService.find(
-          {
+        const query = req.body.query || {};
+
+        const model = await this.entityService.find(
+          _.extend(query, {
             _business: access.business._id.toString(),
             _entity: req.params.entity
-          },
+          }),
           req.body.skip,
           req.body.limit
         );
@@ -354,50 +356,51 @@ export class EntityController {
     ]
   };
 
-  // public search: HttpEndpointInterface = {
-  //   route: "/api/entity/:entity/search",
-  //   method: "post",
-  //   actions: [
-  //     BusinessService.checkUserAccess,
-  //     async (
-  //       req,
-  //       res,
-  //       next,
-  //       done,
-  //       access: BusinessCheckAccessResultInterface
-  //     ) => {
-  //       //{ '$regex': '.*' + req.body.query + '.*' }
+  public search: HttpEndpointInterface = {
+    route: "/api/entity/:entity/search",
+    method: "post",
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        //{ '$regex': '.*' + req.body.query + '.*' }
 
-  //       var properties = req.body.properties;
-  //       var propertiesSearchMode = req.body.propertiesSearchMode;
+        // var properties = req.body.properties || [];
 
-  //       var project: any = {};
-  //       var q = req.body.query || "";
-  //       properties.forEach(element => {
-  //         project[element] = 1;
-  //       });
+        // var project: any = {};
+        // var q = req.body.query || "";
 
-  //       if (!project._id) project._id = 1;
+        // if(properties.indexOf('_id') === -1)
+        // properties.push('_id');
 
-  //       var model = await this.entityService.collection
-  //         .aggregate([
-  //           {
-  //             $match: {
-  //               _entity: req.params.entity,
-  //               _business: access.business._id.toString(),
-  //               $text: { $search: q }
-  //             }
-  //           },
-  //           { $sort: { score: { $meta: "textScore" } } },
-  //           { $project: project }
-  //         ])
-  //         .limit(req.body.limit || 30)
-  //         .toArray();
+        // var model = await this.entityService.collection.find({
+        //   _entity: req.params.entity,
+        //   _business: access.business._id.toString(),
+        //   $text: { $search: q }
+        // })
+        //   .aggregate([
+        //     {
+        //       $match: {
+        //         _entity: req.params.entity,
+        //         _business: access.business._id.toString(),
+        //         $text: { $search: q }
+        //       }
+        //     },
+        //     { $sort: { score: { $meta: "textScore" } } },
+        //     { $project: project }
+        //   ])
+        //   .limit(req.body.limit || 30)
+        //   .toArray();
 
-  //       res.json(model);
-  //     }
-  //   ]
-  // };
+        res.json([]);
+      }
+    ]
+  };
 
   public insert: HttpEndpointInterface = {
     route: "/api/entity/:entity/insert",

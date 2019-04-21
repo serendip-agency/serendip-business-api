@@ -19,6 +19,11 @@ class EntityService {
         this.collection = await this.dbService.collection("Entities", true);
         //this.collection.createIndex({ "$**": "text" }, {});
         this.webSocketService.messageEmitter.on("/entity", async (input, ws) => { });
+        // var records = await this.find({ _entity: "entity" }, 0, 0);
+        // for (const r of records) {
+        //   r._entity = "_entity";
+        //   await this.collection.updateOne(r);
+        // }
     }
     async insert(model) {
         if (!model._cdate)

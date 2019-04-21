@@ -49,6 +49,13 @@ export class EntityService implements ServerServiceInterface {
       "/entity",
       async (input: string, ws: WebSocketInterface) => {}
     );
+
+    // var records = await this.find({ _entity: "entity" }, 0, 0);
+    // for (const r of records) {
+    //   r._entity = "_entity";
+
+    //   await this.collection.updateOne(r);
+    // }
   }
 
   async insert(model: EntityModel) {

@@ -13,6 +13,7 @@ const StorageController_1 = require("./controllers/StorageController");
 const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
 const dotenv = require("dotenv");
 const events_1 = require("events");
+const ClientService_1 = require("./services/ClientService");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
@@ -22,6 +23,10 @@ serendip_1.AuthService.configure({
 serendip_1.DbService.configure({
     defaultProvider: "Mongodb",
     providers: {
+        // Griddb: {
+        //   object: new GriddbProvider(),
+        //   options: {}
+        // },
         Mongodb: {
             object: new serendip_mongodb_provider_1.MongodbProvider(),
             options: {
@@ -82,7 +87,8 @@ serendip_1.start({
         StorageService_1.StorageService,
         DashboardService_1.DashboardService,
         StorageService_1.StorageService,
-        services_1.ProfileService
+        services_1.ProfileService,
+        ClientService_1.ClientService
     ]
 })
     .then(() => {
