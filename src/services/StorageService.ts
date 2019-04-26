@@ -12,6 +12,8 @@ import * as glob from "glob";
 import * as promise_serial from "promise-serial";
 import { ObjectID } from "bson";
 import * as mime from "mime-types";
+import * as multiStream from 'multistream';
+
 import {
   UserModel,
   BusinessModel,
@@ -42,7 +44,7 @@ export class StorageService {
   constructor(
     private dbService: DbService,
     private webSocketService: WebSocketService
-  ) {}
+  ) { }
 
   async userHasAccessToPath(userId: string, path: string): Promise<boolean> {
     if (!path.startsWith("users/") && !path.startsWith("businesses/"))
@@ -107,8 +109,8 @@ export class StorageService {
 
     var partFiles = (await fs.pathExists(this.getDirectoryOfPath(filePath)))
       ? (await fs.readdir(this.getDirectoryOfPath(filePath))).filter(item =>
-          item.startsWith(fileName + ".")
-        )
+        item.startsWith(fileName + ".")
+      )
       : [];
     var parts: StorageFilePartInfoInterface[] = [];
 
@@ -178,34 +180,47 @@ export class StorageService {
     console.log("assemblePartsIfPossible", filePath);
     if ((await this.uploadPercent(filePath)) < 100) return;
 
-    fs.writeFileSync(filePath, "");
+    if (fs.existsSync(filePath))
+      fs.unlinkSync(filePath);
 
     var parts = await this.getFilePartsInfo(filePath);
+    var uploadName = filePath.replace(this.dataPath, '');
+    if (!uploadName.startsWith('/'))
+      uploadName = '/' + uploadName;
+    await new Promise(async (resolve, reject) => {
 
-    console.log("assembling to ", filePath);
+      multiStream(parts.map(p => fs.createReadStream(p.path)))
+        .pipe(await this.dbService.openUploadStreamByFilePath(uploadName, {
+          userId
+        }))
+        .on('finish', () => {
+          resolve();
+        })
 
-    await promise_serial(
-      parts.map(
-        part => {
-          return async () => {
-            console.log("assembling   ", part.start, part.end);
+    });
 
-            await fs.appendFile(
-              filePath,
-              fs.readFileSync(part.path).toString()
-            );
-            await fs.unlink(part.path);
-          };
-        },
-        { parallelize: 1 }
-      )
-    );
+    // await promise_serial(
+    //   parts.map(
+    //     part => {
+    //       return async () => {
+    //         console.log("assembling   ", part.start, part.end);
 
-    //  await this.writeBase64AsFile(packed, filePath);
-    await this.writeBase64AsFile(
-      fs.readFileSync(filePath).toString(),
-      filePath
-    );
+    //         await fs.appendFile(
+    //           filePath,
+    //           fs.readFileSync(part.path).toString(), { encoding: 'binary' }
+    //         );
+    //         //   await fs.unlink(part.path);
+    //       };
+    //     },
+    //     { parallelize: 1 }
+    //   )
+    // );
+
+    // //  await this.writeBase64AsFile(packed, filePath);
+    // await this.writeBase64AsFile(
+    //   fs.readFileSync(filePath).toString(),
+    //   filePath
+    // );
   }
 
   getDirectoryOfPath(path: string): string {
@@ -226,7 +241,7 @@ export class StorageService {
                 return (
                   !subPath.endsWith(".part") &&
                   subPath !=
-                    join(this.dataPath, this.getDirectoryOfPath(storagePath))
+                  join(this.dataPath, this.getDirectoryOfPath(storagePath))
                 );
               })
             );
@@ -293,7 +308,7 @@ export class StorageService {
         var command: StorageCommandInterface;
         try {
           command = JSON.parse(input);
-        } catch (error) {}
+        } catch (error) { }
 
         if (!command) return;
 
@@ -308,5 +323,9 @@ export class StorageService {
         }
       }
     );
+
+
+
+
   }
 }

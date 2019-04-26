@@ -39,7 +39,6 @@ gulp.task("prod", function() {
   fs.emptyDirSync(buildPath);
 
   [
-    ".env",
     "files",
     "package.json",
     "package-lock.json",

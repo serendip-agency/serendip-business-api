@@ -66,11 +66,36 @@ export class ClientService implements HttpServiceInterface {
       load: async () => {
         if (!(await fs.pathExists(localStoragePath)))
           await fs.writeJSON(localStoragePath, {});
-        return fs.readJSON(localStoragePath);
+
+        try {
+          return await fs.readJSON(localStoragePath);
+
+        } catch{
+          await fs.unlink(localStoragePath);
+          return {};
+        }
       },
-      get: async key => (await fs.readJSON(localStoragePath))[key],
+      get: async key => {
+        if (!(await fs.pathExists(localStoragePath)))
+          await fs.writeJSON(localStoragePath, {});
+
+        try {
+          return (await fs.readJSON(localStoragePath))[key]
+
+        } catch{
+          await fs.unlink(localStoragePath);
+          return null;
+        }
+      },
       set: async (key, value) => {
-        const storage = await fs.readJSON(localStoragePath);
+        let storage = {};
+        try {
+          storage =
+            await fs.readJSON(localStoragePath);
+
+        } catch (error) {
+
+        }
         storage[key] = value;
         try {
           await fs.unlink(localStoragePath);
@@ -112,16 +137,16 @@ export class ClientService implements HttpServiceInterface {
     this.business = SBC.Client.services["BusinessService"];
     this.ws = SBC.Client.services["WsService"];
 
-    console.log("sync start at " + new Date());
+    // console.log("sync start at " + new Date());
 
-    this.data
-      .sync()
-      .then(() => {
-        console.log("sync done at " + new Date());
-      })
-      .catch(e => {
-        console.error("sync error at " + new Date(), e);
-      });
+    // this.data
+    //   .sync()
+    //   .then(() => {
+    //     console.log("sync done at " + new Date());
+    //   })
+    //   .catch(e => {
+    //     console.error("sync error at " + new Date(), e);
+    //   });
 
 
     if (this.data && process.env["sbc.business"])
@@ -138,7 +163,7 @@ export class ClientService implements HttpServiceInterface {
             });
 
             for (const item of neverPushedToSerendip) {
-              console.log("pushing " + item._id);
+              console.log(`pushing ${collectionName} >  ${item._entity} #${item._id}`, item);
               await collection.updateOne(
                 await this.data.update(collectionName, item)
               );

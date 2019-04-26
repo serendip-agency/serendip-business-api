@@ -8,6 +8,7 @@ const glob = require("glob");
 const promise_serial = require("promise-serial");
 const bson_1 = require("bson");
 const mime = require("mime-types");
+const multiStream = require("multistream");
 class StorageService {
     constructor(dbService, webSocketService) {
         this.dbService = dbService;
@@ -99,18 +100,41 @@ class StorageService {
         console.log("assemblePartsIfPossible", filePath);
         if ((await this.uploadPercent(filePath)) < 100)
             return;
-        fs.writeFileSync(filePath, "");
+        if (fs.existsSync(filePath))
+            fs.unlinkSync(filePath);
         var parts = await this.getFilePartsInfo(filePath);
-        console.log("assembling to ", filePath);
-        await promise_serial(parts.map(part => {
-            return async () => {
-                console.log("assembling   ", part.start, part.end);
-                await fs.appendFile(filePath, fs.readFileSync(part.path).toString());
-                await fs.unlink(part.path);
-            };
-        }, { parallelize: 1 }));
-        //  await this.writeBase64AsFile(packed, filePath);
-        await this.writeBase64AsFile(fs.readFileSync(filePath).toString(), filePath);
+        var uploadName = filePath.replace(this.dataPath, '');
+        if (!uploadName.startsWith('/'))
+            uploadName = '/' + uploadName;
+        await new Promise(async (resolve, reject) => {
+            multiStream(parts.map(p => fs.createReadStream(p.path)))
+                .pipe(await this.dbService.openUploadStreamByFilePath(uploadName, {
+                userId
+            }))
+                .on('finish', () => {
+                resolve();
+            });
+        });
+        // await promise_serial(
+        //   parts.map(
+        //     part => {
+        //       return async () => {
+        //         console.log("assembling   ", part.start, part.end);
+        //         await fs.appendFile(
+        //           filePath,
+        //           fs.readFileSync(part.path).toString(), { encoding: 'binary' }
+        //         );
+        //         //   await fs.unlink(part.path);
+        //       };
+        //     },
+        //     { parallelize: 1 }
+        //   )
+        // );
+        // //  await this.writeBase64AsFile(packed, filePath);
+        // await this.writeBase64AsFile(
+        //   fs.readFileSync(filePath).toString(),
+        //   filePath
+        // );
     }
     getDirectoryOfPath(path) {
         var pathSplit = path.split("/");
