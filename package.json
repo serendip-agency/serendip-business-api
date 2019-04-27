@@ -34,7 +34,7 @@
     "moment": "^2.22.2",
     "multistream": "^2.1.1",
     "request": "^2.88.0",
-    "serendip": "^1.1.17",
+    "serendip": "^1.1.18",
     "serendip-business-client": "^1.0.6",
     "serendip-business-model": "^1.1.11",
     "serendip-griddb-provider": "^1.0.0",

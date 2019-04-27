@@ -37,6 +37,30 @@ class StorageController {
                 }
             ]
         };
+        this.newFolder = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return done(400);
+                    if (!command.path)
+                        return done(400);
+                    if (!command.path.startsWith('/'))
+                        command.path = '/' + command.path;
+                    if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
+                        return done(400);
+                    await this.dbService.openUploadStreamByFilePath(command.path + '/.keep', {}).then((stream) => {
+                        stream.write('');
+                        stream.end();
+                        stream.on('finish', () => {
+                            done(200);
+                        });
+                    });
+                }
+            ]
+        };
         this.upload = {
             method: "POST",
             actions: [
@@ -68,30 +92,80 @@ class StorageController {
                 }
             ]
         };
-        this.download = {
+        this.public = {
             method: "GET",
             publicAccess: true,
-            route: 'api/storage/download/:path*',
+            isStream: true,
+            route: ':first*/public/:last*',
             actions: [
-                //    BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
-                    var command = req.body;
-                    if (!command)
-                        return;
-                    // if (
-                    //   !(await this.storageService.userHasAccessToPath(
-                    //     req.user._id.toString(),
-                    //     req.params.path
-                    //   ))
-                    // )
-                    //   return;
-                    console.log(req.params);
-                    let filePath = req.params.path.join('/');
+                async (req, res, next, done) => {
+                    req.params.path = '/' + ([...req.params.first, ...['public'], ...req.params.last].join('/'));
+                    // return res.json(req.params.path);
+                    const filesCollection = await this.dbService.collection('fs.files', false);
+                    const dirQuery = await filesCollection.find({ $or: [{ filename: req.params.path + '/.keep' }] });
+                    return this.preview.actions[0](req, res, next, done);
+                }
+            ]
+        };
+        this.preview = {
+            method: "GET",
+            publicAccess: false, isStream: true,
+            route: 'api/storage/preview/:path*',
+            actions: [
+                async (req, res, next, done) => {
+                    let filePath;
+                    if (typeof req.params.path !== 'string')
+                        filePath = req.params.path.join('/');
+                    else
+                        filePath = req.params.path;
                     if (!filePath.startsWith('/'))
                         filePath = '/' + filePath;
-                    await this.dbService.openDownloadStreamByFilePath(filePath).then((stream) => {
-                        stream.pipe(res);
-                    });
+                    if (filePath.split('/')[3] != 'public' &&
+                        !(await this.storageService.userHasAccessToPath(req.user._id.toString(), filePath)))
+                        return done(403);
+                    const filesCollection = await this.dbService.collection('fs.files', false);
+                    const fileQuery = await filesCollection.find({ filename: filePath });
+                    if (!fileQuery[0])
+                        return done(404);
+                    res.setHeader('Content-Type', mime.lookup(filePath));
+                    let range = (req.headers.range) ? req.headers.range.toString().replace(/bytes=/, "").split("-") : [];
+                    range[0] = range[0] ? parseInt(range[0], 10) : 0;
+                    range[1] = range[1] ? (parseInt(range[1], 10) || 0) : range[0] + ((1024 * 1024) - 1);
+                    if (range[1] >= fileQuery[0].length) {
+                        range[1] = fileQuery[0].length - 1;
+                    }
+                    range = { start: range[0], end: range[1] };
+                    if (mime.lookup(filePath).indexOf('application/') === 0) {
+                        await this.dbService.openDownloadStreamByFilePath(filePath).then((stream) => {
+                            res.writeHead(200, {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache',
+                                'Expires': 0,
+                                'Content-Disposition': `inline; filename=${encodeURIComponent(fileQuery[0].filename.split('/')[fileQuery[0].filename.split('/').length - 1])}`,
+                                'Content-Type': mime.lookup(filePath),
+                                'Content-Length': fileQuery[0].length,
+                            });
+                            stream.pipe(res);
+                        });
+                    }
+                    else {
+                        await this.dbService.openDownloadStreamByFilePath(filePath, {
+                            start: range.start,
+                            end: range.end
+                        }).then((stream) => {
+                            res.writeHead(206, {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache',
+                                'Expires': 0,
+                                'Content-Type': mime.lookup(filePath),
+                                'Content-Disposition': `inline; filename=${encodeURIComponent(fileQuery[0].filename.split('/')[fileQuery[0].filename.split('/').length - 1])}`,
+                                'Accept-Ranges': 'bytes',
+                                'Content-Range': 'bytes ' + range.start + '-' + range.end + '/' + (fileQuery[0].length),
+                                'Content-Length': range.end - range.start + 1,
+                            });
+                            stream.pipe(res);
+                        });
+                    }
                 }
             ]
         };
@@ -166,12 +240,12 @@ class StorageController {
                                 }
                             }]
                     });
-                    model = model.map((p) => {
+                    model = model.filter((p) => command.path + '.keep' != p.filename).map((p) => {
                         return {
                             isFile: !p.filename.endsWith('/.keep'),
                             isDirectory: p.filename.endsWith('/.keep'),
                             path: p.filename,
-                            basename: path_1.basename(p.filename),
+                            basename: path_1.basename(p.filename.replace('/.keep', '')),
                             mime: mime.lookup(p.filename),
                             size: p.length,
                             ext: p.filename.split(".")
