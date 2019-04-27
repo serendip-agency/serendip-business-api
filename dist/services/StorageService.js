@@ -4,10 +4,8 @@ const serendip_1 = require("serendip");
 const path_1 = require("path");
 const fs = require("fs-extra");
 const _ = require("underscore");
-const glob = require("glob");
 const promise_serial = require("promise-serial");
 const bson_1 = require("bson");
-const mime = require("mime-types");
 const multiStream = require("multistream");
 class StorageService {
     constructor(dbService, webSocketService) {
@@ -15,14 +13,14 @@ class StorageService {
         this.webSocketService = webSocketService;
     }
     async userHasAccessToPath(userId, path) {
-        if (!path.startsWith("users/") && !path.startsWith("businesses/"))
+        if (!path.startsWith("/users/") && !path.startsWith("/businesses/"))
             return false;
-        if (path.startsWith("users/" + userId + "/"))
+        if (path.startsWith("/users/" + userId + "/"))
             return true;
-        if (path.startsWith("users/"))
+        if (path.startsWith("/users/"))
             return false;
         // extract id from paths like businesses/_id
-        const businessId = path.split("/")[1];
+        const businessId = path.split("/")[2];
         let business, businessQuery = await this.businessesCollection.find({
             _id: new bson_1.ObjectID(businessId)
         });
@@ -142,39 +140,49 @@ class StorageService {
         var pathDir = pathSplit.join("/");
         return pathDir;
     }
-    async list(storagePath) {
-        return promise_serial(_.map(await new Promise((resolve, reject) => {
-            glob(path_1.join(this.dataPath, storagePath), (err, matches) => {
-                resolve(matches.filter(subPath => {
-                    return (!subPath.endsWith(".part") &&
-                        subPath !=
-                            path_1.join(this.dataPath, this.getDirectoryOfPath(storagePath)));
-                }));
-            });
-        }), subPath => {
-            return async () => {
-                var stat = await fs.stat(subPath);
-                var model = {
-                    path: subPath.replace(this.dataPath + "/", ""),
-                    isFile: stat.isFile(),
-                    isLink: stat.isSymbolicLink(),
-                    isDirectory: stat.isDirectory(),
-                    size: stat.size,
-                    basename: path_1.basename(subPath),
-                    mime: mime.lookup(subPath),
-                    ext: subPath
-                        .split(".")
-                        .reverse()[0]
-                        .toLowerCase(),
-                    sizeInMB: parseFloat((stat.size / 1024 / 1024).toFixed(2))
-                };
-                if (stat.size == 0) {
-                    model.uploadPercent = await this.uploadPercent(subPath);
-                }
-                return model;
-            };
-        }), { parallelize: 1 });
-    }
+    // async list(storagePath: string) {
+    //   return promise_serial(
+    //     _.map(
+    //       await new Promise<string[]>((resolve, reject) => {
+    //         glob(join(this.dataPath, storagePath), (err, matches) => {
+    //           resolve(
+    //             matches.filter(subPath => {
+    //               return (
+    //                 !subPath.endsWith(".part") &&
+    //                 subPath !=
+    //                 join(this.dataPath, this.getDirectoryOfPath(storagePath))
+    //               );
+    //             })
+    //           );
+    //         });
+    //       }),
+    //       subPath => {
+    //         return async () => {
+    //           var stat = await fs.stat(subPath);
+    //           var model: any = {
+    //             path: subPath.replace(this.dataPath + "/", ""),
+    //             isFile: stat.isFile(),
+    //             isLink: stat.isSymbolicLink(),
+    //             isDirectory: stat.isDirectory(),
+    //             size: stat.size,
+    //             basename: basename(subPath),
+    //             mime: mime.lookup(subPath),
+    //             ext: subPath
+    //               .split(".")
+    //               .reverse()[0]
+    //               .toLowerCase(),
+    //             sizeInMB: parseFloat((stat.size / 1024 / 1024).toFixed(2))
+    //           };
+    //           if (stat.size == 0) {
+    //             model.uploadPercent = await this.uploadPercent(subPath);
+    //           }
+    //           return model;
+    //         };
+    //       }
+    //     ),
+    //     { parallelize: 1 }
+    //   );
+    // }
     async start() {
         this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
         fs.ensureDirSync(this.dataPath);

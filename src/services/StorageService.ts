@@ -47,15 +47,15 @@ export class StorageService {
   ) { }
 
   async userHasAccessToPath(userId: string, path: string): Promise<boolean> {
-    if (!path.startsWith("users/") && !path.startsWith("businesses/"))
+    if (!path.startsWith("/users/") && !path.startsWith("/businesses/"))
       return false;
 
-    if (path.startsWith("users/" + userId + "/")) return true;
+    if (path.startsWith("/users/" + userId + "/")) return true;
 
-    if (path.startsWith("users/")) return false;
+    if (path.startsWith("/users/")) return false;
 
     // extract id from paths like businesses/_id
-    const businessId = path.split("/")[1];
+    const businessId = path.split("/")[2];
 
     let business: { members?: any },
       businessQuery = await this.businessesCollection.find({
@@ -231,51 +231,51 @@ export class StorageService {
     return pathDir;
   }
 
-  async list(storagePath: string) {
-    return promise_serial(
-      _.map(
-        await new Promise<string[]>((resolve, reject) => {
-          glob(join(this.dataPath, storagePath), (err, matches) => {
-            resolve(
-              matches.filter(subPath => {
-                return (
-                  !subPath.endsWith(".part") &&
-                  subPath !=
-                  join(this.dataPath, this.getDirectoryOfPath(storagePath))
-                );
-              })
-            );
-          });
-        }),
-        subPath => {
-          return async () => {
-            var stat = await fs.stat(subPath);
+  // async list(storagePath: string) {
+  //   return promise_serial(
+  //     _.map(
+  //       await new Promise<string[]>((resolve, reject) => {
+  //         glob(join(this.dataPath, storagePath), (err, matches) => {
+  //           resolve(
+  //             matches.filter(subPath => {
+  //               return (
+  //                 !subPath.endsWith(".part") &&
+  //                 subPath !=
+  //                 join(this.dataPath, this.getDirectoryOfPath(storagePath))
+  //               );
+  //             })
+  //           );
+  //         });
+  //       }),
+  //       subPath => {
+  //         return async () => {
+  //           var stat = await fs.stat(subPath);
 
-            var model: any = {
-              path: subPath.replace(this.dataPath + "/", ""),
-              isFile: stat.isFile(),
-              isLink: stat.isSymbolicLink(),
-              isDirectory: stat.isDirectory(),
-              size: stat.size,
-              basename: basename(subPath),
-              mime: mime.lookup(subPath),
-              ext: subPath
-                .split(".")
-                .reverse()[0]
-                .toLowerCase(),
-              sizeInMB: parseFloat((stat.size / 1024 / 1024).toFixed(2))
-            };
+  //           var model: any = {
+  //             path: subPath.replace(this.dataPath + "/", ""),
+  //             isFile: stat.isFile(),
+  //             isLink: stat.isSymbolicLink(),
+  //             isDirectory: stat.isDirectory(),
+  //             size: stat.size,
+  //             basename: basename(subPath),
+  //             mime: mime.lookup(subPath),
+  //             ext: subPath
+  //               .split(".")
+  //               .reverse()[0]
+  //               .toLowerCase(),
+  //             sizeInMB: parseFloat((stat.size / 1024 / 1024).toFixed(2))
+  //           };
 
-            if (stat.size == 0) {
-              model.uploadPercent = await this.uploadPercent(subPath);
-            }
-            return model;
-          };
-        }
-      ),
-      { parallelize: 1 }
-    );
-  }
+  //           if (stat.size == 0) {
+  //             model.uploadPercent = await this.uploadPercent(subPath);
+  //           }
+  //           return model;
+  //         };
+  //       }
+  //     ),
+  //     { parallelize: 1 }
+  //   );
+  // }
   async start() {
     this.dataPath = join(Server.dir, "..", "data");
     fs.ensureDirSync(this.dataPath);

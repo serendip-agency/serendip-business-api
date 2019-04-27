@@ -1,5 +1,5 @@
 import * as fs from "fs-extra";
-import { join } from "path";
+import { join, basename } from "path";
 import {
   HttpEndpointInterface,
   HttpRequestInterface,
@@ -17,6 +17,7 @@ import {
   StorageService
 } from "../services/StorageService";
 import { Writable, Readable } from "stream";
+import * as mime from "mime-types";
 
 export class StorageController {
 
@@ -97,7 +98,10 @@ export class StorageController {
       ) => {
         var command: StorageCommandInterface = req.body;
 
-        if (!command) return;
+        if (!command) return done(400);
+        if (!command.path) return done(400);
+        if (!command.path.startsWith('/'))
+          command.path = '/' + command.path;
 
         if (
           !(await this.storageService.userHasAccessToPath(
@@ -105,7 +109,7 @@ export class StorageController {
             command.path
           ))
         )
-          return;
+          return done(400);
 
         await fs.ensureFile(join(this.storageService.dataPath, command.path));
 
@@ -186,7 +190,10 @@ export class StorageController {
       ) => {
         var command: StorageCommandInterface = req.body;
 
-        if (!command) return;
+        if (!command) return done(400);
+        if (!command.path) return done(400);
+        if (!command.path.startsWith('/'))
+          command.path = '/' + command.path;
 
         if (
           !(await this.storageService.userHasAccessToPath(
@@ -194,7 +201,7 @@ export class StorageController {
             command.path
           ))
         )
-          return;
+          return done(400);
 
         var model = await this.storageService.getFilePartsInfo(
           join(this.storageService.dataPath, command.path)
@@ -244,7 +251,14 @@ export class StorageController {
       ) => {
         var command: StorageCommandInterface = req.body;
 
-        if (!command) return;
+
+        if (!command) return done(400);
+        if (!command.path) return done(400);
+        if (!command.path.startsWith('/'))
+          command.path = '/' + command.path;
+
+        if (!command.path.endsWith('/'))
+          command.path += '/';
 
         if (
           !(await this.storageService.userHasAccessToPath(
@@ -252,9 +266,40 @@ export class StorageController {
             command.path
           ))
         )
-          return;
+          return done(400);
 
-        res.json(await this.storageService.list(command.path));
+        const filesCollection = await this.dbService.collection('fs.files', false);
+
+        let model = await filesCollection.find({
+          $or: [{
+            filename: {
+              $regex: `^${command.path.replace(/\//g, '\/')}[^/]{0,}$`
+            }
+          }, {
+            filename: {
+
+              $regex: `^${command.path.replace(/\//g, '\/')}[^/]{0,}\/.keep$`
+            }
+
+          }]
+        })
+
+        model = model.map((p: any) => {
+          return {
+            isFile: !p.filename.endsWith('/.keep'),
+            isDirectory: p.filename.endsWith('/.keep'),
+            path: p.filename,
+            basename: basename(p.filename),
+            mime: mime.lookup(p.filename),
+            size: p.length,
+            ext: p.filename.split(".")
+              .reverse()[0]
+              .toLowerCase(),
+            sizeInMB: parseFloat((p.length / 1024 / 1024).toFixed(2))
+          }
+        });
+        res.json(model);
+        // res.json(await this.storageService.list(command.path));
       }
     ]
   };
@@ -272,7 +317,11 @@ export class StorageController {
       ) => {
         var command: StorageCommandInterface = req.body;
 
-        if (!command) return;
+        if (!command) return done(400);
+        if (!command.path) return done(400);
+        if (!command.path.startsWith('/'))
+          command.path = '/' + command.path;
+
 
         if (
           !(await this.storageService.userHasAccessToPath(
@@ -280,7 +329,7 @@ export class StorageController {
             command.path
           ))
         )
-          return;
+          return done(400);
 
         await this.storageService.assemblePartsIfPossible(
           join(this.storageService.dataPath, command.path),

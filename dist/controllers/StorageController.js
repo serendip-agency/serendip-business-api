@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const path_1 = require("path");
 const services_1 = require("../services");
+const mime = require("mime-types");
 class StorageController {
     constructor(dbService, storageService) {
         this.dbService = dbService;
@@ -43,9 +44,13 @@ class StorageController {
                 async (req, res, next, done, access) => {
                     var command = req.body;
                     if (!command)
-                        return;
+                        return done(400);
+                    if (!command.path)
+                        return done(400);
+                    if (!command.path.startsWith('/'))
+                        command.path = '/' + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
-                        return;
+                        return done(400);
                     await fs.ensureFile(path_1.join(this.storageService.dataPath, command.path));
                     if (!command.total) {
                         // await this.storageService.writeBase64AsFile(
@@ -97,9 +102,13 @@ class StorageController {
                 async (req, res, next, done, access) => {
                     var command = req.body;
                     if (!command)
-                        return;
+                        return done(400);
+                    if (!command.path)
+                        return done(400);
+                    if (!command.path.startsWith('/'))
+                        command.path = '/' + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
-                        return;
+                        return done(400);
                     var model = await this.storageService.getFilePartsInfo(path_1.join(this.storageService.dataPath, command.path));
                     var exists = [];
                     var missing = [];
@@ -136,10 +145,43 @@ class StorageController {
                 async (req, res, next, done, access) => {
                     var command = req.body;
                     if (!command)
-                        return;
+                        return done(400);
+                    if (!command.path)
+                        return done(400);
+                    if (!command.path.startsWith('/'))
+                        command.path = '/' + command.path;
+                    if (!command.path.endsWith('/'))
+                        command.path += '/';
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
-                        return;
-                    res.json(await this.storageService.list(command.path));
+                        return done(400);
+                    const filesCollection = await this.dbService.collection('fs.files', false);
+                    let model = await filesCollection.find({
+                        $or: [{
+                                filename: {
+                                    $regex: `^${command.path.replace(/\//g, '\/')}[^/]{0,}$`
+                                }
+                            }, {
+                                filename: {
+                                    $regex: `^${command.path.replace(/\//g, '\/')}[^/]{0,}\/.keep$`
+                                }
+                            }]
+                    });
+                    model = model.map((p) => {
+                        return {
+                            isFile: !p.filename.endsWith('/.keep'),
+                            isDirectory: p.filename.endsWith('/.keep'),
+                            path: p.filename,
+                            basename: path_1.basename(p.filename),
+                            mime: mime.lookup(p.filename),
+                            size: p.length,
+                            ext: p.filename.split(".")
+                                .reverse()[0]
+                                .toLowerCase(),
+                            sizeInMB: parseFloat((p.length / 1024 / 1024).toFixed(2))
+                        };
+                    });
+                    res.json(model);
+                    // res.json(await this.storageService.list(command.path));
                 }
             ]
         };
@@ -150,9 +192,13 @@ class StorageController {
                 async (req, res, next, done, access) => {
                     var command = req.body;
                     if (!command)
-                        return;
+                        return done(400);
+                    if (!command.path)
+                        return done(400);
+                    if (!command.path.startsWith('/'))
+                        command.path = '/' + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
-                        return;
+                        return done(400);
                     await this.storageService.assemblePartsIfPossible(path_1.join(this.storageService.dataPath, command.path), req.user._id);
                     done();
                 }
