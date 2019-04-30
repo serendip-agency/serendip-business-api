@@ -184,7 +184,7 @@ export class StorageController {
     method: "GET",
     publicAccess: true,
     isStream: true,
-    route: ':first*/public/:last*',
+    route: 'dl/:first*/public/:last*',
     actions: [
       async (
         req,
@@ -233,7 +233,6 @@ export class StorageController {
 
 
 
-
         if (filePath.split('/')[3] != 'public' &&
           !(await this.storageService.userHasAccessToPath(
             req.user._id.toString(),
@@ -263,8 +262,7 @@ export class StorageController {
 
         range = { start: range[0], end: range[1] };
 
-
-        if (mime.lookup(filePath).indexOf('application/') === 0) {
+        if (!req.headers.range) {
 
           await this.dbService.openDownloadStreamByFilePath(filePath).then((stream) => {
 

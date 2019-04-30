@@ -96,7 +96,7 @@ class StorageController {
             method: "GET",
             publicAccess: true,
             isStream: true,
-            route: ':first*/public/:last*',
+            route: 'dl/:first*/public/:last*',
             actions: [
                 async (req, res, next, done) => {
                     req.params.path = '/' + ([...req.params.first, ...['public'], ...req.params.last].join('/'));
@@ -135,7 +135,7 @@ class StorageController {
                         range[1] = fileQuery[0].length - 1;
                     }
                     range = { start: range[0], end: range[1] };
-                    if (mime.lookup(filePath).indexOf('application/') === 0) {
+                    if (!req.headers.range) {
                         await this.dbService.openDownloadStreamByFilePath(filePath).then((stream) => {
                             res.writeHead(200, {
                                 'Cache-Control': 'no-cache, no-store, must-revalidate',
