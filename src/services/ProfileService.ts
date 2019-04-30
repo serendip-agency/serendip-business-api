@@ -1,3 +1,8 @@
+
+/**
+ * @module Profile
+ */
+
 import { ServerServiceInterface, DbService, Server } from "serendip";
 import { ProfileModel, DbCollectionInterface } from "serendip-business-model";
 import { ObjectId } from "bson";

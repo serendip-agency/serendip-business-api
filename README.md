@@ -33,10 +33,82 @@ it will easily authenticate you with our API and it will let you:
 ### Authentication
 authenticating with this API is possible with any http client for [password grant type](https://www.oauth.com/oauth2-servers/access-tokens/password-grant/) or our [SSO(single sign-on)](https://github.com/serendip-agency/serendip-sso) for [authorization_code grant type](https://www.oauth.com/oauth2-servers/access-tokens/authorization-code-request/) which needs your client and it's redirect URL defined and approved in your business setting on serendip.
 
-### Common Usage Notes
+### Usage Notes
  This Web API is accessible in domains below and you need account and business created to access routes
  * [business.serendip.cloud](http://business.serendip.cloud)
  * [business.serendip.ir](http://business.serendip.ir)
+ 
+| Request Method | URL Path | Controller > Endpoint |
+| - | - | - |
+| [POST] | /api/auth/register | AuthController > register | 
+| [POST] | /api/auth/sendresetpasswordtoken | AuthController > sendResetPasswordToken | 
+| [POST] | /api/auth/addusertogroup | AuthController > addUserToGroup | 
+| [POST] | /api/auth/deleteuserfromgroup | AuthController > deleteUserFromGroup | 
+| [POST] | /api/auth/changepassword | AuthController > changePassword | 
+| [POST] | /api/auth/resetpassword | AuthController > resetPassword | 
+| [POST] | /api/auth/sendverifyemail | AuthController > sendVerifyEmail | 
+| [POST] | /api/auth/sendverifysms | AuthController > sendVerifySms | 
+| [POST] | /api/auth/verifymobile | AuthController > verifyMobile | 
+| [POST] | /api/auth/verifyemail | AuthController > verifyEmail | 
+| [POST] | /api/auth/clienttoken | AuthController > clientToken | 
+| [POST] | /api/auth/refreshtoken | AuthController > refreshToken | 
+| [GET] | /api/auth/sessions | AuthController > sessions
+| [POST] | /api/auth/checktoken | AuthController > checkToken | 
+| [POST] | /api/auth/onetimepassword | AuthController > oneTimePassword | 
+| [POST] | /api/auth/newauthcode | AuthController > newAuthCode | 
+| [POST] | /api/auth/token | AuthController > token
+| [GET] | /api/server/cluster-testing | ServerController > clusterTesting | 
+| [GET] | /api/server/cluster-workers | ServerController > clusterWorkers | 
+| [GET] | /api/server/routes | ServerController > routes
+| [GET] | /api/server/throw | ServerController > throw
+| [GET] | /api/server/nexterror | ServerController > nextError | 
+| [GET] | /api/server/doneerror | ServerController > doneError | 
+| [GET] | /api/server/services | ServerController > services | 
+| [GET] | /api/business/list | BusinessController > list
+| [POST] | /api/business/grid | BusinessController > grid | 
+| [POST] | /api/business/savebusiness | BusinessController > saveBusiness | 
+| [POST] | /api/business/deletemember | BusinessController > deleteMember | 
+| [POST] | /api/business/addmember | BusinessController > addMember | 
+| [POST] | /api/entity/:entity/zip | EntityController > zip | 
+| [POST] | /api/entity/export | EntityController > export | 
+| [POST] | /api/entity/:entity/details | EntityController > details | 
+| [POST] | /api/entity/changes | EntityController > changes | 
+| [POST] | /api/entity/:entity/list | EntityController > list | 
+| [POST] | /api/entity/:entity/count | EntityController > count | 
+| [POST] | /api/entity/:entity/search | EntityController > search | 
+| [POST] | /api/entity/:entity/insert | EntityController > insert | 
+| [POST] | /api/entity/:entity/update | EntityController > update | 
+| [POST] | /api/entity/:entity/delete | EntityController > delete | 
+| [GET] | /api/server/cluster-testing | ServerController > clusterTesting | 
+| [GET] | /api/server/cluster-workers | ServerController > clusterWorkers | 
+| [GET] | /api/server/routes | ServerController > routes
+| [GET] | /api/server/throw | ServerController > throw
+| [GET] | /api/server/nexterror | ServerController > nextError | 
+| [GET] | /api/server/doneerror | ServerController > doneError | 
+| [GET] | /api/server/services | ServerController > services | 
+| [GET] | /api/storage/test | StorageController > test
+| [POST] | /api/storage/newfolder | StorageController > newFolder | 
+| [POST] | /api/storage/upload | StorageController > upload | 
+| [GET] | /dl/:first*/public/:last* | StorageController > public | 
+| [GET] | /api/storage/preview/:path* | StorageController > preview | 
+| [POST] | /api/storage/parts | StorageController > parts | 
+| [POST] | /api/storage/list | StorageController > list
+| [POST] | /api/storage/assemble | StorageController > assemble | 
+
+### API Documentation
+coming soon ...
+
+### Code Documentation
+This documents are auto generated from typescript source using [typedoc](https://github.com/TypeStrong/typedoc)
+* [Auth](modules/auth.md)
+* [Business](modules/business.md)
+* [Client](modules/client.md)
+* [Dashboard](modules/dashboard.md)
+* [Db](modules/db.md)
+* [Entity](modules/entity.md)
+* [Profile](modules/profile.md)
+* [Server](modules/server.md)
+* [Storage](modules/storage.md)
 
 ### Contribution
  We would love for you to contribute to Serendip and help making it better!  

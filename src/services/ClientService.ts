@@ -1,3 +1,8 @@
+
+/**
+ * @module Client
+ */
+
 import { HttpServiceInterface, DbService, Server, HttpService } from "serendip";
 import * as SBC from "serendip-business-client";
 import * as WS from "ws";

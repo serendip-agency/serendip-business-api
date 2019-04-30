@@ -1,3 +1,7 @@
+
+/**
+ * @module Storage
+ */
 import * as fs from "fs-extra";
 import { join, basename } from "path";
 import {

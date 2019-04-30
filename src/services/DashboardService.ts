@@ -1,7 +1,13 @@
+
+/**
+ * @module Dashboard
+ */
+
 import { WebSocketInterface, WebSocketService } from "serendip";
 
 import { BusinessService } from "./BusinessService";
 import { EntityService } from "./EntityService";
+
 
 export class DashboardService {
   constructor(

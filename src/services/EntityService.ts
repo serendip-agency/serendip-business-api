@@ -1,3 +1,7 @@
+
+/**
+ * @module Entity
+ */
 import {
   ServerServiceInterface,
   DbService,

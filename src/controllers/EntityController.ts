@@ -1,3 +1,7 @@
+
+/**
+ * @module Entity
+ */
 import * as archiver from "archiver";
 import {
   DbService,

@@ -1,3 +1,7 @@
+
+/**
+ * @module Business
+ */
 import {
   HttpEndpointInterface,
   Server,

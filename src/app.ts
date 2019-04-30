@@ -14,8 +14,7 @@ import {
 } from "serendip";
 
 import { join } from "path";
-import { BusinessController } from "./controllers";
-import { ImportService } from "./services/ImportService";
+import { BusinessController } from "./controllers"; 
 import { EntityController } from "./controllers/EntityController";
 import { BusinessService } from "./services/BusinessService";
 import { EntityService, ProfileService } from "./services";
@@ -107,8 +106,7 @@ start({
     AuthService,
     ViewEngineService,
     BusinessService,
-    EntityService,
-    ImportService,
+    EntityService, 
     WebSocketService,
     StorageService,
     DashboardService,

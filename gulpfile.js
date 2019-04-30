@@ -4,7 +4,7 @@ var clean = require("gulp-clean");
 var child = require("child_process");
 var moment = require("moment");
 var fs = require("fs-extra");
-let uglify = require("gulp-uglify-es").default;
+var typedoc = require("gulp-typedoc");
 
 var paths = {
   dist: "dist",
@@ -18,27 +18,29 @@ var serverLog = fs.createWriteStream(
   { flags: "a" }
 );
 
-var run = function() {
+var run = function () {
   if (server) if (server.kill) server.kill();
 
   server = child.spawn("node", ["dist/app.js"], { stdio: "inherit" });
 };
 
-gulp.task("cleanLogs", function() {
+gulp.task("cleanLogs", function () {
   return gulp.src(paths.logs, { read: false }).pipe(clean());
 });
 
 // clean dist folder
-gulp.task("clean", function(cb) {
+gulp.task("clean", function (cb) {
   return gulp.src(paths.dist, { read: false }).pipe(clean());
 });
 
-gulp.task("prod", function() {
+gulp.task("prod", function () {
   var buildPath = "../builds/serendip-business-api/";
 
   fs.emptyDirSync(buildPath);
 
   [
+    ".dockerignore",
+    ".gitignore",
     "files",
     "package.json",
     "package-lock.json",
@@ -54,8 +56,45 @@ gulp.task("prod", function() {
     .pipe(gulp.dest(buildPath + "dist/"));
 });
 
+
+gulp.task("typedoc", function () {
+  //
+  //  "doc": "typedoc --theme minimal --hideGenerator --includeDeclarations --excludeExternals --excludePrivate --excludeNotExported  --out ./doc ./src"
+  //
+  return gulp
+    .src([paths.tsSources,
+      './node_modules/serendip-business-model/src/auth/*.ts',
+      './node_modules/serendip-business-model/src/db/*.ts',
+      './node_modules/serendip-business-model/src/Server*.ts'])
+    .pipe(typedoc({
+      // TypeScript options (see typescript docs)
+      module: "commonjs",
+      target: "es2017",
+
+      includeDeclarations: true,
+      excludePrivate: true,
+      excludeProtected: true,
+      excludeExternals: true,
+      readme: 'doc.md',
+      hideGenerator: true,
+      exclude: ['./src/app.ts', '*/**/index.ts'],
+      // Output options (see typedoc docs)
+      out: "./doc",
+      json: "./doc.json",
+
+      // TypeDoc options (see typedoc docs)
+      name: "Serendip Business API",
+      // theme: "minimal",
+      theme: "markdown",
+      ignoreCompilerErrors: false,
+      version: true
+    }))
+
+});
+
+
 // compile typescripts
-gulp.task("ts", function() {
+gulp.task("ts", function () {
   return gulp
     .src(paths.tsSources)
     .pipe(
@@ -76,13 +115,15 @@ gulp.task("ts", function() {
 // whats typescripts , compile and then run
 gulp.watch(paths.tsSources, ["run"]);
 
+
+
 // clean before build
 gulp.task("preBuild", ["clean"]);
 
 // clean and compile
-gulp.task("build", ["preBuild", "ts"], function() {});
+gulp.task("build", ["preBuild", "ts"], function () { });
 
 // compile and run node process
 gulp.task("run", ["ts"], run);
 
-gulp.task("default", ["build", "run"], function() {});
+gulp.task("default", ["build", "run"], function () { });

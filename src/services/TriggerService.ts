@@ -1,3 +1,8 @@
+
+/**
+ * @module Dashboard
+ */
+
 import {
   ServerServiceInterface,
   EmailService,
@@ -7,9 +12,9 @@ import {
 } from "serendip";
 
 export class TriggerService implements ServerServiceInterface {
-  constructor() {}
+  constructor() { }
 
-  checkEvent(type: "form" | "report" | string, subType: string) {}
+  checkEvent(type: "form" | "report" | string, subType: string) { }
 
   async start() {
     // try {

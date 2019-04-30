@@ -1,4 +1,9 @@
-import {
+
+/**
+ * @module Storage
+ */
+
+ import {
   Server,
   AuthService,
   WebSocketService,
