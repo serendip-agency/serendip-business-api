@@ -30,7 +30,7 @@
 
 ⊕ **new BusinessController**(businessService: *[BusinessService](business.businessservice.md)*, authService: *`AuthService`*, profileService: *[ProfileService](profile.profileservice.md)*, entityService: *[EntityService](entity.entityservice.md)*): [BusinessController](business.businesscontroller.md)
 
-*Defined in [src/controllers/BusinessController.ts:19](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L19)*
+*Defined in [src/controllers/BusinessController.ts:19](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L19)*
 
 **Parameters:**
 
@@ -53,7 +53,7 @@ ___
 
 **addMember**: *`object`*
 
-*Defined in [src/controllers/BusinessController.ts:166](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L166)*
+*Defined in [src/controllers/BusinessController.ts:166](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L166)*
 
 <a id="addmember.actions"></a>
 
@@ -108,7 +108,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/BusinessController.ts:168](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L168)*
+*Defined in [src/controllers/BusinessController.ts:168](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L168)*
 
 ___
 <a id="addmember.method"></a>
@@ -117,7 +117,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/BusinessController.ts:167](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L167)*
+*Defined in [src/controllers/BusinessController.ts:167](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L167)*
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 **deleteMember**: *`object`*
 
-*Defined in [src/controllers/BusinessController.ts:133](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L133)*
+*Defined in [src/controllers/BusinessController.ts:133](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L133)*
 
 <a id="deletemember.actions-1"></a>
 
@@ -164,7 +164,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/BusinessController.ts:135](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L135)*
+*Defined in [src/controllers/BusinessController.ts:135](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L135)*
 
 ___
 <a id="deletemember.method-1"></a>
@@ -173,7 +173,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/BusinessController.ts:134](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L134)*
+*Defined in [src/controllers/BusinessController.ts:134](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L134)*
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 **grid**: *`object`*
 
-*Defined in [src/controllers/BusinessController.ts:75](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L75)*
+*Defined in [src/controllers/BusinessController.ts:75](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L75)*
 
 <a id="grid.actions-2"></a>
 
@@ -214,7 +214,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/BusinessController.ts:77](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L77)*
+*Defined in [src/controllers/BusinessController.ts:77](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L77)*
 
 ___
 <a id="grid.method-2"></a>
@@ -223,7 +223,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/BusinessController.ts:76](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L76)*
+*Defined in [src/controllers/BusinessController.ts:76](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L76)*
 
 ___
 
@@ -234,7 +234,7 @@ ___
 
 **list**: *`object`*
 
-*Defined in [src/controllers/BusinessController.ts:27](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L27)*
+*Defined in [src/controllers/BusinessController.ts:27](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L27)*
 
 <a id="list.actions-3"></a>
 
@@ -285,7 +285,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/BusinessController.ts:29](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L29)*
+*Defined in [src/controllers/BusinessController.ts:29](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L29)*
 
 ___
 <a id="list.method-3"></a>
@@ -294,7 +294,7 @@ ___
 
 **● method**: *`string`* = "get"
 
-*Defined in [src/controllers/BusinessController.ts:28](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L28)*
+*Defined in [src/controllers/BusinessController.ts:28](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L28)*
 
 ___
 
@@ -305,7 +305,7 @@ ___
 
 **saveBusiness**: *`object`*
 
-*Defined in [src/controllers/BusinessController.ts:101](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L101)*
+*Defined in [src/controllers/BusinessController.ts:101](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L101)*
 
 <a id="savebusiness.actions-4"></a>
 
@@ -340,7 +340,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/BusinessController.ts:103](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L103)*
+*Defined in [src/controllers/BusinessController.ts:103](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L103)*
 
 ___
 <a id="savebusiness.method-4"></a>
@@ -349,7 +349,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/BusinessController.ts:102](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/BusinessController.ts#L102)*
+*Defined in [src/controllers/BusinessController.ts:102](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/BusinessController.ts#L102)*
 
 ___
 

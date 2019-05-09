@@ -1,4 +1,7 @@
 "use strict";
+/**
+ * @module Storage
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
 const path_1 = require("path");

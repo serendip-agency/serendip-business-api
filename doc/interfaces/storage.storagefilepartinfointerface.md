@@ -25,7 +25,7 @@
 
 **● end**: *`number`*
 
-*Defined in [src/services/StorageService.ts:40](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L40)*
+*Defined in [src/services/StorageService.ts:40](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L40)*
 
 ___
 <a id="path"></a>
@@ -34,7 +34,7 @@ ___
 
 **● path**: *`string`*
 
-*Defined in [src/services/StorageService.ts:38](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L38)*
+*Defined in [src/services/StorageService.ts:38](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L38)*
 
 ___
 <a id="start"></a>
@@ -43,7 +43,7 @@ ___
 
 **● start**: *`number`*
 
-*Defined in [src/services/StorageService.ts:39](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L39)*
+*Defined in [src/services/StorageService.ts:39](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L39)*
 
 ___
 <a id="total"></a>
@@ -52,7 +52,7 @@ ___
 
 **● total**: *`number`*
 
-*Defined in [src/services/StorageService.ts:41](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L41)*
+*Defined in [src/services/StorageService.ts:41](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L41)*
 
 ___
 

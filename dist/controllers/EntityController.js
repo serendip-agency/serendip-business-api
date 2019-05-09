@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module Entity
+ */
 const archiver = require("archiver");
 const serendip_1 = require("serendip");
 const serendip_business_model_1 = require("serendip-business-model");

@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module Storage
+ */
 const fs = require("fs-extra");
 const path_1 = require("path");
 const services_1 = require("../services");

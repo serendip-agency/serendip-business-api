@@ -40,7 +40,7 @@
 
 ⊕ **new StorageService**(dbService: *`DbService`*, webSocketService: *`WebSocketService`*): [StorageService](storage.storageservice.md)
 
-*Defined in [src/services/StorageService.ts:47](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L47)*
+*Defined in [src/services/StorageService.ts:47](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L47)*
 
 **Parameters:**
 
@@ -61,7 +61,7 @@ ___
 
 **● businessesCollection**: *[DbCollectionInterface](../interfaces/db.dbcollectioninterface.md)<`BusinessModel`>*
 
-*Defined in [src/services/StorageService.ts:46](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L46)*
+*Defined in [src/services/StorageService.ts:46](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L46)*
 
 ___
 <a id="datapath"></a>
@@ -70,7 +70,7 @@ ___
 
 **● dataPath**: *`string`*
 
-*Defined in [src/services/StorageService.ts:47](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L47)*
+*Defined in [src/services/StorageService.ts:47](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L47)*
 
 ___
 <a id="userscollection"></a>
@@ -79,7 +79,7 @@ ___
 
 **● usersCollection**: *[DbCollectionInterface](../interfaces/db.dbcollectioninterface.md)<[UserModel](auth.usermodel.md)>*
 
-*Defined in [src/services/StorageService.ts:45](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L45)*
+*Defined in [src/services/StorageService.ts:45](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L45)*
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 ▸ **assemblePartsIfPossible**(filePath: *`any`*, userId: *`any`*): `Promise`<`void`>
 
-*Defined in [src/services/StorageService.ts:184](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L184)*
+*Defined in [src/services/StorageService.ts:184](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L184)*
 
 check .part files for specific filePath if all required files are available it will get assemble the file
 
@@ -111,7 +111,7 @@ ___
 
 ▸ **checkPartsBeforeUpload**(command: *[StorageCommandInterface](../interfaces/storage.storagecommandinterface.md)*): `Promise`<`void`>
 
-*Defined in [src/services/StorageService.ts:177](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L177)*
+*Defined in [src/services/StorageService.ts:177](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L177)*
 
 **Parameters:**
 
@@ -128,7 +128,7 @@ ___
 
 ▸ **getDirectoryOfPath**(path: *`string`*): `string`
 
-*Defined in [src/services/StorageService.ts:231](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L231)*
+*Defined in [src/services/StorageService.ts:231](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L231)*
 
 **Parameters:**
 
@@ -145,7 +145,7 @@ ___
 
 ▸ **getFilePartsInfo**(filePath: *`string`*): `Promise`<[StorageFilePartInfoInterface](../interfaces/storage.storagefilepartinfointerface.md)[]>
 
-*Defined in [src/services/StorageService.ts:110](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L110)*
+*Defined in [src/services/StorageService.ts:110](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L110)*
 
 **Parameters:**
 
@@ -162,7 +162,7 @@ ___
 
 ▸ **notifyUser**(userId: *`any`*, model: *`object`*): `Promise`<`void`>
 
-*Defined in [src/services/StorageService.ts:96](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L96)*
+*Defined in [src/services/StorageService.ts:96](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L96)*
 
 **Parameters:**
 
@@ -184,7 +184,7 @@ ___
 
 ▸ **start**(): `Promise`<`void`>
 
-*Defined in [src/services/StorageService.ts:284](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L284)*
+*Defined in [src/services/StorageService.ts:284](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L284)*
 
 **Returns:** `Promise`<`void`>
 
@@ -195,7 +195,7 @@ ___
 
 ▸ **uploadPercent**(filePath: *`any`*): `Promise`<`number`>
 
-*Defined in [src/services/StorageService.ts:157](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L157)*
+*Defined in [src/services/StorageService.ts:157](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L157)*
 
 calculate upload percent base on uploaded parts divide by total
 
@@ -214,7 +214,7 @@ ___
 
 ▸ **userHasAccessToPath**(userId: *`string`*, path: *`string`*): `Promise`<`boolean`>
 
-*Defined in [src/services/StorageService.ts:54](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L54)*
+*Defined in [src/services/StorageService.ts:54](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L54)*
 
 **Parameters:**
 
@@ -232,7 +232,7 @@ ___
 
 ▸ **writeBase64AsFile**(base64: *`any`*, path: *`any`*): `Promise`<`void`>
 
-*Defined in [src/services/StorageService.ts:79](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/StorageService.ts#L79)*
+*Defined in [src/services/StorageService.ts:79](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/StorageService.ts#L79)*
 
 **Parameters:**
 

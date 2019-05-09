@@ -39,7 +39,7 @@
 
 ⊕ **new EntityController**(entityService: *[EntityService](entity.entityservice.md)*, dbService: *`DbService`*): [EntityController](entity.entitycontroller.md)
 
-*Defined in [src/controllers/EntityController.ts:24](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L24)*
+*Defined in [src/controllers/EntityController.ts:24](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L24)*
 
 **Parameters:**
 
@@ -60,7 +60,7 @@ ___
 
 ▸ **onRequest**(req: *`HttpRequestInterface`*, res: *`HttpResponseInterface`*, next: *`any`*, done: *`any`*): `Promise`<`void`>
 
-*Defined in [src/controllers/EntityController.ts:30](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L30)*
+*Defined in [src/controllers/EntityController.ts:30](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L30)*
 
 **Parameters:**
 
@@ -83,7 +83,7 @@ ___
 
 **changes**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:190](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L190)*
+*Defined in [src/controllers/EntityController.ts:190](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L190)*
 
 <a id="changes.actions"></a>
 
@@ -146,7 +146,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:193](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L193)*
+*Defined in [src/controllers/EntityController.ts:193](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L193)*
 
 ___
 <a id="changes.method"></a>
@@ -155,7 +155,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:192](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L192)*
+*Defined in [src/controllers/EntityController.ts:192](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L192)*
 
 ___
 <a id="changes.route"></a>
@@ -164,7 +164,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/changes"
 
-*Defined in [src/controllers/EntityController.ts:191](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L191)*
+*Defined in [src/controllers/EntityController.ts:191](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L191)*
 
 ___
 
@@ -175,7 +175,7 @@ ___
 
 **count**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:345](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L345)*
+*Defined in [src/controllers/EntityController.ts:345](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L345)*
 
 <a id="count.actions-1"></a>
 
@@ -195,7 +195,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:348](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L348)*
+*Defined in [src/controllers/EntityController.ts:348](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L348)*
 
 ___
 <a id="count.method-1"></a>
@@ -204,7 +204,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:347](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L347)*
+*Defined in [src/controllers/EntityController.ts:347](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L347)*
 
 ___
 <a id="count.route-1"></a>
@@ -213,7 +213,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/count"
 
-*Defined in [src/controllers/EntityController.ts:346](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L346)*
+*Defined in [src/controllers/EntityController.ts:346](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L346)*
 
 ___
 
@@ -224,7 +224,7 @@ ___
 
 **delete**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:481](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L481)*
+*Defined in [src/controllers/EntityController.ts:481](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L481)*
 
 <a id="delete.actions-2"></a>
 
@@ -265,7 +265,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:484](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L484)*
+*Defined in [src/controllers/EntityController.ts:484](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L484)*
 
 ___
 <a id="delete.method-2"></a>
@@ -274,7 +274,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:483](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L483)*
+*Defined in [src/controllers/EntityController.ts:483](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L483)*
 
 ___
 <a id="delete.route-2"></a>
@@ -283,7 +283,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/delete"
 
-*Defined in [src/controllers/EntityController.ts:482](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L482)*
+*Defined in [src/controllers/EntityController.ts:482](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L482)*
 
 ___
 
@@ -294,7 +294,7 @@ ___
 
 **details**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:141](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L141)*
+*Defined in [src/controllers/EntityController.ts:141](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L141)*
 
 <a id="details.actions-3"></a>
 
@@ -318,7 +318,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:144](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L144)*
+*Defined in [src/controllers/EntityController.ts:144](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L144)*
 
 ___
 <a id="details.method-3"></a>
@@ -327,7 +327,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:143](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L143)*
+*Defined in [src/controllers/EntityController.ts:143](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L143)*
 
 ___
 <a id="details.route-3"></a>
@@ -336,7 +336,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/details"
 
-*Defined in [src/controllers/EntityController.ts:142](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L142)*
+*Defined in [src/controllers/EntityController.ts:142](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L142)*
 
 ___
 
@@ -347,7 +347,7 @@ ___
 
 **export**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:82](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L82)*
+*Defined in [src/controllers/EntityController.ts:82](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L82)*
 
 <a id="export.actions-4"></a>
 
@@ -407,7 +407,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:86](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L86)*
+*Defined in [src/controllers/EntityController.ts:86](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L86)*
 
 ___
 <a id="export.isstream"></a>
@@ -416,7 +416,7 @@ ___
 
 **● isStream**: *`true`* = true
 
-*Defined in [src/controllers/EntityController.ts:85](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L85)*
+*Defined in [src/controllers/EntityController.ts:85](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L85)*
 
 ___
 <a id="export.method-4"></a>
@@ -425,7 +425,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:84](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L84)*
+*Defined in [src/controllers/EntityController.ts:84](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L84)*
 
 ___
 <a id="export.route-4"></a>
@@ -434,7 +434,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/export"
 
-*Defined in [src/controllers/EntityController.ts:83](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L83)*
+*Defined in [src/controllers/EntityController.ts:83](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L83)*
 
 ___
 
@@ -445,7 +445,7 @@ ___
 
 **insert**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:409](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L409)*
+*Defined in [src/controllers/EntityController.ts:409](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L409)*
 
 <a id="insert.actions-5"></a>
 
@@ -482,7 +482,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:412](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L412)*
+*Defined in [src/controllers/EntityController.ts:412](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L412)*
 
 ___
 <a id="insert.method-5"></a>
@@ -491,7 +491,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:411](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L411)*
+*Defined in [src/controllers/EntityController.ts:411](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L411)*
 
 ___
 <a id="insert.route-5"></a>
@@ -500,7 +500,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/insert"
 
-*Defined in [src/controllers/EntityController.ts:410](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L410)*
+*Defined in [src/controllers/EntityController.ts:410](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L410)*
 
 ___
 
@@ -511,7 +511,7 @@ ___
 
 **list**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:316](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L316)*
+*Defined in [src/controllers/EntityController.ts:316](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L316)*
 
 <a id="list.actions-6"></a>
 
@@ -541,7 +541,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:320](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L320)*
+*Defined in [src/controllers/EntityController.ts:320](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L320)*
 
 ___
 <a id="list.method-6"></a>
@@ -550,7 +550,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:319](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L319)*
+*Defined in [src/controllers/EntityController.ts:319](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L319)*
 
 ___
 <a id="list.route-6"></a>
@@ -559,7 +559,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/list"
 
-*Defined in [src/controllers/EntityController.ts:317](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L317)*
+*Defined in [src/controllers/EntityController.ts:317](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L317)*
 
 ___
 
@@ -570,7 +570,7 @@ ___
 
 **search**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:363](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L363)*
+*Defined in [src/controllers/EntityController.ts:363](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L363)*
 
 <a id="search.actions-7"></a>
 
@@ -618,7 +618,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:366](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L366)*
+*Defined in [src/controllers/EntityController.ts:366](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L366)*
 
 ___
 <a id="search.method-7"></a>
@@ -627,7 +627,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:365](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L365)*
+*Defined in [src/controllers/EntityController.ts:365](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L365)*
 
 ___
 <a id="search.route-7"></a>
@@ -636,7 +636,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/search"
 
-*Defined in [src/controllers/EntityController.ts:364](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L364)*
+*Defined in [src/controllers/EntityController.ts:364](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L364)*
 
 ___
 
@@ -647,7 +647,7 @@ ___
 
 **update**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:444](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L444)*
+*Defined in [src/controllers/EntityController.ts:444](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L444)*
 
 <a id="update.actions-8"></a>
 
@@ -685,7 +685,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:448](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L448)*
+*Defined in [src/controllers/EntityController.ts:448](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L448)*
 
 ___
 <a id="update.method-8"></a>
@@ -694,7 +694,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:447](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L447)*
+*Defined in [src/controllers/EntityController.ts:447](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L447)*
 
 ___
 <a id="update.route-8"></a>
@@ -703,7 +703,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/update"
 
-*Defined in [src/controllers/EntityController.ts:445](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L445)*
+*Defined in [src/controllers/EntityController.ts:445](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L445)*
 
 ___
 
@@ -714,7 +714,7 @@ ___
 
 **zip**: *`object`*
 
-*Defined in [src/controllers/EntityController.ts:39](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L39)*
+*Defined in [src/controllers/EntityController.ts:39](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L39)*
 
 <a id="zip.actions-9"></a>
 
@@ -758,7 +758,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/EntityController.ts:43](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L43)*
+*Defined in [src/controllers/EntityController.ts:43](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L43)*
 
 ___
 <a id="zip.isstream-1"></a>
@@ -767,7 +767,7 @@ ___
 
 **● isStream**: *`true`* = true
 
-*Defined in [src/controllers/EntityController.ts:42](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L42)*
+*Defined in [src/controllers/EntityController.ts:42](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L42)*
 
 ___
 <a id="zip.method-9"></a>
@@ -776,7 +776,7 @@ ___
 
 **● method**: *`string`* = "post"
 
-*Defined in [src/controllers/EntityController.ts:41](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L41)*
+*Defined in [src/controllers/EntityController.ts:41](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L41)*
 
 ___
 <a id="zip.route-9"></a>
@@ -785,7 +785,7 @@ ___
 
 **● route**: *`string`* = "/api/entity/:entity/zip"
 
-*Defined in [src/controllers/EntityController.ts:40](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/EntityController.ts#L40)*
+*Defined in [src/controllers/EntityController.ts:40](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/EntityController.ts#L40)*
 
 ___
 

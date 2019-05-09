@@ -14,12 +14,17 @@ export class DashboardService {
     private webSocketService: WebSocketService,
     private entityService: EntityService,
     private businessService: BusinessService
-  ) {}
+  ) { }
 
   async start() {
+
+    console.log('starting dashboard service')
     this.webSocketService.messageEmitter.on(
       "/dashboard",
       async (input: string, ws: WebSocketInterface) => {
+
+        console.log(input);
+
         var msg: {
           command: "sync_grid";
           business: string;
@@ -27,6 +32,7 @@ export class DashboardService {
         } = JSON.parse(input);
 
         msg.data = JSON.parse(msg.data);
+
 
         if (
           !(await this.businessService.userHasAccessToBusiness(
@@ -41,15 +47,17 @@ export class DashboardService {
           this.entityService
             .insert({
               _business: msg.business,
-              _entity: "grid",
+              _entity: "_grid",
               _cuser: ws.token.userId.toString(),
               _vuser: ws.token.userId.toString(),
               _vdate: Date.now(),
               _cdate: Date.now(),
               data: msg.data
             })
-            .then(() => {})
-            .catch(() => {});
+            .then(() => { })
+            .catch((e) => {
+              console.error('error sync_grid insert', e)
+            });
 
           // console.log(
           //   "grid sync from",

@@ -26,7 +26,7 @@
 
 ⊕ **new DashboardService**(webSocketService: *`WebSocketService`*, entityService: *[EntityService](entity.entityservice.md)*, businessService: *[BusinessService](business.businessservice.md)*): [DashboardService](dashboard.dashboardservice.md)
 
-*Defined in [src/services/DashboardService.ts:12](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/DashboardService.ts#L12)*
+*Defined in [src/services/DashboardService.ts:12](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/DashboardService.ts#L12)*
 
 **Parameters:**
 
@@ -48,7 +48,7 @@ ___
 
 ▸ **start**(): `Promise`<`void`>
 
-*Defined in [src/services/DashboardService.ts:19](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/DashboardService.ts#L19)*
+*Defined in [src/services/DashboardService.ts:19](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/DashboardService.ts#L19)*
 
 **Returns:** `Promise`<`void`>
 

@@ -14,7 +14,7 @@ import {
 } from "serendip";
 
 import { join } from "path";
-import { BusinessController } from "./controllers"; 
+import { BusinessController } from "./controllers";
 import { EntityController } from "./controllers/EntityController";
 import { BusinessService } from "./services/BusinessService";
 import { EntityService, ProfileService } from "./services";
@@ -92,6 +92,9 @@ HttpService.configure({
   ]
 });
 
+
+//WebSocketService.bypassTokenOnRoutes = ['/']
+
 start({
   logging: (process.env["core.logging"] as any) || "info",
 
@@ -106,7 +109,7 @@ start({
     AuthService,
     ViewEngineService,
     BusinessService,
-    EntityService, 
+    EntityService,
     WebSocketService,
     StorageService,
     DashboardService,
@@ -116,10 +119,7 @@ start({
   ]
 })
   .then(() => {
-
-
     let emitter = new EventEmitter();
-
 
   })
   .catch(msg => console.log(msg));

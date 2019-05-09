@@ -65,7 +65,7 @@ export class EntityService implements ServerServiceInterface {
   async insert(model: EntityModel) {
     if (!model._cdate) model._cdate = Date.now();
 
-    if (model._entity != "grid") await this.notifyUsers("insert", model);
+    if (model._entity != "_grid") await this.notifyUsers("insert", model);
     return this.collection.insertOne(model);
   }
 

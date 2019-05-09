@@ -31,7 +31,7 @@
 
 ⊕ **new TriggerService**(): [TriggerService](dashboard.triggerservice.md)
 
-*Defined in [src/services/TriggerService.ts:14](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/TriggerService.ts#L14)*
+*Defined in [src/services/TriggerService.ts:14](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/TriggerService.ts#L14)*
 
 **Returns:** [TriggerService](dashboard.triggerservice.md)
 
@@ -45,7 +45,7 @@ ___
 
 ▸ **checkEvent**(type: *"form" \| "report" \| `string`*, subType: *`string`*): `void`
 
-*Defined in [src/services/TriggerService.ts:17](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/TriggerService.ts#L17)*
+*Defined in [src/services/TriggerService.ts:17](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/TriggerService.ts#L17)*
 
 **Parameters:**
 
@@ -63,7 +63,7 @@ ___
 
 ▸ **start**(): `Promise`<`void`>
 
-*Defined in [src/services/TriggerService.ts:19](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/TriggerService.ts#L19)*
+*Defined in [src/services/TriggerService.ts:19](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/TriggerService.ts#L19)*
 
 **Returns:** `Promise`<`void`>
 

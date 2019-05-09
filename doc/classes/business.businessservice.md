@@ -42,7 +42,7 @@
 
 ⊕ **new BusinessService**(): [BusinessService](business.businessservice.md)
 
-*Defined in [src/services/BusinessService.ts:29](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L29)*
+*Defined in [src/services/BusinessService.ts:29](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L29)*
 
 **Returns:** [BusinessService](business.businessservice.md)
 
@@ -56,7 +56,7 @@ ___
 
 **● businessCollection**: *[DbCollectionInterface](../interfaces/db.dbcollectioninterface.md)<`BusinessModel`>*
 
-*Defined in [src/services/BusinessService.ts:29](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L29)*
+*Defined in [src/services/BusinessService.ts:29](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L29)*
 
 ___
 <a id="dependencies"></a>
@@ -65,7 +65,7 @@ ___
 
 **● dependencies**: *`string`[]* =  ["AuthService", "DbService"]
 
-*Defined in [src/services/BusinessService.ts:25](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L25)*
+*Defined in [src/services/BusinessService.ts:25](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L25)*
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 ▸ **delete**(model: *`BusinessModel`*): `Promise`<`BusinessModel`>
 
-*Defined in [src/services/BusinessService.ts:51](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L51)*
+*Defined in [src/services/BusinessService.ts:51](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L51)*
 
 **Parameters:**
 
@@ -94,7 +94,7 @@ ___
 
 ▸ **findBusinessesByUserId**(userId: *`string`*): `Promise`<`BusinessModel`[]>
 
-*Defined in [src/services/BusinessService.ts:62](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L62)*
+*Defined in [src/services/BusinessService.ts:62](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L62)*
 
 **Parameters:**
 
@@ -111,7 +111,7 @@ ___
 
 ▸ **findById**(id: *`string`*): `Promise`<`BusinessModel`>
 
-*Defined in [src/services/BusinessService.ts:55](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L55)*
+*Defined in [src/services/BusinessService.ts:55](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L55)*
 
 **Parameters:**
 
@@ -128,7 +128,7 @@ ___
 
 ▸ **insert**(model: *`BusinessModel`*): `Promise`<`BusinessModel`>
 
-*Defined in [src/services/BusinessService.ts:43](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L43)*
+*Defined in [src/services/BusinessService.ts:43](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L43)*
 
 **Parameters:**
 
@@ -145,7 +145,7 @@ ___
 
 ▸ **start**(): `Promise`<`void`>
 
-*Defined in [src/services/BusinessService.ts:36](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L36)*
+*Defined in [src/services/BusinessService.ts:36](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L36)*
 
 **Returns:** `Promise`<`void`>
 
@@ -156,7 +156,7 @@ ___
 
 ▸ **update**(model: *`BusinessModel`*): `Promise`<`BusinessModel`>
 
-*Defined in [src/services/BusinessService.ts:47](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L47)*
+*Defined in [src/services/BusinessService.ts:47](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L47)*
 
 **Parameters:**
 
@@ -173,7 +173,7 @@ ___
 
 ▸ **userHasAccessToBusiness**(userId: *`any`*, businessId: *`any`*): `Promise`<`boolean`>
 
-*Defined in [src/services/BusinessService.ts:85](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L85)*
+*Defined in [src/services/BusinessService.ts:85](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L85)*
 
 **Parameters:**
 
@@ -191,7 +191,7 @@ ___
 
 ▸ **checkUserAccess**(req: *`HttpRequestInterface`*, res: *`any`*, next: *`any`*, done: *`any`*): `Promise`<`any`>
 
-*Defined in [src/services/BusinessService.ts:92](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/BusinessService.ts#L92)*
+*Defined in [src/services/BusinessService.ts:92](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/BusinessService.ts#L92)*
 
 **Parameters:**
 

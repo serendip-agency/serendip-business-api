@@ -38,7 +38,7 @@
 
 ⊕ **new ClientService**(httpService: *`HttpService`*, dbService: *`DbService`*): [ClientService](client.clientservice.md)
 
-*Defined in [src/services/ClientService.ts:18](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L18)*
+*Defined in [src/services/ClientService.ts:18](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L18)*
 
 **Parameters:**
 
@@ -59,7 +59,7 @@ ___
 
 **● business**: *`BusinessService`*
 
-*Defined in [src/services/ClientService.ts:15](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L15)*
+*Defined in [src/services/ClientService.ts:15](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L15)*
 
 ___
 <a id="data"></a>
@@ -68,7 +68,7 @@ ___
 
 **● data**: *`DataService`*
 
-*Defined in [src/services/ClientService.ts:16](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L16)*
+*Defined in [src/services/ClientService.ts:16](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L16)*
 
 ___
 <a id="entitysocket"></a>
@@ -77,7 +77,7 @@ ___
 
 **● entitySocket**: *`WebSocket`*
 
-*Defined in [src/services/ClientService.ts:18](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L18)*
+*Defined in [src/services/ClientService.ts:18](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L18)*
 
 ___
 <a id="ws"></a>
@@ -86,7 +86,7 @@ ___
 
 **● ws**: *`WsService`*
 
-*Defined in [src/services/ClientService.ts:17](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L17)*
+*Defined in [src/services/ClientService.ts:17](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L17)*
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 ▸ **initEntitySocket**(): `Promise`<`void`>
 
-*Defined in [src/services/ClientService.ts:211](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L211)*
+*Defined in [src/services/ClientService.ts:211](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L211)*
 
 **Returns:** `Promise`<`void`>
 
@@ -109,7 +109,7 @@ ___
 
 ▸ **start**(): `Promise`<`void`>
 
-*Defined in [src/services/ClientService.ts:21](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ClientService.ts#L21)*
+*Defined in [src/services/ClientService.ts:21](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ClientService.ts#L21)*
 
 **Returns:** `Promise`<`void`>
 

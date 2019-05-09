@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
 const path_1 = require("path");
 const controllers_1 = require("./controllers");
-const ImportService_1 = require("./services/ImportService");
 const EntityController_1 = require("./controllers/EntityController");
 const BusinessService_1 = require("./services/BusinessService");
 const services_1 = require("./services");
@@ -69,6 +68,7 @@ serendip_1.HttpService.configure({
         StorageController_1.StorageController
     ]
 });
+//WebSocketService.bypassTokenOnRoutes = ['/']
 serendip_1.start({
     logging: process.env["core.logging"] || "info",
     cpuCores: process.env["core.cpuCores"] || 1,
@@ -82,7 +82,6 @@ serendip_1.start({
         serendip_1.ViewEngineService,
         BusinessService_1.BusinessService,
         services_1.EntityService,
-        ImportService_1.ImportService,
         serendip_1.WebSocketService,
         StorageService_1.StorageService,
         DashboardService_1.DashboardService,

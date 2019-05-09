@@ -84,7 +84,7 @@ export class BusinessController {
         access: BusinessCheckAccessResultInterface
       ) => {
         var query = (await this.entityService.collection.find({
-          _entity: "grid",
+          _entity: "_grid",
           _business: access.business._id.toString(),
           _cuser: access.member.userId.toString(),
           "data.section": req.body.section

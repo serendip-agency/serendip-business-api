@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module Business
+ */
 const serendip_1 = require("serendip");
 const BusinessService_1 = require("../services/BusinessService");
 const serendip_business_model_1 = require("serendip-business-model");
@@ -48,7 +51,7 @@ class BusinessController {
                 BusinessService_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
                     var query = (await this.entityService.collection.find({
-                        _entity: "grid",
+                        _entity: "_grid",
                         _business: access.business._id.toString(),
                         _cuser: access.member.userId.toString(),
                         "data.section": req.body.section

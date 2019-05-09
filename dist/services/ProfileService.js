@@ -1,4 +1,7 @@
 "use strict";
+/**
+ * @module Profile
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const bson_1 = require("bson");
 class ProfileService {

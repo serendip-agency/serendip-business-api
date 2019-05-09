@@ -6,7 +6,7 @@
 ![TypeScript](https://badges.frapsoft.com/typescript/love/typescript.svg?v=101)
 
 
-![SF](https://raw.githubusercontent.com/serendip-agency/serendip-business-API/master/readme_icon.png " ")
+![SF](https://raw.githubusercontent.com/serendip-agency/serendip-business-api/master/readme_icon.png " ")
 
 ## Serendip Business API
 It's the source code of our main business API. this web API is built on [Serendip framework](https://github.com/serendip-agency/serendip-framework) and is responsible for
@@ -99,7 +99,7 @@ authenticating with this API is possible with any http client for [password gran
 coming soon ...
 
 ### Code Documentation
-This documents are auto generated from typescript source using [typedoc](https://github.com/TypeStrong/typedoc)
+This documents are auto generated from typescript source using [typedoc](https://github.com/TypeStrong/typedoc)pac
 * [Auth](modules/auth.md)
 * [Business](modules/business.md)
 * [Client](modules/client.md)

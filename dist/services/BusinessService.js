@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module Business
+ */
 const serendip_1 = require("serendip");
 const _ = require("underscore");
 class BusinessService {

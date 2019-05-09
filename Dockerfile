@@ -1,26 +1,33 @@
-FROM node:current-alpine
-
+FROM node:alpine
 WORKDIR /app
+COPY . .
+RUN npm i 
+EXPOSE 80
+USER root
 
+# Serendip core options
+ENV core.logging=info 
+ENV core.cpuCores=1 
+ENV core.httpPort=80 
 
-COPY package*.json ./
-COPY files files
-COPY dist dist
-COPY node_modules node_modules
+# Db service options
+ENV db.mongoDb=serendip_business_api 
+ENV db.mongoUrl=mongodb://localhost:27017 
+ENV db.authSource=
+ENV db.user=
+ENV db.password=
 
+# Email service options
+ENV email.host=test.cloud 
+ENV email.username=system@test.cloud 
+ENV email.password=  
+ENV email.port=587 
+ENV email.ssl=false 
 
-# RUN npm i npm@latest -g
+ENV smsIr.lineNumber=  
+ENV smsIr.apiKey=  
+ENV smsIr.secretKey=
+ENV smsIr.verifyTemplate=5405 
+ENV smsIr.verifyTemplateWithIpAndUseragent=5406 
 
-# RUN npm install --no-optional && npm cache clean --force
-
-# HEALTHCHECK --interval=30s CMD node healthcheck.js
-
-
-# the official node image provides an unprivileged user as a security best practice
-# https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#non-root-user
-
-USER node
-
-EXPOSE 2040
-
-CMD [ "node", "./dist/app.js" ]
+CMD [ "node", "dist/app.js" ]

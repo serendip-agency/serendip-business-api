@@ -37,7 +37,7 @@
 
 ⊕ **new ProfileService**(dbService: *`DbService`*): [ProfileService](profile.profileservice.md)
 
-*Defined in [src/services/ProfileService.ts:13](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ProfileService.ts#L13)*
+*Defined in [src/services/ProfileService.ts:13](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ProfileService.ts#L13)*
 
 **Parameters:**
 
@@ -57,7 +57,7 @@ ___
 
 **● collection**: *[DbCollectionInterface](../interfaces/db.dbcollectioninterface.md)<`ProfileModel`>*
 
-*Defined in [src/services/ProfileService.ts:11](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ProfileService.ts#L11)*
+*Defined in [src/services/ProfileService.ts:11](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ProfileService.ts#L11)*
 
 ___
 <a id="dependencies"></a>
@@ -66,7 +66,7 @@ ___
 
 **● dependencies**: *`string`[]* =  ["DbService"]
 
-*Defined in [src/services/ProfileService.ts:13](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ProfileService.ts#L13)*
+*Defined in [src/services/ProfileService.ts:13](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ProfileService.ts#L13)*
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 ▸ **findProfileById**(id: *`string`*, skip?: *`number`*, limit?: *`number`*): `Promise`<`ProfileModel`>
 
-*Defined in [src/services/ProfileService.ts:24](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ProfileService.ts#L24)*
+*Defined in [src/services/ProfileService.ts:24](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ProfileService.ts#L24)*
 
 **Parameters:**
 
@@ -97,7 +97,7 @@ ___
 
 ▸ **findProfileByUserId**(id: *`string`*, skip?: *`number`*, limit?: *`number`*): `Promise`<`ProfileModel`>
 
-*Defined in [src/services/ProfileService.ts:35](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ProfileService.ts#L35)*
+*Defined in [src/services/ProfileService.ts:35](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ProfileService.ts#L35)*
 
 **Parameters:**
 
@@ -116,7 +116,7 @@ ___
 
 ▸ **start**(): `Promise`<`void`>
 
-*Defined in [src/services/ProfileService.ts:17](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/services/ProfileService.ts#L17)*
+*Defined in [src/services/ProfileService.ts:17](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/services/ProfileService.ts#L17)*
 
 **Returns:** `Promise`<`void`>
 

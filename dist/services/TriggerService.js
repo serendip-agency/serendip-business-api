@@ -1,4 +1,7 @@
 "use strict";
+/**
+ * @module Dashboard
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 class TriggerService {
     constructor() { }

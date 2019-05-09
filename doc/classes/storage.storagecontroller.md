@@ -37,7 +37,7 @@
 
 ⊕ **new StorageController**(dbService: *`DbService`*, storageService: *[StorageService](storage.storageservice.md)*): [StorageController](storage.storagecontroller.md)
 
-*Defined in [src/controllers/StorageController.ts:26](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L26)*
+*Defined in [src/controllers/StorageController.ts:26](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L26)*
 
 **Parameters:**
 
@@ -58,7 +58,7 @@ ___
 
 ▸ **onRequest**(req: *`HttpRequestInterface`*, res: *`HttpResponseInterface`*, next: *`any`*, done: *`any`*): `Promise`<`void`>
 
-*Defined in [src/controllers/StorageController.ts:32](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L32)*
+*Defined in [src/controllers/StorageController.ts:32](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L32)*
 
 **Parameters:**
 
@@ -81,7 +81,7 @@ ___
 
 **assemble**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:439](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L439)*
+*Defined in [src/controllers/StorageController.ts:439](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L439)*
 
 <a id="assemble.actions"></a>
 
@@ -120,7 +120,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:441](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L441)*
+*Defined in [src/controllers/StorageController.ts:441](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L441)*
 
 ___
 <a id="assemble.method"></a>
@@ -129,7 +129,7 @@ ___
 
 **● method**: *`string`* = "POST"
 
-*Defined in [src/controllers/StorageController.ts:440](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L440)*
+*Defined in [src/controllers/StorageController.ts:440](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L440)*
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 **list**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:372](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L372)*
+*Defined in [src/controllers/StorageController.ts:372](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L372)*
 
 <a id="list.actions-1"></a>
 
@@ -209,7 +209,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:374](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L374)*
+*Defined in [src/controllers/StorageController.ts:374](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L374)*
 
 ___
 <a id="list.method-1"></a>
@@ -218,7 +218,7 @@ ___
 
 **● method**: *`string`* = "POST"
 
-*Defined in [src/controllers/StorageController.ts:373](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L373)*
+*Defined in [src/controllers/StorageController.ts:373](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L373)*
 
 ___
 
@@ -229,7 +229,7 @@ ___
 
 **newFolder**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:92](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L92)*
+*Defined in [src/controllers/StorageController.ts:92](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L92)*
 
 <a id="newfolder.actions-2"></a>
 
@@ -274,7 +274,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:94](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L94)*
+*Defined in [src/controllers/StorageController.ts:94](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L94)*
 
 ___
 <a id="newfolder.method-2"></a>
@@ -283,7 +283,7 @@ ___
 
 **● method**: *`string`* = "POST"
 
-*Defined in [src/controllers/StorageController.ts:93](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L93)*
+*Defined in [src/controllers/StorageController.ts:93](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L93)*
 
 ___
 
@@ -294,7 +294,7 @@ ___
 
 **parts**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:311](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L311)*
+*Defined in [src/controllers/StorageController.ts:311](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L311)*
 
 <a id="parts.actions-3"></a>
 
@@ -358,7 +358,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:313](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L313)*
+*Defined in [src/controllers/StorageController.ts:313](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L313)*
 
 ___
 <a id="parts.method-3"></a>
@@ -367,7 +367,7 @@ ___
 
 **● method**: *`string`* = "POST"
 
-*Defined in [src/controllers/StorageController.ts:312](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L312)*
+*Defined in [src/controllers/StorageController.ts:312](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L312)*
 
 ___
 
@@ -378,7 +378,7 @@ ___
 
 **preview**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:213](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L213)*
+*Defined in [src/controllers/StorageController.ts:213](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L213)*
 
 <a id="preview.actions-4"></a>
 
@@ -471,7 +471,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:217](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L217)*
+*Defined in [src/controllers/StorageController.ts:217](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L217)*
 
 ___
 <a id="preview.isstream"></a>
@@ -480,7 +480,7 @@ ___
 
 **● isStream**: *`true`* = true
 
-*Defined in [src/controllers/StorageController.ts:215](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L215)*
+*Defined in [src/controllers/StorageController.ts:215](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L215)*
 
 ___
 <a id="preview.method-4"></a>
@@ -489,7 +489,7 @@ ___
 
 **● method**: *`string`* = "GET"
 
-*Defined in [src/controllers/StorageController.ts:214](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L214)*
+*Defined in [src/controllers/StorageController.ts:214](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L214)*
 
 ___
 <a id="preview.publicaccess"></a>
@@ -498,7 +498,7 @@ ___
 
 **● publicAccess**: *`false`* = false
 
-*Defined in [src/controllers/StorageController.ts:215](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L215)*
+*Defined in [src/controllers/StorageController.ts:215](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L215)*
 
 ___
 <a id="preview.route"></a>
@@ -507,7 +507,7 @@ ___
 
 **● route**: *`string`* = "api/storage/preview/:path*"
 
-*Defined in [src/controllers/StorageController.ts:216](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L216)*
+*Defined in [src/controllers/StorageController.ts:216](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L216)*
 
 ___
 
@@ -518,7 +518,7 @@ ___
 
 **public**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:187](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L187)*
+*Defined in [src/controllers/StorageController.ts:187](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L187)*
 
 <a id="public.actions-5"></a>
 
@@ -543,7 +543,7 @@ ___
         return this.preview.actions[0](req, res, next, done);
       }]
 
-*Defined in [src/controllers/StorageController.ts:192](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L192)*
+*Defined in [src/controllers/StorageController.ts:192](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L192)*
 
 ___
 <a id="public.isstream-1"></a>
@@ -552,7 +552,7 @@ ___
 
 **● isStream**: *`true`* = true
 
-*Defined in [src/controllers/StorageController.ts:190](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L190)*
+*Defined in [src/controllers/StorageController.ts:190](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L190)*
 
 ___
 <a id="public.method-5"></a>
@@ -561,7 +561,7 @@ ___
 
 **● method**: *`string`* = "GET"
 
-*Defined in [src/controllers/StorageController.ts:188](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L188)*
+*Defined in [src/controllers/StorageController.ts:188](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L188)*
 
 ___
 <a id="public.publicaccess-1"></a>
@@ -570,7 +570,7 @@ ___
 
 **● publicAccess**: *`true`* = true
 
-*Defined in [src/controllers/StorageController.ts:189](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L189)*
+*Defined in [src/controllers/StorageController.ts:189](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L189)*
 
 ___
 <a id="public.route-1"></a>
@@ -579,7 +579,7 @@ ___
 
 **● route**: *`string`* = "dl/:first*/public/:last*"
 
-*Defined in [src/controllers/StorageController.ts:191](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L191)*
+*Defined in [src/controllers/StorageController.ts:191](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L191)*
 
 ___
 
@@ -590,7 +590,7 @@ ___
 
 **test**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:43](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L43)*
+*Defined in [src/controllers/StorageController.ts:43](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L43)*
 
 <a id="test.actions-6"></a>
 
@@ -637,7 +637,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:46](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L46)*
+*Defined in [src/controllers/StorageController.ts:46](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L46)*
 
 ___
 <a id="test.method-6"></a>
@@ -646,7 +646,7 @@ ___
 
 **● method**: *`string`* = "get"
 
-*Defined in [src/controllers/StorageController.ts:44](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L44)*
+*Defined in [src/controllers/StorageController.ts:44](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L44)*
 
 ___
 <a id="test.publicaccess-2"></a>
@@ -655,7 +655,7 @@ ___
 
 **● publicAccess**: *`true`* = true
 
-*Defined in [src/controllers/StorageController.ts:45](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L45)*
+*Defined in [src/controllers/StorageController.ts:45](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L45)*
 
 ___
 
@@ -666,7 +666,7 @@ ___
 
 **upload**: *`object`*
 
-*Defined in [src/controllers/StorageController.ts:136](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L136)*
+*Defined in [src/controllers/StorageController.ts:136](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L136)*
 
 <a id="upload.actions-7"></a>
 
@@ -721,7 +721,7 @@ ___
       }
     ]
 
-*Defined in [src/controllers/StorageController.ts:138](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L138)*
+*Defined in [src/controllers/StorageController.ts:138](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L138)*
 
 ___
 <a id="upload.method-7"></a>
@@ -730,7 +730,7 @@ ___
 
 **● method**: *`string`* = "POST"
 
-*Defined in [src/controllers/StorageController.ts:137](https://github.com/serendip-agency/serendip-business-api/blob/5f2768d/src/controllers/StorageController.ts#L137)*
+*Defined in [src/controllers/StorageController.ts:137](https://github.com/serendip-agency/serendip-business-api/blob/069e2af/src/controllers/StorageController.ts#L137)*
 
 ___
 
