@@ -12,7 +12,6 @@ class DashboardService {
     async start() {
         console.log('starting dashboard service');
         this.webSocketService.messageEmitter.on("/dashboard", async (input, ws) => {
-            console.log(input);
             var msg = JSON.parse(input);
             msg.data = JSON.parse(msg.data);
             if (!(await this.businessService.userHasAccessToBusiness(ws.token.userId, msg.business))) {

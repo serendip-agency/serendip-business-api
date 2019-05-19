@@ -39,5 +39,8 @@ export class TriggerService implements ServerServiceInterface {
     // }).catch((err) => {
     //     console.log(err);
     // });
+
+
+    
   }
 }

@@ -3,7 +3,7 @@
  * @module Storage
  */
 
- import {
+import {
   Server,
   AuthService,
   WebSocketService,
@@ -45,6 +45,7 @@ export class StorageService {
   usersCollection: DbCollectionInterface<UserModel>;
   businessesCollection: DbCollectionInterface<BusinessModel>;
   dataPath: string;
+  filesCollection: DbCollectionInterface<any>;
 
   constructor(
     private dbService: DbService,
@@ -282,6 +283,8 @@ export class StorageService {
   //   );
   // }
   async start() {
+
+    this.filesCollection = await this.dbService.collection<any>('fs.files', false);
     this.dataPath = join(Server.dir, "..", "data");
     fs.ensureDirSync(this.dataPath);
 

@@ -23,7 +23,7 @@ export class DashboardService {
       "/dashboard",
       async (input: string, ws: WebSocketInterface) => {
 
-        console.log(input);
+    
 
         var msg: {
           command: "sync_grid";

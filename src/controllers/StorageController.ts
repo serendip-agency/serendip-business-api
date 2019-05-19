@@ -9,7 +9,8 @@ import {
   HttpRequestInterface,
   HttpResponseInterface,
   Server,
-  DbService
+  DbService,
+  HttpError
 } from "serendip";
 
 import {
@@ -22,7 +23,7 @@ import {
 } from "../services/StorageService";
 import { Writable, Readable, Stream } from "stream";
 import * as mime from "mime-types";
-
+import * as archiver from 'archiver'
 export class StorageController {
 
   constructor(private dbService: DbService, private storageService: StorageService) {
@@ -199,14 +200,9 @@ export class StorageController {
 
         req.params.path = '/' + ([...req.params.first, ...['public'], ...req.params.last].join('/'));
 
-        // return res.json(req.params.path);
-
-        const filesCollection = await this.dbService.collection<any>('fs.files', false);
-
-        const dirQuery = await filesCollection.find({ $or: [{ filename: req.params.path + '/.keep' }] });
-
-
         return this.preview.actions[0](req, res, next, done);
+
+
       }]
   }
 
@@ -469,6 +465,84 @@ export class StorageController {
         );
 
         done();
+      }
+    ]
+  };
+
+  public zip: HttpEndpointInterface = {
+    method: "POST",
+
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        var command: { zipName: string; paths: string[] } = req.body;
+
+        if (!command) return done(400);
+        if (!command.paths) return done(400);
+        if (!command.zipName) return done(400);
+
+
+        if (command.zipName.indexOf('/') != 0)
+          command.zipName = '/' + command.zipName;
+
+        for (let cpath of command.paths) {
+          if (!cpath.startsWith('/'))
+            cpath = '/' + cpath;
+          if (
+            !(await this.storageService.userHasAccessToPath(
+              req.user._id.toString(),
+              cpath
+            ))
+          )
+            return done(400);
+        }
+
+
+
+
+        var archive = archiver('zip', {
+          comment: new Date().toISOString(),
+          zlib: { level: 9 }
+        });
+
+
+
+        archive.on('error', function (err) {
+
+          done(500, err.message)
+
+        });
+        const uploadStream = await this.dbService.openUploadStreamByFilePath(command.zipName, {});
+
+        let files = [];
+
+        for (let cpath of command.paths) {
+          files = [...files, ...await this.storageService.filesCollection.find({
+            filename: { $regex: '^' + cpath.replace('/.keep', '/') }
+          })]
+        }
+
+        console.log(command);
+
+        archive.pipe(uploadStream);
+
+        for (const file of files) {
+ 
+          archive.append(await this.dbService.openDownloadStreamByFilePath(file.filename), { date: file.uploadDate, name: file.filename });
+        }
+
+        uploadStream.on('finish', () => {
+          done(200);
+        });
+
+
+        archive.finalize();
       }
     ]
   };

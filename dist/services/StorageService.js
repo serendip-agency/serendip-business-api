@@ -187,6 +187,7 @@ class StorageService {
     //   );
     // }
     async start() {
+        this.filesCollection = await this.dbService.collection('fs.files', false);
         this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
         fs.ensureDirSync(this.dataPath);
         this.usersCollection = await this.dbService.collection("Users");
