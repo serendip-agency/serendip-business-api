@@ -279,6 +279,29 @@ class StorageController {
                 }
             ]
         };
+        this.rename = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return done(400);
+                    if (!command.path)
+                        return done(400);
+                    if (!command.path.startsWith('/'))
+                        command.path = '/' + command.path;
+                    if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
+                        return done(400);
+                    var file = await this.storageService.filesCollection.find({ filename: command.path });
+                    if (!file[0])
+                        return done(400, 'file not found');
+                    file[0].filename = path_1.join(command.path, '..', command.newName);
+                    await this.storageService.filesCollection.updateOne(file[0], req.user._id);
+                    done(200);
+                }
+            ]
+        };
         this.zip = {
             method: "POST",
             actions: [
@@ -322,6 +345,35 @@ class StorageController {
                         done(200);
                     });
                     archive.finalize();
+                }
+            ]
+        };
+        this.delete = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return done(400);
+                    if (!command.paths)
+                        return done(400);
+                    for (let cpath of command.paths) {
+                        if (!cpath.startsWith('/'))
+                            cpath = '/' + cpath;
+                        if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
+                            return done(400);
+                    }
+                    let files = [];
+                    for (let cpath of command.paths) {
+                        files = [...files, ...await this.storageService.filesCollection.find({
+                                filename: { $regex: '^' + cpath.replace('/.keep', '/') }
+                            })];
+                    }
+                    for (const file of files) {
+                        await this.storageService.filesCollection.deleteOne(file._id);
+                    }
+                    done(200);
                 }
             ]
         };

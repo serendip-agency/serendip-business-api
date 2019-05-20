@@ -469,6 +469,47 @@ export class StorageController {
     ]
   };
 
+  public rename: HttpEndpointInterface = {
+    method: "POST",
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        var command: { path: string, newName: string } = req.body;
+
+        if (!command) return done(400);
+        if (!command.path) return done(400);
+        if (!command.path.startsWith('/'))
+          command.path = '/' + command.path;
+
+
+        if (
+          !(await this.storageService.userHasAccessToPath(
+            req.user._id.toString(),
+            command.path
+          ))
+        )
+          return done(400);
+
+        var file = await this.storageService.filesCollection.find({ filename: command.path });
+
+        if (!file[0])
+          return done(400, 'file not found');
+
+        file[0].filename = join(command.path, '..', command.newName);
+
+        await this.storageService.filesCollection.updateOne(file[0], req.user._id)
+
+        done(200);
+      }
+    ]
+  };
+
   public zip: HttpEndpointInterface = {
     method: "POST",
 
@@ -504,14 +545,10 @@ export class StorageController {
         }
 
 
-
-
         var archive = archiver('zip', {
           comment: new Date().toISOString(),
           zlib: { level: 9 }
         });
-
-
 
         archive.on('error', function (err) {
 
@@ -533,7 +570,7 @@ export class StorageController {
         archive.pipe(uploadStream);
 
         for (const file of files) {
- 
+
           archive.append(await this.dbService.openDownloadStreamByFilePath(file.filename), { date: file.uploadDate, name: file.filename });
         }
 
@@ -546,4 +583,56 @@ export class StorageController {
       }
     ]
   };
+
+
+  public delete: HttpEndpointInterface = {
+    method: "POST",
+    actions: [
+      BusinessService.checkUserAccess,
+      async (
+        req,
+        res,
+        next,
+        done,
+        access: BusinessCheckAccessResultInterface
+      ) => {
+        var command: { paths: string[] } = req.body;
+
+        if (!command) return done(400);
+        if (!command.paths) return done(400);
+
+
+
+        for (let cpath of command.paths) {
+          if (!cpath.startsWith('/'))
+            cpath = '/' + cpath;
+          if (
+            !(await this.storageService.userHasAccessToPath(
+              req.user._id.toString(),
+              cpath
+            ))
+          )
+            return done(400);
+        }
+
+
+        let files = [];
+
+        for (let cpath of command.paths) {
+          files = [...files, ...await this.storageService.filesCollection.find({
+            filename: { $regex: '^' + cpath.replace('/.keep', '/') }
+          })]
+        }
+
+        for (const file of files) {
+          await this.storageService.filesCollection.deleteOne(file._id);
+        }
+
+        done(200);
+
+
+      }
+    ]
+  };
+
 }
