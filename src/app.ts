@@ -78,6 +78,12 @@ SmsIrService.configure({
 });
 
 HttpService.configure({
+  beforeMiddlewares: [(req, res, next) => {
+    req.url = req.url.replace(/\/\//g, '/')
+  
+    
+    next();
+  }],
   cors: "*",
   httpPort:
     (process.env.PORT as any) || (process.env["core.httpPort"] as any) || 2040,

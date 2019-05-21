@@ -56,6 +56,10 @@ serendip_1.SmsIrService.configure({
     verifyTemplateWithIpAndUseragent: process.env["smsIr.verifyTemplateWithIpAndUseragent"]
 });
 serendip_1.HttpService.configure({
+    beforeMiddlewares: [(req, res, next) => {
+            req.url = req.url.replace(/\/\//g, '/');
+            next();
+        }],
     cors: "*",
     httpPort: process.env.PORT || process.env["core.httpPort"] || 2040,
     staticPath: path_1.join(__dirname, "../", "files", "public"),
