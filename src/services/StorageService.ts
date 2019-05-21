@@ -46,6 +46,7 @@ export class StorageService {
   businessesCollection: DbCollectionInterface<BusinessModel>;
   dataPath: string;
   filesCollection: DbCollectionInterface<any>;
+  chunksCollection: DbCollectionInterface<any>;
 
   constructor(
     private dbService: DbService,
@@ -285,6 +286,10 @@ export class StorageService {
   async start() {
 
     this.filesCollection = await this.dbService.collection<any>('fs.files', false);
+    this.chunksCollection = await this.dbService.collection<any>('fs.chunks', false);
+    this.filesCollection.ensureIndex({ filename: 1 }, { unique: true });
+
+
     this.dataPath = join(Server.dir, "..", "data");
     fs.ensureDirSync(this.dataPath);
 

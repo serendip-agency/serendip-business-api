@@ -8,6 +8,7 @@ const path_1 = require("path");
 const services_1 = require("../services");
 const mime = require("mime-types");
 const archiver = require("archiver");
+const bson_1 = require("bson");
 class StorageController {
     constructor(dbService, storageService) {
         this.dbService = dbService;
@@ -312,10 +313,12 @@ class StorageController {
                         return done(400);
                     if (!command.paths)
                         return done(400);
-                    if (!command.zipName)
+                    if (!command.zipPath)
                         return done(400);
-                    if (command.zipName.indexOf('/') != 0)
-                        command.zipName = '/' + command.zipName;
+                    if (command.zipPath.indexOf('/') != 0)
+                        command.zipPath = '/' + command.zipPath;
+                    if (!command.zipPath.endsWith('.zip'))
+                        command.zipPath = command.zipPath + '.zip';
                     for (let cpath of command.paths) {
                         if (!cpath.startsWith('/'))
                             cpath = '/' + cpath;
@@ -329,7 +332,7 @@ class StorageController {
                     archive.on('error', function (err) {
                         done(500, err.message);
                     });
-                    const uploadStream = await this.dbService.openUploadStreamByFilePath(command.zipName, {});
+                    const uploadStream = await this.dbService.openUploadStreamByFilePath(command.zipPath, {});
                     let files = [];
                     for (let cpath of command.paths) {
                         files = [...files, ...await this.storageService.filesCollection.find({
@@ -372,6 +375,83 @@ class StorageController {
                     }
                     for (const file of files) {
                         await this.storageService.filesCollection.deleteOne(file._id);
+                    }
+                    done(200);
+                }
+            ]
+        };
+        this.move = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return done(400);
+                    if (!command.paths)
+                        return done(400);
+                    if (!command.dest)
+                        return done(400);
+                    command.dest = command.dest.replace('/.keep', '');
+                    for (let cpath of command.paths) {
+                        if (!cpath.startsWith('/'))
+                            cpath = '/' + cpath;
+                        if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
+                            return done(400);
+                    }
+                    for (let rPath of command.paths) {
+                        var filesInFolder = await this.storageService.filesCollection.find({
+                            filename: { $regex: '^' + rPath.replace('/.keep', '/') }
+                        });
+                        for (const file of filesInFolder) {
+                            let newPath = file.filename.replace(path_1.join(file.filename, rPath.endsWith('/.keep') ? '../..' : '..'), command.dest);
+                            if (!newPath.startsWith('/'))
+                                newPath = '/' + newPath;
+                            file.filename = newPath;
+                            await this.storageService.filesCollection.updateOne(file);
+                        }
+                    }
+                    done(200);
+                }
+            ]
+        };
+        this.copy = {
+            method: "POST",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    var command = req.body;
+                    if (!command)
+                        return done(400);
+                    if (!command.paths)
+                        return done(400);
+                    if (!command.dest)
+                        return done(400);
+                    command.dest = command.dest.replace('/.keep', '');
+                    for (let cpath of command.paths) {
+                        if (!cpath.startsWith('/'))
+                            cpath = '/' + cpath;
+                        if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
+                            return done(400);
+                    }
+                    for (let rPath of command.paths) {
+                        var filesInFolder = await this.storageService.filesCollection.find({
+                            filename: { $regex: '^' + rPath.replace('/.keep', '/') }
+                        });
+                        for (const file of filesInFolder) {
+                            let newPath = file.filename.replace(path_1.join(file.filename, rPath.endsWith('/.keep') ? '../..' : '..'), command.dest);
+                            if (!newPath.startsWith('/'))
+                                newPath = '/' + newPath;
+                            file.filename = newPath;
+                            const newFile = await this.storageService.filesCollection.insertOne(Object.assign({}, file, { _id: new bson_1.ObjectId() }));
+                            const chunks = await this.storageService.chunksCollection.find({
+                                files_id: new bson_1.ObjectId(file._id)
+                            });
+                            for (const chunk of chunks) {
+                                chunk.files_id = new bson_1.ObjectId(newFile._id);
+                                await this.storageService.chunksCollection.insertOne(Object.assign({}, chunk, { _id: new bson_1.ObjectId() }));
+                            }
+                        }
                     }
                     done(200);
                 }

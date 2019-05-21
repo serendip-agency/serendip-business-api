@@ -188,6 +188,8 @@ class StorageService {
     // }
     async start() {
         this.filesCollection = await this.dbService.collection('fs.files', false);
+        this.chunksCollection = await this.dbService.collection('fs.chunks', false);
+        this.filesCollection.ensureIndex({ filename: 1 }, { unique: true });
         this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
         fs.ensureDirSync(this.dataPath);
         this.usersCollection = await this.dbService.collection("Users");
