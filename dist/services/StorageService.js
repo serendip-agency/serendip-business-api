@@ -104,15 +104,15 @@ class StorageService {
         if (fs.existsSync(filePath))
             fs.unlinkSync(filePath);
         var parts = await this.getFilePartsInfo(filePath);
-        var uploadName = filePath.replace(this.dataPath, '');
-        if (!uploadName.startsWith('/'))
-            uploadName = '/' + uploadName;
+        var uploadName = filePath.replace(this.dataPath, "");
+        if (!uploadName.startsWith("/"))
+            uploadName = "/" + uploadName;
         await new Promise(async (resolve, reject) => {
             multiStream(parts.map(p => fs.createReadStream(p.path)))
                 .pipe(await this.dbService.openUploadStreamByFilePath(uploadName, {
                 userId
             }))
-                .on('finish', () => {
+                .on("finish", () => {
                 resolve();
             });
         });
@@ -187,8 +187,8 @@ class StorageService {
     //   );
     // }
     async start() {
-        this.filesCollection = await this.dbService.collection('fs.files', false);
-        this.chunksCollection = await this.dbService.collection('fs.chunks', false);
+        this.filesCollection = await this.dbService.collection("fs.files", false);
+        this.chunksCollection = await this.dbService.collection("fs.chunks", false);
         this.filesCollection.ensureIndex({ filename: 1 }, { unique: true });
         this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
         fs.ensureDirSync(this.dataPath);

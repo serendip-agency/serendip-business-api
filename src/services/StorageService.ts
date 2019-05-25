@@ -1,4 +1,3 @@
-
 /**
  * @module Storage
  */
@@ -17,7 +16,7 @@ import * as glob from "glob";
 import * as promise_serial from "promise-serial";
 import { ObjectID } from "bson";
 import * as mime from "mime-types";
-import * as multiStream from 'multistream';
+import * as multiStream from "multistream";
 
 import {
   UserModel,
@@ -51,7 +50,7 @@ export class StorageService {
   constructor(
     private dbService: DbService,
     private webSocketService: WebSocketService
-  ) { }
+  ) {}
 
   async userHasAccessToPath(userId: string, path: string): Promise<boolean> {
     if (!path.startsWith("/users/") && !path.startsWith("/businesses/"))
@@ -69,6 +68,7 @@ export class StorageService {
         _id: new ObjectID(businessId)
       });
 
+      
     business = businessQuery[0];
 
     let hasAccessToBusiness = _.any(business.members, {
@@ -116,8 +116,8 @@ export class StorageService {
 
     var partFiles = (await fs.pathExists(this.getDirectoryOfPath(filePath)))
       ? (await fs.readdir(this.getDirectoryOfPath(filePath))).filter(item =>
-        item.startsWith(fileName + ".")
-      )
+          item.startsWith(fileName + ".")
+        )
       : [];
     var parts: StorageFilePartInfoInterface[] = [];
 
@@ -187,23 +187,21 @@ export class StorageService {
     console.log("assemblePartsIfPossible", filePath);
     if ((await this.uploadPercent(filePath)) < 100) return;
 
-    if (fs.existsSync(filePath))
-      fs.unlinkSync(filePath);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
     var parts = await this.getFilePartsInfo(filePath);
-    var uploadName = filePath.replace(this.dataPath, '');
-    if (!uploadName.startsWith('/'))
-      uploadName = '/' + uploadName;
+    var uploadName = filePath.replace(this.dataPath, "");
+    if (!uploadName.startsWith("/")) uploadName = "/" + uploadName;
     await new Promise(async (resolve, reject) => {
-
       multiStream(parts.map(p => fs.createReadStream(p.path)))
-        .pipe(await this.dbService.openUploadStreamByFilePath(uploadName, {
-          userId
-        }))
-        .on('finish', () => {
+        .pipe(
+          await this.dbService.openUploadStreamByFilePath(uploadName, {
+            userId
+          })
+        )
+        .on("finish", () => {
           resolve();
-        })
-
+        });
     });
 
     // await promise_serial(
@@ -284,11 +282,15 @@ export class StorageService {
   //   );
   // }
   async start() {
-
-    this.filesCollection = await this.dbService.collection<any>('fs.files', false);
-    this.chunksCollection = await this.dbService.collection<any>('fs.chunks', false);
+    this.filesCollection = await this.dbService.collection<any>(
+      "fs.files",
+      false
+    );
+    this.chunksCollection = await this.dbService.collection<any>(
+      "fs.chunks",
+      false
+    );
     this.filesCollection.ensureIndex({ filename: 1 }, { unique: true });
-
 
     this.dataPath = join(Server.dir, "..", "data");
     fs.ensureDirSync(this.dataPath);
@@ -321,7 +323,7 @@ export class StorageService {
         var command: StorageCommandInterface;
         try {
           command = JSON.parse(input);
-        } catch (error) { }
+        } catch (error) {}
 
         if (!command) return;
 
@@ -336,9 +338,5 @@ export class StorageService {
         }
       }
     );
-
-
-
-
   }
 }

@@ -1,4 +1,3 @@
-
 /**
  * @module Client
  */
@@ -16,18 +15,16 @@ export class ClientService implements HttpServiceInterface {
   data: SBC.DataService;
   ws: SBC.WsService;
   entitySocket: WebSocket;
-  constructor(private httpService: HttpService, private dbService: DbService) { }
+  constructor(private httpService: HttpService, private dbService: DbService) {}
 
   async start() {
-
     try {
-
+      console.log("trying to start serendip client");
 
       if (process.env["serendip.stopped"]) {
-        console.log('\n\t Serendip Client is stopped with env variable. \n')
+        console.log("\n\t Serendip Client is stopped with env variable. \n");
         return;
       }
-
 
       SBC.DbService.configure({
         defaultProvider: "Mongodb",
@@ -54,7 +51,6 @@ export class ClientService implements HttpServiceInterface {
         password: process.env["sbc.password"]
       });
 
-
       if (process.env["sbc.server"])
         SBC.DataService.server = process.env["sbc.server"];
 
@@ -67,7 +63,7 @@ export class ClientService implements HttpServiceInterface {
         clear: async () => {
           try {
             await fs.unlink(localStoragePath);
-          } catch { }
+          } catch {}
           await fs.writeJSON(localStoragePath, {});
         },
         load: async () => {
@@ -76,8 +72,7 @@ export class ClientService implements HttpServiceInterface {
 
           try {
             return await fs.readJSON(localStoragePath);
-
-          } catch{
+          } catch {
             await fs.unlink(localStoragePath);
             return {};
           }
@@ -87,9 +82,8 @@ export class ClientService implements HttpServiceInterface {
             await fs.writeJSON(localStoragePath, {});
 
           try {
-            return (await fs.readJSON(localStoragePath))[key]
-
-          } catch{
+            return (await fs.readJSON(localStoragePath))[key];
+          } catch {
             await fs.unlink(localStoragePath);
             return null;
           }
@@ -97,16 +91,12 @@ export class ClientService implements HttpServiceInterface {
         set: async (key, value) => {
           let storage = {};
           try {
-            storage =
-              await fs.readJSON(localStoragePath);
-
-          } catch (error) {
-
-          }
+            storage = await fs.readJSON(localStoragePath);
+          } catch (error) {}
           storage[key] = value;
           try {
             await fs.unlink(localStoragePath);
-          } catch { }
+          } catch {}
           await fs.writeJSON(localStoragePath, storage);
         },
         remove: async key => {
@@ -114,13 +104,13 @@ export class ClientService implements HttpServiceInterface {
           delete storage[key];
           try {
             await fs.unlink(localStoragePath);
-          } catch { }
+          } catch {}
           await fs.writeJSON(localStoragePath, storage);
         },
         save: async storage => {
           try {
             await fs.unlink(localStoragePath);
-          } catch { }
+          } catch {}
           await fs.writeJSON(localStoragePath, storage);
         }
       });
@@ -155,9 +145,14 @@ export class ClientService implements HttpServiceInterface {
       //     console.error("sync error at " + new Date(), e);
       //   });
 
-
       if (this.data && process.env["sbc.business"])
-        for (const collectionName of ["Users", "Tokens", "Businesses", "Clients", "AuthCodes"]) {
+        for (const collectionName of [
+          "Users",
+          "Tokens",
+          "Businesses",
+          "Clients",
+          "AuthCodes"
+        ]) {
           if (collectionName != "EntityChanges")
             if (collectionName[0] === collectionName[0].toUpperCase()) {
               const collection = await this.dbService.collection(
@@ -170,7 +165,10 @@ export class ClientService implements HttpServiceInterface {
               });
 
               for (const item of neverPushedToSerendip) {
-                console.log(`pushing ${collectionName} >  ${item._entity} #${item._id}`, item);
+                console.log(
+                  `pushing ${collectionName} >  ${item._entity} #${item._id}`,
+                  item
+                );
                 await collection.updateOne(
                   await this.data.update(collectionName, item)
                 );
@@ -181,6 +179,7 @@ export class ClientService implements HttpServiceInterface {
               eventStream.on("insert", doc => {
                 if (doc._fromSocket) return;
 
+                doc._fromCode = true;
                 this.data
                   .insert(collectionName, doc)
                   .then(() => console.log(`${doc._id} insert synced`))
@@ -189,6 +188,9 @@ export class ClientService implements HttpServiceInterface {
 
               eventStream.on("update", doc => {
                 if (doc._fromSocket) return;
+
+                doc._fromCode = true;
+
                 this.data
                   .update(collectionName, doc)
                   .then(() => console.log(`${doc._id} update synced`))
@@ -198,6 +200,8 @@ export class ClientService implements HttpServiceInterface {
               eventStream.on("delete", doc => {
                 if (doc._fromSocket) return;
 
+                doc._fromCode = true;
+
                 this.data
                   .delete(collectionName, doc._id)
                   .then(() => console.log(`${doc._id} delete synced`))
@@ -206,16 +210,20 @@ export class ClientService implements HttpServiceInterface {
             }
         }
 
-      this.initEntitySocket().then(() => { }).catch((e) => { console.error('entity socket error', e) })
+      this.initEntitySocket()
+        .then(() => {})
+        .catch(e => {
+          console.error("entity socket error", e);
+        });
     } catch (error) {
-      console.error('error starting client service', error);
+      console.error("error starting client service", error);
     }
   }
 
   async initEntitySocket() {
     this.entitySocket = await this.ws.newSocket("/entity", true);
 
-    console.log('SBC socket connected!');
+    console.log("SBC socket connected!");
     this.entitySocket.onclose = () => {
       this.initEntitySocket();
     };
@@ -227,10 +235,15 @@ export class ClientService implements HttpServiceInterface {
 
       try {
         data = JSON.parse(msg.data);
-      } catch (error) { }
+      } catch (error) {}
 
-      if (data && data.model) {
-        const collection = await this.dbService.collection(data.model._entity, true);
+      if (data && data.model && !data.model._fromCode) {
+        console.log("message from socket", data.event, data.model);
+
+        const collection = await this.dbService.collection(
+          data.model._entity,
+          true
+        );
 
         // prevent infinite loop
         data.model._fromSocket = true;

@@ -16,8 +16,9 @@ class ClientService {
     }
     async start() {
         try {
+            console.log("trying to start serendip client");
             if (process.env["serendip.stopped"]) {
-                console.log('\n\t Serendip Client is stopped with env variable. \n');
+                console.log("\n\t Serendip Client is stopped with env variable. \n");
                 return;
             }
             SBC.DbService.configure({
@@ -81,11 +82,9 @@ class ClientService {
                 set: async (key, value) => {
                     let storage = {};
                     try {
-                        storage =
-                            await fs.readJSON(localStoragePath);
+                        storage = await fs.readJSON(localStoragePath);
                     }
-                    catch (error) {
-                    }
+                    catch (error) { }
                     storage[key] = value;
                     try {
                         await fs.unlink(localStoragePath);
@@ -136,7 +135,13 @@ class ClientService {
             //     console.error("sync error at " + new Date(), e);
             //   });
             if (this.data && process.env["sbc.business"])
-                for (const collectionName of ["Users", "Tokens", "Businesses", "Clients", "AuthCodes"]) {
+                for (const collectionName of [
+                    "Users",
+                    "Tokens",
+                    "Businesses",
+                    "Clients",
+                    "AuthCodes"
+                ]) {
                     if (collectionName != "EntityChanges")
                         if (collectionName[0] === collectionName[0].toUpperCase()) {
                             const collection = await this.dbService.collection(collectionName, false);
@@ -151,6 +156,7 @@ class ClientService {
                             eventStream.on("insert", doc => {
                                 if (doc._fromSocket)
                                     return;
+                                doc._fromCode = true;
                                 this.data
                                     .insert(collectionName, doc)
                                     .then(() => console.log(`${doc._id} insert synced`))
@@ -159,6 +165,7 @@ class ClientService {
                             eventStream.on("update", doc => {
                                 if (doc._fromSocket)
                                     return;
+                                doc._fromCode = true;
                                 this.data
                                     .update(collectionName, doc)
                                     .then(() => console.log(`${doc._id} update synced`))
@@ -167,6 +174,7 @@ class ClientService {
                             eventStream.on("delete", doc => {
                                 if (doc._fromSocket)
                                     return;
+                                doc._fromCode = true;
                                 this.data
                                     .delete(collectionName, doc._id)
                                     .then(() => console.log(`${doc._id} delete synced`))
@@ -174,15 +182,19 @@ class ClientService {
                             });
                         }
                 }
-            this.initEntitySocket().then(() => { }).catch((e) => { console.error('entity socket error', e); });
+            this.initEntitySocket()
+                .then(() => { })
+                .catch(e => {
+                console.error("entity socket error", e);
+            });
         }
         catch (error) {
-            console.error('error starting client service', error);
+            console.error("error starting client service", error);
         }
     }
     async initEntitySocket() {
         this.entitySocket = await this.ws.newSocket("/entity", true);
-        console.log('SBC socket connected!');
+        console.log("SBC socket connected!");
         this.entitySocket.onclose = () => {
             this.initEntitySocket();
         };
@@ -192,7 +204,8 @@ class ClientService {
                 data = JSON.parse(msg.data);
             }
             catch (error) { }
-            if (data && data.model) {
+            if (data && data.model && !data.model._fromCode) {
+                console.log("message from socket", data.event, data.model);
                 const collection = await this.dbService.collection(data.model._entity, true);
                 // prevent infinite loop
                 data.model._fromSocket = true;

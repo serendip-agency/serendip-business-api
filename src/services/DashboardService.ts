@@ -1,4 +1,3 @@
-
 /**
  * @module Dashboard
  */
@@ -8,23 +7,20 @@ import { WebSocketInterface, WebSocketService } from "serendip";
 import { BusinessService } from "./BusinessService";
 import { EntityService } from "./EntityService";
 
-
 export class DashboardService {
   constructor(
     private webSocketService: WebSocketService,
     private entityService: EntityService,
     private businessService: BusinessService
-  ) { }
+  ) {}
+
+
 
   async start() {
-
-    console.log('starting dashboard service')
+    console.log("starting dashboard service");
     this.webSocketService.messageEmitter.on(
       "/dashboard",
       async (input: string, ws: WebSocketInterface) => {
-
-    
-
         var msg: {
           command: "sync_grid";
           business: string;
@@ -32,7 +28,6 @@ export class DashboardService {
         } = JSON.parse(input);
 
         msg.data = JSON.parse(msg.data);
-
 
         if (
           !(await this.businessService.userHasAccessToBusiness(
@@ -54,9 +49,9 @@ export class DashboardService {
               _cdate: Date.now(),
               data: msg.data
             })
-            .then(() => { })
-            .catch((e) => {
-              console.error('error sync_grid insert', e)
+            .then(() => {})
+            .catch(e => {
+              console.error("error sync_grid insert", e);
             });
 
           // console.log(

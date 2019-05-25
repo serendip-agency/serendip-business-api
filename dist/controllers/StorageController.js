@@ -3,12 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module Storage
  */
-const fs = require("fs-extra");
-const path_1 = require("path");
-const services_1 = require("../services");
-const mime = require("mime-types");
 const archiver = require("archiver");
 const bson_1 = require("bson");
+const fs = require("fs-extra");
+const mime = require("mime-types");
+const path_1 = require("path");
 class StorageController {
     constructor(dbService, storageService) {
         this.dbService = dbService;
@@ -17,12 +16,12 @@ class StorageController {
             method: "get",
             publicAccess: true,
             actions: [
-                async (req, res, next, done, access) => {
-                    const data = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik0zNC4zOTcsMjlMMjAsNDhMNS42MDQsMjkgIEgxNUMxNSwwLDQ0LDEsNDQsMVMyNSwyLjM3MywyNSwyOUgzNC4zOTd6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=';
-                    const binaryString = Buffer.from(data, 'base64');
+                async (req, res, next, done) => {
+                    const data = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik0zNC4zOTcsMjlMMjAsNDhMNS42MDQsMjkgIEgxNUMxNSwwLDQ0LDEsNDQsMVMyNSwyLjM3MywyNSwyOUgzNC4zOTd6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=";
+                    const binaryString = Buffer.from(data, "base64");
                     // res.setHeader('Content-Type', 'application-octet-stream');
                     // res.setHeader('Content-disposition', 'attachment; filename=test.svg');
-                    res.write(binaryString, 'binary', () => {
+                    res.write(binaryString, "binary", () => {
                         res.end();
                     });
                     // const write = (data) => {
@@ -45,21 +44,22 @@ class StorageController {
         this.newFolder = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.path)
                         return done(400);
-                    if (!command.path.startsWith('/'))
-                        command.path = '/' + command.path;
+                    if (!command.path.startsWith("/"))
+                        command.path = "/" + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return done(400);
-                    await this.dbService.openUploadStreamByFilePath(command.path + '/.keep', {}).then((stream) => {
-                        stream.write('');
+                    await this.dbService
+                        .openUploadStreamByFilePath(command.path + "/.keep", {})
+                        .then(stream => {
+                        stream.write("");
                         stream.end();
-                        stream.on('finish', () => {
+                        stream.on("finish", () => {
                             done(200);
                         });
                     });
@@ -69,15 +69,14 @@ class StorageController {
         this.upload = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.path)
                         return done(400);
-                    if (!command.path.startsWith('/'))
-                        command.path = '/' + command.path;
+                    if (!command.path.startsWith("/"))
+                        command.path = "/" + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return done(400);
                     await fs.ensureFile(path_1.join(this.storageService.dataPath, command.path));
@@ -91,7 +90,7 @@ class StorageController {
                     else {
                         await this.storageService.checkPartsBeforeUpload(command);
                         await fs.writeFile(path_1.join(this.storageService.dataPath, command.path) +
-                            `.${command.start || "0"}-${command.end || "0"}-${command.total}.part`, command.data, { encoding: 'hex' });
+                            `.${command.start || "0"}-${command.end || "0"}-${command.total}.part`, command.data, { encoding: "hex" });
                         done();
                     }
                 }
@@ -101,69 +100,88 @@ class StorageController {
             method: "GET",
             publicAccess: true,
             isStream: true,
-            route: 'dl/:first*/public/:last*',
+            route: "dl/:first*/public/:last*",
             actions: [
                 async (req, res, next, done) => {
-                    req.params.path = '/' + ([...req.params.first, ...['public'], ...req.params.last].join('/'));
+                    req.params.path =
+                        "/" +
+                            [...req.params.first, ...["public"], ...req.params.last].join("/");
                     return this.preview.actions[0](req, res, next, done);
                 }
             ]
         };
         this.preview = {
             method: "GET",
-            publicAccess: false, isStream: true,
-            route: 'api/storage/preview/:path*',
+            publicAccess: false,
+            isStream: true,
+            route: "api/storage/preview/:path*",
             actions: [
                 async (req, res, next, done) => {
                     let filePath;
-                    if (typeof req.params.path !== 'string')
-                        filePath = req.params.path.join('/');
+                    if (typeof req.params.path !== "string")
+                        filePath = req.params.path.join("/");
                     else
                         filePath = req.params.path;
-                    if (!filePath.startsWith('/'))
-                        filePath = '/' + filePath;
-                    if (filePath.split('/')[3] != 'public' &&
+                    if (!filePath.startsWith("/"))
+                        filePath = "/" + filePath;
+                    if (filePath.split("/")[3] != "public" &&
                         !(await this.storageService.userHasAccessToPath(req.user._id.toString(), filePath)))
                         return done(403);
-                    const filesCollection = await this.dbService.collection('fs.files', false);
+                    const filesCollection = await this.dbService.collection("fs.files", false);
                     const fileQuery = await filesCollection.find({ filename: filePath });
                     if (!fileQuery[0])
                         return done(404);
-                    res.setHeader('Content-Type', mime.lookup(filePath));
-                    let range = (req.headers.range) ? req.headers.range.toString().replace(/bytes=/, "").split("-") : [];
+                    res.setHeader("Content-Type", mime.lookup(filePath));
+                    let range = req.headers.range
+                        ? req.headers.range
+                            .toString()
+                            .replace(/bytes=/, "")
+                            .split("-")
+                        : [];
                     range[0] = range[0] ? parseInt(range[0], 10) : 0;
-                    range[1] = range[1] ? (parseInt(range[1], 10) || 0) : range[0] + ((1024 * 1024) - 1);
+                    range[1] = range[1]
+                        ? parseInt(range[1], 10) || 0
+                        : range[0] + (1024 * 1024 - 1);
                     if (range[1] >= fileQuery[0].length) {
                         range[1] = fileQuery[0].length - 1;
                     }
                     range = { start: range[0], end: range[1] };
                     if (!req.headers.range) {
-                        await this.dbService.openDownloadStreamByFilePath(filePath).then((stream) => {
+                        await this.dbService
+                            .openDownloadStreamByFilePath(filePath)
+                            .then(stream => {
                             res.writeHead(200, {
-                                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                'Pragma': 'no-cache',
-                                'Expires': 0,
-                                'Content-Disposition': `inline; filename=${encodeURIComponent(fileQuery[0].filename.split('/')[fileQuery[0].filename.split('/').length - 1])}`,
-                                'Content-Type': mime.lookup(filePath),
-                                'Content-Length': fileQuery[0].length,
+                                "Cache-Control": "no-cache, no-store, must-revalidate",
+                                Pragma: "no-cache",
+                                Expires: 0,
+                                "Content-Disposition": `inline; filename=${encodeURIComponent(fileQuery[0].filename.split("/")[fileQuery[0].filename.split("/").length - 1])}`,
+                                "Content-Type": mime.lookup(filePath),
+                                "Content-Length": fileQuery[0].length
                             });
                             stream.pipe(res);
                         });
                     }
                     else {
-                        await this.dbService.openDownloadStreamByFilePath(filePath, {
+                        await this.dbService
+                            .openDownloadStreamByFilePath(filePath, {
                             start: range.start,
                             end: range.end
-                        }).then((stream) => {
+                        })
+                            .then(stream => {
                             res.writeHead(206, {
-                                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                'Pragma': 'no-cache',
-                                'Expires': 0,
-                                'Content-Type': mime.lookup(filePath),
-                                'Content-Disposition': `inline; filename=${encodeURIComponent(fileQuery[0].filename.split('/')[fileQuery[0].filename.split('/').length - 1])}`,
-                                'Accept-Ranges': 'bytes',
-                                'Content-Range': 'bytes ' + range.start + '-' + range.end + '/' + (fileQuery[0].length),
-                                'Content-Length': range.end - range.start + 1,
+                                "Cache-Control": "no-cache, no-store, must-revalidate",
+                                Pragma: "no-cache",
+                                Expires: 0,
+                                "Content-Type": mime.lookup(filePath),
+                                "Content-Disposition": `inline; filename=${encodeURIComponent(fileQuery[0].filename.split("/")[fileQuery[0].filename.split("/").length - 1])}`,
+                                "Accept-Ranges": "bytes",
+                                "Content-Range": "bytes " +
+                                    range.start +
+                                    "-" +
+                                    range.end +
+                                    "/" +
+                                    fileQuery[0].length,
+                                "Content-Length": range.end - range.start + 1
                             });
                             stream.pipe(res);
                         });
@@ -174,15 +192,14 @@ class StorageController {
         this.parts = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.path)
                         return done(400);
-                    if (!command.path.startsWith('/'))
-                        command.path = '/' + command.path;
+                    if (!command.path.startsWith("/"))
+                        command.path = "/" + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return done(400);
                     var model = await this.storageService.getFilePartsInfo(path_1.join(this.storageService.dataPath, command.path));
@@ -217,40 +234,45 @@ class StorageController {
         this.list = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.path)
                         return done(400);
-                    if (!command.path.startsWith('/'))
-                        command.path = '/' + command.path;
-                    if (!command.path.endsWith('/'))
-                        command.path += '/';
+                    if (!command.path.startsWith("/"))
+                        command.path = "/" + command.path;
+                    if (!command.path.endsWith("/"))
+                        command.path += "/";
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return done(400);
-                    const filesCollection = await this.dbService.collection('fs.files', false);
+                    const filesCollection = await this.dbService.collection("fs.files", false);
                     let model = await filesCollection.find({
-                        $or: [{
+                        $or: [
+                            {
                                 filename: {
-                                    $regex: `^${command.path.replace(/\//g, '\/')}[^/]{0,}$`
+                                    $regex: `^${command.path.replace(/\//g, "/")}[^/]{0,}$`
                                 }
-                            }, {
+                            },
+                            {
                                 filename: {
-                                    $regex: `^${command.path.replace(/\//g, '\/')}[^/]{0,}\/.keep$`
+                                    $regex: `^${command.path.replace(/\//g, "/")}[^/]{0,}\/.keep$`
                                 }
-                            }]
+                            }
+                        ]
                     });
-                    model = model.filter((p) => command.path + '.keep' != p.filename).map((p) => {
+                    model = model
+                        .filter((p) => command.path + ".keep" != p.filename)
+                        .map((p) => {
                         return {
-                            isFile: !p.filename.endsWith('/.keep'),
-                            isDirectory: p.filename.endsWith('/.keep'),
+                            isFile: !p.filename.endsWith("/.keep"),
+                            isDirectory: p.filename.endsWith("/.keep"),
                             path: p.filename,
-                            basename: path_1.basename(p.filename.replace('/.keep', '')),
+                            basename: path_1.basename(p.filename.replace("/.keep", "")),
                             mime: mime.lookup(p.filename),
                             size: p.length,
-                            ext: p.filename.split(".")
+                            ext: p.filename
+                                .split(".")
                                 .reverse()[0]
                                 .toLowerCase(),
                             sizeInMB: parseFloat((p.length / 1024 / 1024).toFixed(2))
@@ -264,15 +286,14 @@ class StorageController {
         this.assemble = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.path)
                         return done(400);
-                    if (!command.path.startsWith('/'))
-                        command.path = '/' + command.path;
+                    if (!command.path.startsWith("/"))
+                        command.path = "/" + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return done(400);
                     await this.storageService.assemblePartsIfPossible(path_1.join(this.storageService.dataPath, command.path), req.user._id);
@@ -283,21 +304,22 @@ class StorageController {
         this.rename = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.path)
                         return done(400);
-                    if (!command.path.startsWith('/'))
-                        command.path = '/' + command.path;
+                    if (!command.path.startsWith("/"))
+                        command.path = "/" + command.path;
                     if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), command.path)))
                         return done(400);
-                    var file = await this.storageService.filesCollection.find({ filename: command.path });
+                    var file = await this.storageService.filesCollection.find({
+                        filename: command.path
+                    });
                     if (!file[0])
-                        return done(400, 'file not found');
-                    file[0].filename = path_1.join(command.path, '..', command.newName);
+                        return done(400, "file not found");
+                    file[0].filename = path_1.join(command.path, "..", command.newName);
                     await this.storageService.filesCollection.updateOne(file[0], req.user._id);
                     done(200);
                 }
@@ -306,8 +328,7 @@ class StorageController {
         this.zip = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
@@ -315,36 +336,39 @@ class StorageController {
                         return done(400);
                     if (!command.zipPath)
                         return done(400);
-                    if (command.zipPath.indexOf('/') != 0)
-                        command.zipPath = '/' + command.zipPath;
-                    if (!command.zipPath.endsWith('.zip'))
-                        command.zipPath = command.zipPath + '.zip';
+                    if (command.zipPath.indexOf("/") != 0)
+                        command.zipPath = "/" + command.zipPath;
+                    if (!command.zipPath.endsWith(".zip"))
+                        command.zipPath = command.zipPath + ".zip";
                     for (let cpath of command.paths) {
-                        if (!cpath.startsWith('/'))
-                            cpath = '/' + cpath;
+                        if (!cpath.startsWith("/"))
+                            cpath = "/" + cpath;
                         if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
                             return done(400);
                     }
-                    var archive = archiver('zip', {
+                    var archive = archiver("zip", {
                         comment: new Date().toISOString(),
                         zlib: { level: 9 }
                     });
-                    archive.on('error', function (err) {
+                    archive.on("error", function (err) {
                         done(500, err.message);
                     });
                     const uploadStream = await this.dbService.openUploadStreamByFilePath(command.zipPath, {});
                     let files = [];
                     for (let cpath of command.paths) {
-                        files = [...files, ...await this.storageService.filesCollection.find({
-                                filename: { $regex: '^' + cpath.replace('/.keep', '/') }
-                            })];
+                        files = [
+                            ...files,
+                            ...(await this.storageService.filesCollection.find({
+                                filename: { $regex: "^" + cpath.replace("/.keep", "/") }
+                            }))
+                        ];
                     }
                     console.log(command);
                     archive.pipe(uploadStream);
                     for (const file of files) {
                         archive.append(await this.dbService.openDownloadStreamByFilePath(file.filename), { date: file.uploadDate, name: file.filename });
                     }
-                    uploadStream.on('finish', () => {
+                    uploadStream.on("finish", () => {
                         done(200);
                     });
                     archive.finalize();
@@ -354,24 +378,26 @@ class StorageController {
         this.delete = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
                     if (!command.paths)
                         return done(400);
                     for (let cpath of command.paths) {
-                        if (!cpath.startsWith('/'))
-                            cpath = '/' + cpath;
+                        if (!cpath.startsWith("/"))
+                            cpath = "/" + cpath;
                         if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
                             return done(400);
                     }
                     let files = [];
                     for (let cpath of command.paths) {
-                        files = [...files, ...await this.storageService.filesCollection.find({
-                                filename: { $regex: '^' + cpath.replace('/.keep', '/') }
-                            })];
+                        files = [
+                            ...files,
+                            ...(await this.storageService.filesCollection.find({
+                                filename: { $regex: "^" + cpath.replace("/.keep", "/") }
+                            }))
+                        ];
                     }
                     for (const file of files) {
                         await this.storageService.filesCollection.deleteOne(file._id);
@@ -383,8 +409,7 @@ class StorageController {
         this.move = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
@@ -392,21 +417,21 @@ class StorageController {
                         return done(400);
                     if (!command.dest)
                         return done(400);
-                    command.dest = command.dest.replace('/.keep', '');
+                    command.dest = command.dest.replace("/.keep", "");
                     for (let cpath of command.paths) {
-                        if (!cpath.startsWith('/'))
-                            cpath = '/' + cpath;
+                        if (!cpath.startsWith("/"))
+                            cpath = "/" + cpath;
                         if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
                             return done(400);
                     }
                     for (let rPath of command.paths) {
                         var filesInFolder = await this.storageService.filesCollection.find({
-                            filename: { $regex: '^' + rPath.replace('/.keep', '/') }
+                            filename: { $regex: "^" + rPath.replace("/.keep", "/") }
                         });
                         for (const file of filesInFolder) {
-                            let newPath = file.filename.replace(path_1.join(file.filename, rPath.endsWith('/.keep') ? '../..' : '..'), command.dest);
-                            if (!newPath.startsWith('/'))
-                                newPath = '/' + newPath;
+                            let newPath = file.filename.replace(path_1.join(file.filename, rPath.endsWith("/.keep") ? "../.." : ".."), command.dest);
+                            if (!newPath.startsWith("/"))
+                                newPath = "/" + newPath;
                             file.filename = newPath;
                             await this.storageService.filesCollection.updateOne(file);
                         }
@@ -418,8 +443,7 @@ class StorageController {
         this.copy = {
             method: "POST",
             actions: [
-                services_1.BusinessService.checkUserAccess,
-                async (req, res, next, done, access) => {
+                async (req, res, next, done) => {
                     var command = req.body;
                     if (!command)
                         return done(400);
@@ -427,21 +451,21 @@ class StorageController {
                         return done(400);
                     if (!command.dest)
                         return done(400);
-                    command.dest = command.dest.replace('/.keep', '');
+                    command.dest = command.dest.replace("/.keep", "");
                     for (let cpath of command.paths) {
-                        if (!cpath.startsWith('/'))
-                            cpath = '/' + cpath;
+                        if (!cpath.startsWith("/"))
+                            cpath = "/" + cpath;
                         if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
                             return done(400);
                     }
                     for (let rPath of command.paths) {
                         var filesInFolder = await this.storageService.filesCollection.find({
-                            filename: { $regex: '^' + rPath.replace('/.keep', '/') }
+                            filename: { $regex: "^" + rPath.replace("/.keep", "/") }
                         });
                         for (const file of filesInFolder) {
-                            let newPath = file.filename.replace(path_1.join(file.filename, rPath.endsWith('/.keep') ? '../..' : '..'), command.dest);
-                            if (!newPath.startsWith('/'))
-                                newPath = '/' + newPath;
+                            let newPath = file.filename.replace(path_1.join(file.filename, rPath.endsWith("/.keep") ? "../.." : ".."), command.dest);
+                            if (!newPath.startsWith("/"))
+                                newPath = "/" + newPath;
                             file.filename = newPath;
                             const newFile = await this.storageService.filesCollection.insertOne(Object.assign({}, file, { _id: new bson_1.ObjectId() }));
                             const chunks = await this.storageService.chunksCollection.find({

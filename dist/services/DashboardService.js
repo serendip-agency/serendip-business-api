@@ -10,7 +10,7 @@ class DashboardService {
         this.businessService = businessService;
     }
     async start() {
-        console.log('starting dashboard service');
+        console.log("starting dashboard service");
         this.webSocketService.messageEmitter.on("/dashboard", async (input, ws) => {
             var msg = JSON.parse(input);
             msg.data = JSON.parse(msg.data);
@@ -30,8 +30,8 @@ class DashboardService {
                     data: msg.data
                 })
                     .then(() => { })
-                    .catch((e) => {
-                    console.error('error sync_grid insert', e);
+                    .catch(e => {
+                    console.error("error sync_grid insert", e);
                 });
                 // console.log(
                 //   "grid sync from",
