@@ -26,6 +26,7 @@ import { GriddbProvider } from "serendip-griddb-provider";
 import * as dotenv from "dotenv";
 import { EventEmitter } from "events";
 import { ClientService } from "./services/ClientService";
+import { HooksController } from "./controllers/HooksController";
 
 dotenv.config();
 
@@ -78,12 +79,13 @@ SmsIrService.configure({
 });
 
 HttpService.configure({
-  beforeMiddlewares: [(req, res, next) => {
-    req.url = req.url.replace(/\/\//g, '/')
-  
-    
-    next();
-  }],
+  beforeMiddlewares: [
+    (req, res, next) => {
+      req.url = req.url.replace(/\/\//g, "/");
+
+      next();
+    }
+  ],
   cors: "*",
   httpPort:
     (process.env.PORT as any) || (process.env["core.httpPort"] as any) || 2040,
@@ -94,12 +96,14 @@ HttpService.configure({
     BusinessController,
     EntityController,
     ServerController,
-    StorageController
+    StorageController,
+    HooksController
   ]
 });
 
-
 //WebSocketService.bypassTokenOnRoutes = ['/']
+
+console.log("ENV", process.env);
 
 start({
   logging: (process.env["core.logging"] as any) || "info",
@@ -126,6 +130,5 @@ start({
 })
   .then(() => {
     let emitter = new EventEmitter();
-
   })
   .catch(msg => console.log(msg));

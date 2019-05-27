@@ -13,6 +13,7 @@ const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
 const dotenv = require("dotenv");
 const events_1 = require("events");
 const ClientService_1 = require("./services/ClientService");
+const HooksController_1 = require("./controllers/HooksController");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
@@ -56,10 +57,12 @@ serendip_1.SmsIrService.configure({
     verifyTemplateWithIpAndUseragent: process.env["smsIr.verifyTemplateWithIpAndUseragent"]
 });
 serendip_1.HttpService.configure({
-    beforeMiddlewares: [(req, res, next) => {
-            req.url = req.url.replace(/\/\//g, '/');
+    beforeMiddlewares: [
+        (req, res, next) => {
+            req.url = req.url.replace(/\/\//g, "/");
             next();
-        }],
+        }
+    ],
     cors: "*",
     httpPort: process.env.PORT || process.env["core.httpPort"] || 2040,
     staticPath: path_1.join(__dirname, "../", "files", "public"),
@@ -69,10 +72,12 @@ serendip_1.HttpService.configure({
         controllers_1.BusinessController,
         EntityController_1.EntityController,
         serendip_1.ServerController,
-        StorageController_1.StorageController
+        StorageController_1.StorageController,
+        HooksController_1.HooksController
     ]
 });
 //WebSocketService.bypassTokenOnRoutes = ['/']
+console.log("ENV", process.env);
 serendip_1.start({
     logging: process.env["core.logging"] || "info",
     cpuCores: process.env["core.cpuCores"] || 1,
