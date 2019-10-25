@@ -95,11 +95,12 @@ export class EntityService implements ServerServiceInterface {
     return this.collection.find(query, skip, limit);
   }
 
-  async count(entityName: string, businessId: string): Promise<Number> {
+  async count(entityName: string, query : any = {} , businessId: string): Promise<Number> {
     return this.collection.count({
+      ...{
       _entity: entityName,
       _business: businessId.toString()
-    });
+    }, ...query});
   }
 
   async aggregate(pipeline: any[] = [], businessId: string): Promise<string[]> {

@@ -54,11 +54,11 @@ class EntityService {
     async find(query, skip, limit) {
         return this.collection.find(query, skip, limit);
     }
-    async count(entityName, businessId) {
-        return this.collection.count({
+    async count(entityName, query = {}, businessId) {
+        return this.collection.count(Object.assign({
             _entity: entityName,
             _business: businessId.toString()
-        });
+        }, query));
     }
     async aggregate(pipeline = [], businessId) {
         pipeline.unshift({ $match: { _business: businessId.toString() } });

@@ -395,6 +395,7 @@ export class EntityController {
       ) => {
         var model = await this.entityService.count(
           req.params.entity,
+          req.body.query,
           access.business._id
         );
         res.json(model);

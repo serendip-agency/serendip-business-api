@@ -271,7 +271,7 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    var model = await this.entityService.count(req.params.entity, access.business._id);
+                    var model = await this.entityService.count(req.params.entity, req.body.query, access.business._id);
                     res.json(model);
                 }
             ]
