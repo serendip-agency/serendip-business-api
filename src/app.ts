@@ -22,7 +22,6 @@ import { DashboardService } from "./services/DashboardService";
 import { StorageService } from "./services/StorageService";
 import { StorageController } from "./controllers/StorageController";
 import { MongodbProvider } from "serendip-mongodb-provider";
-import { GriddbProvider } from "serendip-griddb-provider";
 import * as dotenv from "dotenv";
 import { EventEmitter } from "events";
 import { ClientService } from "./services/ClientService";

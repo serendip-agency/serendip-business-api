@@ -95,12 +95,12 @@ export class BusinessService implements ServerServiceInterface {
     next,
     done
   ) {
-    if (!req.body._business) return done(400, "_business field missing");
+    if (!req.body._business && !req.query._business) return done(400, "_business field missing");
 
     var business: BusinessModel;
     try {
       business = await Server.services["BusinessService"].findById(
-        req.body._business
+        req.body._business || req.query._business
       );
     } catch (e) {}
 

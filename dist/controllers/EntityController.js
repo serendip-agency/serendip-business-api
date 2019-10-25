@@ -85,6 +85,16 @@ class EntityController {
                 }
             ]
         };
+        this.entityTypes = {
+            route: "/api/entity/types",
+            method: "get",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    res.json(await this.entityService.types(access.business._id));
+                }
+            ]
+        };
         this.details = {
             route: "/api/entity/:entity/details",
             method: "post",
@@ -244,13 +254,24 @@ class EntityController {
                 }
             ]
         };
+        this.aggregate = {
+            route: "/api/entity/:entity/aggregate",
+            method: "post",
+            actions: [
+                services_1.BusinessService.checkUserAccess,
+                async (req, res, next, done, access) => {
+                    const model = await this.entityService.aggregate(req.body.pipeline, access.business._id);
+                    res.json(model);
+                }
+            ]
+        };
         this.count = {
             route: "/api/entity/:entity/count",
             method: "post",
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    var model = await this.entityService.count(access.business._id);
+                    var model = await this.entityService.count(req.params.entity, access.business._id);
                     res.json(model);
                 }
             ]
@@ -261,31 +282,22 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    //{ '$regex': '.*' + req.body.query + '.*' }
-                    // var properties = req.body.properties || [];
-                    // var project: any = {};
-                    // var q = req.body.query || "";
-                    // if(properties.indexOf('_id') === -1)
-                    // properties.push('_id');
-                    // var model = await this.entityService.collection.find({
-                    //   _entity: req.params.entity,
-                    //   _business: access.business._id.toString(),
-                    //   $text: { $search: q }
-                    // })
-                    //   .aggregate([
-                    //     {
-                    //       $match: {
-                    //         _entity: req.params.entity,
-                    //         _business: access.business._id.toString(),
-                    //         $text: { $search: q }
-                    //       }
-                    //     },
-                    //     { $sort: { score: { $meta: "textScore" } } },
-                    //     { $project: project }
-                    //   ])
-                    //   .limit(req.body.limit || 30)
-                    //   .toArray();
-                    res.json([]);
+                    const queryText = req.body.query, propertiesToSearch = req.body.properties || [];
+                    if (propertiesToSearch.indexOf("_id") === -1)
+                        propertiesToSearch.push("_id");
+                    const query = {
+                        _entity: req.params.entity,
+                        _business: access.business._id.toString(),
+                        $or: []
+                    };
+                    for (const prop of propertiesToSearch) {
+                        const subQuery = {};
+                        subQuery[prop] = { $regex: ".*" + queryText + ".*", $options: "i" };
+                        query.$or.push(subQuery);
+                    }
+                    console.log(JSON.stringify(query, null, 2));
+                    var model = await this.entityService.collection.find(query);
+                    res.json(model);
                 }
             ]
         };

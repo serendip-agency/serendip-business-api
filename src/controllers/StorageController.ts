@@ -37,12 +37,7 @@ export class StorageController {
     method: "get",
     publicAccess: true,
     actions: [
-      async (
-        req,
-        res,
-        next,
-        done,
-      ) => {
+      async (req, res, next, done) => {
         const data =
           "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiBoZWlnaHQ9IjUwcHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MCA1MCIgd2lkdGg9IjUwcHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iNTAiIHdpZHRoPSI1MCIvPjxwYXRoIGQ9Ik0zNC4zOTcsMjlMMjAsNDhMNS42MDQsMjkgIEgxNUMxNSwwLDQ0LDEsNDQsMVMyNSwyLjM3MywyNSwyOUgzNC4zOTd6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=";
         const binaryString = Buffer.from(data, "base64");
@@ -73,12 +68,7 @@ export class StorageController {
   public newFolder: HttpEndpointInterface = {
     method: "POST",
     actions: [
-      async (
-        req,
-        res,
-        next,
-        done,
-      ) => {
+      async (req, res, next, done) => {
         var command: StorageCommandInterface = req.body;
         if (!command) return done(400);
         if (!command.path) return done(400);
@@ -105,12 +95,7 @@ export class StorageController {
   public upload: HttpEndpointInterface = {
     method: "POST",
     actions: [
-      async (
-        req,
-        res,
-        next,
-        done,
-      ) => {
+      async (req, res, next, done) => {
         var command: StorageCommandInterface = req.body;
         if (!command) return done(400);
         if (!command.path) return done(400);
@@ -420,12 +405,12 @@ export class StorageController {
           command.zipPath = "/" + command.zipPath;
         if (!command.zipPath.endsWith(".zip"))
           command.zipPath = command.zipPath + ".zip";
-        for (let cpath of command.paths) {
-          if (!cpath.startsWith("/")) cpath = "/" + cpath;
+        for (let commandPath of command.paths) {
+          if (!commandPath.startsWith("/")) commandPath = "/" + commandPath;
           if (
             !(await this.storageService.userHasAccessToPath(
               req.user._id.toString(),
-              cpath
+              commandPath
             ))
           )
             return done(400);
@@ -443,15 +428,15 @@ export class StorageController {
           {}
         );
         let files = [];
-        for (let cpath of command.paths) {
+        for (let commandPath of command.paths) {
           files = [
             ...files,
             ...(await this.storageService.filesCollection.find({
-              filename: { $regex: "^" + cpath.replace("/.keep", "/") }
+              filename: { $regex: "^" + commandPath.replace("/.keep", "/") }
             }))
           ];
         }
-        console.log(command);
+
         archive.pipe(uploadStream);
         for (const file of files) {
           archive.append(

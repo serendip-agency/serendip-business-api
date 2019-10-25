@@ -54,8 +54,27 @@ class EntityService {
     async find(query, skip, limit) {
         return this.collection.find(query, skip, limit);
     }
-    async count(businessId) {
-        return this.collection.count({ _business: businessId.toString() });
+    async count(entityName, businessId) {
+        return this.collection.count({
+            _entity: entityName,
+            _business: businessId.toString()
+        });
+    }
+    async aggregate(pipeline = [], businessId) {
+        pipeline.unshift({ $match: { _business: businessId.toString() } });
+        return this.collection.aggregate(pipeline);
+    }
+    async types(businessId) {
+        return (await this.collection.aggregate([
+            { $match: { _business: businessId.toString() } },
+            {
+                $group: {
+                    _id: "$_entity"
+                }
+            }
+        ]))
+            .map(p => p._id)
+            .filter(p => !p.startsWith("_"));
     }
 }
 exports.EntityService = EntityService;

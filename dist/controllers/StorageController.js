@@ -340,10 +340,10 @@ class StorageController {
                         command.zipPath = "/" + command.zipPath;
                     if (!command.zipPath.endsWith(".zip"))
                         command.zipPath = command.zipPath + ".zip";
-                    for (let cpath of command.paths) {
-                        if (!cpath.startsWith("/"))
-                            cpath = "/" + cpath;
-                        if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), cpath)))
+                    for (let commandPath of command.paths) {
+                        if (!commandPath.startsWith("/"))
+                            commandPath = "/" + commandPath;
+                        if (!(await this.storageService.userHasAccessToPath(req.user._id.toString(), commandPath)))
                             return done(400);
                     }
                     var archive = archiver("zip", {
@@ -355,15 +355,14 @@ class StorageController {
                     });
                     const uploadStream = await this.dbService.openUploadStreamByFilePath(command.zipPath, {});
                     let files = [];
-                    for (let cpath of command.paths) {
+                    for (let commandPath of command.paths) {
                         files = [
                             ...files,
                             ...(await this.storageService.filesCollection.find({
-                                filename: { $regex: "^" + cpath.replace("/.keep", "/") }
+                                filename: { $regex: "^" + commandPath.replace("/.keep", "/") }
                             }))
                         ];
                     }
-                    console.log(command);
                     archive.pipe(uploadStream);
                     for (const file of files) {
                         archive.append(await this.dbService.openDownloadStreamByFilePath(file.filename), { date: file.uploadDate, name: file.filename });

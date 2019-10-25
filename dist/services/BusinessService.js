@@ -54,11 +54,11 @@ class BusinessService {
         return ((await this.findBusinessesByUserId(userId)).filter(x => x._id == businessId).length == 1);
     }
     static async checkUserAccess(req, res, next, done) {
-        if (!req.body._business)
+        if (!req.body._business && !req.query._business)
             return done(400, "_business field missing");
         var business;
         try {
-            business = await serendip_1.Server.services["BusinessService"].findById(req.body._business);
+            business = await serendip_1.Server.services["BusinessService"].findById(req.body._business || req.query._business);
         }
         catch (e) { }
         if (!business) {
