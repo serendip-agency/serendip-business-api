@@ -101,13 +101,11 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    var model = await this.entityService.findById(req.body._id);
+                    var model = await this.entityService.findById(req.body._id, req.query.skip, req.query.limit, req.params.entity, access.business._id);
+                    console.log(model);
                     if (!model)
                         return done(404, "entity not found");
-                    if (model._business == access.business._id)
-                        res.json(model);
-                    else
-                        return done(404, "entity not found");
+                    res.json(model);
                 }
             ]
         };

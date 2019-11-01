@@ -187,8 +187,20 @@ export class EntityService implements ServerServiceInterface {
     });
   }
 
-  async findById(id: string, skip?: number, limit?: number) {
-    var query = await this.collection.find({ _id: id }, skip, limit);
+  async findById(
+    id: string,
+    skip?: number,
+    limit?: number,
+    entityName?: string,
+    businessId?: string
+  ) {
+    var query = await this.find(
+      { _id: id },
+      skip,
+      limit,
+      entityName,
+      businessId
+    );
 
     if (query.length == 0) return undefined;
     else return query[0];
@@ -198,8 +210,28 @@ export class EntityService implements ServerServiceInterface {
     return this.collection.find({ _business: id.toString() }, skip, limit);
   }
 
-  async find(query, skip?: number, limit?: number) {
-    return this.collection.find(query, skip, limit);
+  async find(
+    query: any = {},
+    skip?: number,
+    limit?: number,
+    entityName?: string,
+    businessId?: string
+  ): Promise<EntityModel[]> {
+    if (!businessId) return this.collection.find(query, skip, limit);
+
+    if (!this.dataSources[businessId]) this.dataSources[businessId] = [];
+    const dataSource = this.dataSources[businessId].find(
+      p =>
+        p.model.name == entityName.split(".")[0] &&
+        typeof entityName.split(".")[1] === "string"
+    );
+    if (dataSource) {
+      if (query._entity) delete query._entity;
+
+      return (await dataSource.provider.collection(
+        entityName.split(".")[1]
+      )).find(query);
+    } else return this.collection.find(query, skip, limit);
   }
 
   async count(
@@ -209,7 +241,9 @@ export class EntityService implements ServerServiceInterface {
   ): Promise<Number> {
     if (!this.dataSources[businessId]) this.dataSources[businessId] = [];
     const dataSource = this.dataSources[businessId].find(
-      p => p.model.name == entityName.split(".")[0] && typeof entityName.split(".")[1] === 'string'
+      p =>
+        p.model.name == entityName.split(".")[0] &&
+        typeof entityName.split(".")[1] === "string"
     );
 
     if (dataSource) {
@@ -233,10 +267,11 @@ export class EntityService implements ServerServiceInterface {
     pipeline: any[] = [],
     businessId: string
   ): Promise<string[]> {
-  
     if (!this.dataSources[businessId]) this.dataSources[businessId] = [];
     const dataSource = this.dataSources[businessId].find(
-      p => p.model.name == entityName.split(".")[0] && typeof entityName.split(".")[1] === 'string'
+      p =>
+        p.model.name == entityName.split(".")[0] &&
+        typeof entityName.split(".")[1] === "string"
     );
     if (dataSource) {
       if (pipeline[0] && pipeline[0].$match) {

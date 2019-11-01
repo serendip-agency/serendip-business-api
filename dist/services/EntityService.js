@@ -121,8 +121,8 @@ class EntityService {
             await this.notifyUsers("delete", model);
         });
     }
-    async findById(id, skip, limit) {
-        var query = await this.collection.find({ _id: id }, skip, limit);
+    async findById(id, skip, limit, entityName, businessId) {
+        var query = await this.find({ _id: id }, skip, limit, entityName, businessId);
         if (query.length == 0)
             return undefined;
         else
@@ -131,13 +131,26 @@ class EntityService {
     async findByBusinessId(id, skip, limit) {
         return this.collection.find({ _business: id.toString() }, skip, limit);
     }
-    async find(query, skip, limit) {
-        return this.collection.find(query, skip, limit);
+    async find(query = {}, skip, limit, entityName, businessId) {
+        if (!businessId)
+            return this.collection.find(query, skip, limit);
+        if (!this.dataSources[businessId])
+            this.dataSources[businessId] = [];
+        const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] &&
+            typeof entityName.split(".")[1] === "string");
+        if (dataSource) {
+            if (query._entity)
+                delete query._entity;
+            return (await dataSource.provider.collection(entityName.split(".")[1])).find(query);
+        }
+        else
+            return this.collection.find(query, skip, limit);
     }
     async count(entityName, query = {}, businessId) {
         if (!this.dataSources[businessId])
             this.dataSources[businessId] = [];
-        const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] && typeof entityName.split(".")[1] === 'string');
+        const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] &&
+            typeof entityName.split(".")[1] === "string");
         if (dataSource) {
             delete query._entity;
             return (await dataSource.provider.collection(entityName.split(".")[1])).count(query);
@@ -152,7 +165,8 @@ class EntityService {
     async aggregate(entityName, pipeline = [], businessId) {
         if (!this.dataSources[businessId])
             this.dataSources[businessId] = [];
-        const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] && typeof entityName.split(".")[1] === 'string');
+        const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] &&
+            typeof entityName.split(".")[1] === "string");
         if (dataSource) {
             if (pipeline[0] && pipeline[0].$match) {
                 delete pipeline[0].$match._entity;
