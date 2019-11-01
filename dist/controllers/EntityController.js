@@ -260,7 +260,7 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    const model = await this.entityService.aggregate(req.body.pipeline, access.business._id);
+                    const model = await this.entityService.aggregate(req.params.entity, req.body.pipeline, access.business._id);
                     res.json(model);
                 }
             ]
@@ -307,7 +307,7 @@ class EntityController {
             actions: [
                 services_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, access) => {
-                    var model = req.body;
+                    let model = req.body;
                     if (!model._entity)
                         model._entity = req.params.entity;
                     if (!model._business)

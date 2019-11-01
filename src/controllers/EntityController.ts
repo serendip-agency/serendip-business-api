@@ -372,6 +372,7 @@ export class EntityController {
         access: BusinessCheckAccessResultInterface
       ) => {
         const model = await this.entityService.aggregate(
+          req.params.entity,
           req.body.pipeline,
           access.business._id
         );
@@ -453,7 +454,7 @@ export class EntityController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
-        var model: EntityModel = req.body;
+        let model: EntityModel = req.body;
 
         if (!model._entity) model._entity = req.params.entity;
 

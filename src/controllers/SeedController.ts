@@ -2,7 +2,7 @@
  * @module Entity
  */
 import * as archiver from "archiver";
-import  axios from 'axios'
+import axios from "axios";
 import {
   DbService,
   HttpEndpointInterface,
@@ -38,7 +38,6 @@ export class SeedController {
 
   public importFromUrl: HttpEndpointInterface = {
     route: "/api/seed/import_form_url",
-
     method: "post",
     actions: [
       BusinessService.checkUserAccess,
@@ -64,6 +63,4 @@ export class SeedController {
       }
     ]
   };
-
- 
 }

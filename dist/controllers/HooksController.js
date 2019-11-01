@@ -35,6 +35,35 @@ class HooksController {
                 }
             ]
         };
+        this.submitGet = {
+            method: "GET",
+            route: "/api/hooks/submit",
+            publicAccess: true,
+            actions: [
+                async (req, res, next, done, access) => {
+                    var entityName = req.body.entityName;
+                    var entityQuery = await this.entityService.find({
+                        _entity: "_entity",
+                        webhook: req.query.key
+                    });
+                    if (entityQuery[0]) {
+                        res.write(`
+          <div style="font-family:monospace;">
+          <b>This is the hook for:</b>
+          <pre>
+${JSON.stringify(entityQuery[0], null, 2)}
+          </pre>
+          for inserting data send a [POST] request to this url
+          </div>
+          `);
+                        done(200);
+                    }
+                    else {
+                        done(400, "entity not found");
+                    }
+                }
+            ]
+        };
         this.refresh = {
             method: "post",
             actions: [
