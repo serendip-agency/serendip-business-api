@@ -6,5 +6,4 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./BusinessController"));
 __export(require("./EntityController"));
-__export(require("./ProfileController"));
 __export(require("./StorageController"));

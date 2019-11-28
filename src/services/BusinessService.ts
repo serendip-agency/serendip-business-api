@@ -1,4 +1,3 @@
-
 /**
  * @module Business
  */
@@ -7,14 +6,17 @@ import {
   DbService,
   HttpRequestInterface,
   Server,
-  ServerServiceInterface
+  ServerServiceInterface,
+  WebSocketService
 } from "serendip";
 import {
   BusinessMemberModel,
   BusinessModel,
-  DbCollectionInterface
+  DbCollectionInterface,
+  EntityModel
 } from "serendip-business-model";
 import * as _ from "underscore";
+import { EntityService } from "./EntityService";
 
 export interface BusinessCheckAccessResultInterface {
   member: BusinessMemberModel;
@@ -22,16 +24,13 @@ export interface BusinessCheckAccessResultInterface {
 }
 
 export class BusinessService implements ServerServiceInterface {
-  static dependencies = ["AuthService", "DbService"];
-
-  private dbService: DbService;
-  private authService: AuthService;
   public businessCollection: DbCollectionInterface<BusinessModel>;
 
-  constructor() {
-    this.dbService = Server.services["DbService"];
-    this.authService = Server.services["AuthService"];
-  }
+  constructor(
+    private webSocketService: WebSocketService,
+    private dbService: DbService,
+    private authService: AuthService
+  ) {}
 
   async start() {
     this.businessCollection = await this.dbService.collection<BusinessModel>(
@@ -40,15 +39,41 @@ export class BusinessService implements ServerServiceInterface {
     );
   }
 
+  async notifyUsers(event: "insert" | "update" | "delete", model: EntityModel) {
+    let business = await this.findById(model._business);
+
+    await Promise.all(
+      business.members
+        .filter(m => m)
+        .map(m =>
+          this.webSocketService.sendToUser(
+            m.userId,
+            "/entity",
+            JSON.stringify({
+              event,
+              model
+            })
+          )
+        )
+    );
+  }
+
   async insert(model: BusinessModel) {
-    return this.businessCollection.insertOne(model);
+    (model as any)._entity = "_business";
+
+    await this.notifyUsers("insert", model);
+    return await this.businessCollection.insertOne(model);
   }
 
   async update(model: BusinessModel) {
+    (model as any)._entity = "_business";
+    await this.notifyUsers("update", model);
     return this.businessCollection.updateOne(model);
   }
 
   async delete(model: BusinessModel) {
+    (model as any)._entity = "_business";
+    await this.notifyUsers("delete", model);
     return this.businessCollection.deleteOne(model._id);
   }
 
@@ -95,7 +120,8 @@ export class BusinessService implements ServerServiceInterface {
     next,
     done
   ) {
-    if (!req.body._business && !req.query._business) return done(400, "_business field missing");
+    if (!req.body._business && !req.query._business)
+      return done(400, "_business field missing");
 
     var business: BusinessModel;
     try {

@@ -6,6 +6,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./BusinessService"));
 __export(require("./DashboardService"));
 __export(require("./EntityService"));
-__export(require("./ProfileService"));
 __export(require("./StorageService"));
-__export(require("./TriggerService"));

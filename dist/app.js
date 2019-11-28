@@ -5,15 +5,13 @@ const path_1 = require("path");
 const controllers_1 = require("./controllers");
 const EntityController_1 = require("./controllers/EntityController");
 const BusinessService_1 = require("./services/BusinessService");
-const services_1 = require("./services");
 const DashboardService_1 = require("./services/DashboardService");
 const StorageService_1 = require("./services/StorageService");
 const StorageController_1 = require("./controllers/StorageController");
 const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
 const dotenv = require("dotenv");
-const events_1 = require("events");
-const ClientService_1 = require("./services/ClientService");
 const HooksController_1 = require("./controllers/HooksController");
+const services_1 = require("./services");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
@@ -94,12 +92,9 @@ serendip_1.start({
         serendip_1.WebSocketService,
         StorageService_1.StorageService,
         DashboardService_1.DashboardService,
-        StorageService_1.StorageService,
-        services_1.ProfileService,
-        ClientService_1.ClientService
+        StorageService_1.StorageService
+        // ClientService
     ]
 })
-    .then(() => {
-    let emitter = new events_1.EventEmitter();
-})
+    .then(() => { })
     .catch(msg => console.log(msg));

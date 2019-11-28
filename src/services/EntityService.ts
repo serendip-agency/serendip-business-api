@@ -16,38 +16,19 @@ import {
 import { ObjectId } from "bson";
 import { BusinessService } from "./BusinessService";
 import { MongodbProvider } from "serendip-mongodb-provider";
+import * as _ from "lodash";
 
 export class EntityService implements ServerServiceInterface {
   collection: DbCollectionInterface<EntityModel>;
 
   constructor(
     private dbService: DbService,
-    private webSocketService: WebSocketService,
     private businessService: BusinessService
   ) {}
 
   dataSources: {
     [key: string]: { model: EntityModel; provider: DbProviderInterface }[];
   } = {};
-
-  async notifyUsers(event: "insert" | "update" | "delete", model: EntityModel) {
-    let business = await this.businessService.findById(model._business);
-
-    await Promise.all(
-      business.members
-        .filter(m => m)
-        .map(m =>
-          this.webSocketService.sendToUser(
-            m.userId,
-            "/entity",
-            JSON.stringify({
-              event,
-              model
-            })
-          )
-        )
-    );
-  }
 
   async start() {
     this.collection = await this.dbService.collection<EntityModel>(
@@ -57,10 +38,10 @@ export class EntityService implements ServerServiceInterface {
 
     //this.collection.createIndex({ "$**": "text" }, {});
 
-    this.webSocketService.messageEmitter.on(
-      "/entity",
-      async (input: string, ws: WebSocketInterface) => {}
-    );
+    // this.webSocketService.messageEmitter.on(
+    //   "/entity",
+    //   async (input: string, ws: WebSocketInterface) => {}
+    // );
 
     // var records = await this.find({ _entity: "entity" }, 0, 0);
     // for (const r of records) {
@@ -164,26 +145,49 @@ export class EntityService implements ServerServiceInterface {
     }, 3000);
   }
 
+  async entityTrigger(eventType: string, model: EntityModel) {
+    if (["_notification", "_task"].indexOf(model._entity) == -1) {
+      await Promise.all(
+        _.uniq(
+          ["_cuser", "_uuser", "_duser", "userId"]
+            .map(p => model[p])
+            .filter(p => p)
+        ).map(async userId => {
+          await this.insert({
+            _entity: "_notification",
+            userId: userId,
+            text: `${model._entity} ${eventType}`,
+            flash: true,
+            _business: model._business
+          });
+        })
+      );
+    }
+  }
   async insert(model: EntityModel): Promise<EntityModel> {
     if (!model._cdate) model._cdate = Date.now();
 
-    return this.collection.insertOne(model).then(() => {
-      if (model._entity != "_grid")
-        this.notifyUsers("insert", model).catch(console.error);
+    return this.collection.insertOne(model).then(async () => {
+      await this.entityTrigger("insert", model);
+
+      // if (model._entity != "_grid")
+      //   this.businessService.notifyUsers("insert", model).catch(console.error);
     }) as any;
   }
 
   async update(model: EntityModel) {
-    await this.notifyUsers("update", model);
+    return this.collection.updateOne(model).then(async () => {
+      await this.entityTrigger("update", model);
 
-    return this.collection.updateOne(model).then(() => {
-      this.notifyUsers("update", model).catch(console.error);
+      // this.businessService.notifyUsers("update", model).catch(console.error);
     });
   }
 
   async delete(id: string, userId?: string) {
     return this.collection.deleteOne(id, userId).then(async model => {
-      await this.notifyUsers("delete", model);
+      await this.entityTrigger("delete", model);
+
+      // await this.businessService.notifyUsers("delete", model);
     });
   }
 
@@ -228,9 +232,9 @@ export class EntityService implements ServerServiceInterface {
     if (dataSource) {
       if (query._entity) delete query._entity;
 
-      return (await dataSource.provider.collection(
-        entityName.split(".")[1]
-      )).find(query);
+      return (
+        await dataSource.provider.collection(entityName.split(".")[1])
+      ).find(query);
     } else return this.collection.find(query, skip, limit);
   }
 
@@ -248,9 +252,9 @@ export class EntityService implements ServerServiceInterface {
 
     if (dataSource) {
       delete query._entity;
-      return (await dataSource.provider.collection(
-        entityName.split(".")[1]
-      )).count(query);
+      return (
+        await dataSource.provider.collection(entityName.split(".")[1])
+      ).count(query);
     } else {
       return this.collection.count({
         ...{
@@ -273,13 +277,20 @@ export class EntityService implements ServerServiceInterface {
         p.model.name == entityName.split(".")[0] &&
         typeof entityName.split(".")[1] === "string"
     );
+
+    if (entityName && entityName != "null" && entityName != "undefined") {
+      pipeline.unshift({
+        $match: { _entity: entityName }
+      });
+    }
+
     if (dataSource) {
       if (pipeline[0] && pipeline[0].$match) {
         delete pipeline[0].$match._entity;
       }
-      return (await dataSource.provider.collection(
-        entityName.split(".")[1]
-      )).aggregate(pipeline);
+      return (
+        await dataSource.provider.collection(entityName.split(".")[1])
+      ).aggregate(pipeline);
     } else {
       pipeline.unshift({ $match: { _business: businessId.toString() } });
       return this.collection.aggregate(pipeline);
@@ -287,14 +298,16 @@ export class EntityService implements ServerServiceInterface {
   }
 
   async types(businessId: string): Promise<string[]> {
-    return (await this.collection.aggregate([
-      { $match: { _business: businessId.toString() } },
-      {
-        $group: {
-          _id: "$_entity"
+    return (
+      await this.collection.aggregate([
+        { $match: { _business: businessId.toString() } },
+        {
+          $group: {
+            _id: "$_entity"
+          }
         }
-      }
-    ]))
+      ])
+    )
       .map(p => p._id)
       .filter(p => !p.startsWith("_"));
   }

@@ -27,7 +27,7 @@ class ClientService {
                     Mongodb: {
                         object: new serendip_mongodb_provider_1.MongodbProvider(),
                         options: {
-                            mongoDb: process.env["db.mongoDb"],
+                            mongoDb: process.env["sbc.mongoDb"],
                             mongoUrl: process.env["db.mongoUrl"],
                             authSource: process.env["db.authSource"],
                             user: process.env["db.user"],

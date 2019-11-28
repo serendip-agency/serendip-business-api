@@ -1,4 +1,3 @@
-
 /**
  * @module Business
  */
@@ -14,13 +13,12 @@ import {
 } from "../services/BusinessService";
 import { BusinessModel, BusinessMemberModel } from "serendip-business-model";
 import * as _ from "underscore";
-import { EntityService, ProfileService } from "../services";
+import { EntityService } from "../services";
 
 export class BusinessController {
   constructor(
     private businessService: BusinessService,
     private authService: AuthService,
-    private profileService: ProfileService,
     private entityService: EntityService
   ) {}
 
@@ -58,9 +56,9 @@ export class BusinessController {
               member.mobileCountryCode = queryUser.mobileCountryCode;
             }
 
-            member.profile = await this.profileService.findProfileByUserId(
-              member.userId
-            );
+            // member.profile = await this.profileService.findProfileByUserId(
+            //   member.userId
+            // );
 
             business.members[mi] = member;
           }
@@ -83,12 +81,14 @@ export class BusinessController {
         done,
         access: BusinessCheckAccessResultInterface
       ) => {
-        var query = (await this.entityService.collection.find({
-          _entity: "_grid",
-          _business: access.business._id.toString(),
-          _cuser: access.member.userId.toString(),
-          "data.section": req.body.section
-        })).sort((a, b) => {
+        var query = (
+          await this.entityService.collection.find({
+            _entity: "_grid",
+            _business: access.business._id.toString(),
+            _cuser: access.member.userId.toString(),
+            "data.section": req.body.section
+          })
+        ).sort((a, b) => {
           return b._cdate - a._cdate;
         });
 
@@ -98,7 +98,8 @@ export class BusinessController {
       }
     ]
   };
-  public saveBusiness: HttpEndpointInterface = {
+
+  public save: HttpEndpointInterface = {
     method: "post",
     actions: [
       async (req, res, next, done) => {

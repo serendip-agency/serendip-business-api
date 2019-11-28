@@ -6,20 +6,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
 const _ = require("underscore");
 class BusinessService {
-    constructor() {
-        this.dbService = serendip_1.Server.services["DbService"];
-        this.authService = serendip_1.Server.services["AuthService"];
+    constructor(webSocketService, dbService, authService) {
+        this.webSocketService = webSocketService;
+        this.dbService = dbService;
+        this.authService = authService;
     }
     async start() {
         this.businessCollection = await this.dbService.collection("Businesses", true);
     }
+    async notifyUsers(event, model) {
+        let business = await this.findById(model._business);
+        await Promise.all(business.members
+            .filter(m => m)
+            .map(m => this.webSocketService.sendToUser(m.userId, "/entity", JSON.stringify({
+            event,
+            model
+        }))));
+    }
     async insert(model) {
-        return this.businessCollection.insertOne(model);
+        model._entity = "_business";
+        await this.notifyUsers("insert", model);
+        return await this.businessCollection.insertOne(model);
     }
     async update(model) {
+        model._entity = "_business";
+        await this.notifyUsers("update", model);
         return this.businessCollection.updateOne(model);
     }
     async delete(model) {
+        model._entity = "_business";
+        await this.notifyUsers("delete", model);
         return this.businessCollection.deleteOne(model._id);
     }
     async findById(id) {
@@ -84,5 +100,4 @@ class BusinessService {
         next(result);
     }
 }
-BusinessService.dependencies = ["AuthService", "DbService"];
 exports.BusinessService = BusinessService;

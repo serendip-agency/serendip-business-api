@@ -17,15 +17,13 @@ import { join } from "path";
 import { BusinessController } from "./controllers";
 import { EntityController } from "./controllers/EntityController";
 import { BusinessService } from "./services/BusinessService";
-import { EntityService, ProfileService } from "./services";
 import { DashboardService } from "./services/DashboardService";
 import { StorageService } from "./services/StorageService";
 import { StorageController } from "./controllers/StorageController";
 import { MongodbProvider } from "serendip-mongodb-provider";
 import * as dotenv from "dotenv";
-import { EventEmitter } from "events";
-import { ClientService } from "./services/ClientService";
 import { HooksController } from "./controllers/HooksController";
+import { EntityService } from "./services";
 
 dotenv.config();
 
@@ -122,12 +120,9 @@ start({
     WebSocketService,
     StorageService,
     DashboardService,
-    StorageService,
-    ProfileService,
-    ClientService
+    StorageService
+    // ClientService
   ]
 })
-  .then(() => {
-    let emitter = new EventEmitter();
-  })
+  .then(() => {})
   .catch(msg => console.log(msg));

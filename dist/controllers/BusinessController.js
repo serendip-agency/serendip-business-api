@@ -8,10 +8,9 @@ const BusinessService_1 = require("../services/BusinessService");
 const serendip_business_model_1 = require("serendip-business-model");
 const _ = require("underscore");
 class BusinessController {
-    constructor(businessService, authService, profileService, entityService) {
+    constructor(businessService, authService, entityService) {
         this.businessService = businessService;
         this.authService = authService;
-        this.profileService = profileService;
         this.entityService = entityService;
         this.list = {
             method: "get",
@@ -36,7 +35,9 @@ class BusinessController {
                                 member.mobile = queryUser.mobile;
                                 member.mobileCountryCode = queryUser.mobileCountryCode;
                             }
-                            member.profile = await this.profileService.findProfileByUserId(member.userId);
+                            // member.profile = await this.profileService.findProfileByUserId(
+                            //   member.userId
+                            // );
                             business.members[mi] = member;
                         }
                         model[i] = business;
@@ -66,7 +67,7 @@ class BusinessController {
                 }
             ]
         };
-        this.saveBusiness = {
+        this.save = {
             method: "post",
             actions: [
                 async (req, res, next, done) => {

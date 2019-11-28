@@ -1,26 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
+const _ = require("lodash");
 class EntityService {
-    constructor(dbService, webSocketService, businessService) {
+    constructor(dbService, businessService) {
         this.dbService = dbService;
-        this.webSocketService = webSocketService;
         this.businessService = businessService;
         this.dataSources = {};
-    }
-    async notifyUsers(event, model) {
-        let business = await this.businessService.findById(model._business);
-        await Promise.all(business.members
-            .filter(m => m)
-            .map(m => this.webSocketService.sendToUser(m.userId, "/entity", JSON.stringify({
-            event,
-            model
-        }))));
     }
     async start() {
         this.collection = await this.dbService.collection("Entities", true);
         //this.collection.createIndex({ "$**": "text" }, {});
-        this.webSocketService.messageEmitter.on("/entity", async (input, ws) => { });
+        // this.webSocketService.messageEmitter.on(
+        //   "/entity",
+        //   async (input: string, ws: WebSocketInterface) => {}
+        // );
         // var records = await this.find({ _entity: "entity" }, 0, 0);
         // for (const r of records) {
         //   r._entity = "_entity";
@@ -102,23 +96,40 @@ class EntityService {
             this.refreshEntityTypes();
         }, 3000);
     }
+    async entityTrigger(eventType, model) {
+        if (["_notification", "_task"].indexOf(model._entity) == -1) {
+            await Promise.all(_.uniq(["_cuser", "_uuser", "_duser", "userId"]
+                .map(p => model[p])
+                .filter(p => p)).map(async (userId) => {
+                await this.insert({
+                    _entity: "_notification",
+                    userId: userId,
+                    text: `${model._entity} ${eventType}`,
+                    flash: true,
+                    _business: model._business
+                });
+            }));
+        }
+    }
     async insert(model) {
         if (!model._cdate)
             model._cdate = Date.now();
-        return this.collection.insertOne(model).then(() => {
-            if (model._entity != "_grid")
-                this.notifyUsers("insert", model).catch(console.error);
+        return this.collection.insertOne(model).then(async () => {
+            await this.entityTrigger("insert", model);
+            // if (model._entity != "_grid")
+            //   this.businessService.notifyUsers("insert", model).catch(console.error);
         });
     }
     async update(model) {
-        await this.notifyUsers("update", model);
-        return this.collection.updateOne(model).then(() => {
-            this.notifyUsers("update", model).catch(console.error);
+        return this.collection.updateOne(model).then(async () => {
+            await this.entityTrigger("update", model);
+            // this.businessService.notifyUsers("update", model).catch(console.error);
         });
     }
     async delete(id, userId) {
         return this.collection.deleteOne(id, userId).then(async (model) => {
-            await this.notifyUsers("delete", model);
+            await this.entityTrigger("delete", model);
+            // await this.businessService.notifyUsers("delete", model);
         });
     }
     async findById(id, skip, limit, entityName, businessId) {
@@ -167,6 +178,11 @@ class EntityService {
             this.dataSources[businessId] = [];
         const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] &&
             typeof entityName.split(".")[1] === "string");
+        if (entityName && entityName != "null" && entityName != "undefined") {
+            pipeline.unshift({
+                $match: { _entity: entityName }
+            });
+        }
         if (dataSource) {
             if (pipeline[0] && pipeline[0].$match) {
                 delete pipeline[0].$match._entity;

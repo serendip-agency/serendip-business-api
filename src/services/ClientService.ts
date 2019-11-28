@@ -32,7 +32,7 @@ export class ClientService implements HttpServiceInterface {
           Mongodb: {
             object: new MongodbProvider() as any,
             options: {
-              mongoDb: process.env["db.mongoDb"],
+              mongoDb: process.env["sbc.mongoDb"],
               mongoUrl: process.env["db.mongoUrl"],
               authSource: process.env["db.authSource"],
               user: process.env["db.user"],
