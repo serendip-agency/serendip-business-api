@@ -15,6 +15,10 @@ class BusinessService {
         this.businessCollection = await this.dbService.collection("Businesses", true);
     }
     async notifyUsers(event, model) {
+        if (!model._entity.startsWith("_")) {
+            // TODO: check for entity setting
+            return;
+        }
         let business = await this.findById(model._business);
         await Promise.all(business.members
             .filter(m => m)
@@ -25,17 +29,14 @@ class BusinessService {
     }
     async insert(model) {
         model._entity = "_business";
-        await this.notifyUsers("insert", model);
         return await this.businessCollection.insertOne(model);
     }
     async update(model) {
         model._entity = "_business";
-        await this.notifyUsers("update", model);
         return this.businessCollection.updateOne(model);
     }
     async delete(model) {
         model._entity = "_business";
-        await this.notifyUsers("delete", model);
         return this.businessCollection.deleteOne(model._id);
     }
     async findById(id) {

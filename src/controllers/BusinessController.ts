@@ -56,9 +56,13 @@ export class BusinessController {
               member.mobileCountryCode = queryUser.mobileCountryCode;
             }
 
-            // member.profile = await this.profileService.findProfileByUserId(
-            //   member.userId
-            // );
+            member.profile = (
+              await this.entityService.collection.find({
+                _entity: "_profile",
+                _business: business._id,
+                userId: member.userId
+              })
+            )[0] as any;
 
             business.members[mi] = member;
           }
@@ -142,16 +146,27 @@ export class BusinessController {
         done,
         model: BusinessCheckAccessResultInterface
       ) => {
-        var userId = req.body.userId;
-
-        if (!userId) return next(new HttpError(400, "userId field missing"));
+        const toAdd = req.body;
+        const user = await this.authService.findUserByMobile(
+          toAdd.mobile,
+          toAdd.mobileCountryCode
+        );
 
         model.business.members = _.reject(
           model.business.members,
           (item: BusinessMemberModel) => {
-            return item.userId == userId;
+            return item.userId == user._id.toString();
           }
         );
+
+        await this.entityService.insert({
+          _entity: "_notification",
+          viewed: false,
+          icon: "club-1",
+          text: `user access of (${toAdd.mobileCountryCode})${toAdd.mobile} deleted`,
+          flash: false,
+          _business: model.business._id.toString()
+        });
 
         try {
           await this.businessService.update(model.business);
@@ -204,6 +219,15 @@ export class BusinessController {
         }
 
         model.business.members.push(toAdd as any);
+
+        await this.entityService.insert({
+          _entity: "_notification",
+          viewed: false,
+          icon: "club-1",
+          text: `New user granted access to business (${toAdd.mobileCountryCode})${toAdd.mobile}`,
+          flash: false,
+          _business: model.business._id.toString()
+        });
 
         try {
           await this.businessService.update(model.business);

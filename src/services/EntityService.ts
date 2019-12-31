@@ -6,12 +6,14 @@ import {
   DbService,
   Server,
   WebSocketService,
-  WebSocketInterface
+  WebSocketInterface,
+  AuthService
 } from "serendip";
 import {
   DbCollectionInterface,
   EntityModel,
-  DbProviderInterface
+  DbProviderInterface,
+  TokenModel
 } from "serendip-business-model";
 import { ObjectId } from "bson";
 import { BusinessService } from "./BusinessService";
@@ -24,7 +26,27 @@ export class EntityService implements ServerServiceInterface {
   constructor(
     private dbService: DbService,
     private businessService: BusinessService
-  ) {}
+  ) {
+    AuthService.events.on("insertToken", async (token: TokenModel) => {
+      const businesses = await this.businessService.findBusinessesByUserId(
+        token.userId
+      );
+
+      const promises = businesses.map(b => {
+        return this.insert({
+          _entity: "_notification",
+          viewed: false,
+          userId: token.userId,
+          icon: "key-1",
+          text: `New token created using ${token.grant_type} from ${token.useragent}`,
+          flash: false,
+          _business: b._id
+        });
+      });
+
+      await Promise.all(promises);
+    });
+  }
 
   dataSources: {
     [key: string]: { model: EntityModel; provider: DbProviderInterface }[];
@@ -171,7 +193,7 @@ export class EntityService implements ServerServiceInterface {
       await this.entityTrigger("insert", model);
 
       // if (model._entity != "_grid")
-      //   this.businessService.notifyUsers("insert", model).catch(console.error);
+      this.businessService.notifyUsers("insert", model).catch(console.error);
     }) as any;
   }
 
@@ -179,7 +201,7 @@ export class EntityService implements ServerServiceInterface {
     return this.collection.updateOne(model).then(async () => {
       await this.entityTrigger("update", model);
 
-      // this.businessService.notifyUsers("update", model).catch(console.error);
+      this.businessService.notifyUsers("update", model).catch(console.error);
     });
   }
 
@@ -187,7 +209,7 @@ export class EntityService implements ServerServiceInterface {
     return this.collection.deleteOne(id, userId).then(async model => {
       await this.entityTrigger("delete", model);
 
-      // await this.businessService.notifyUsers("delete", model);
+      await this.businessService.notifyUsers("delete", model);
     });
   }
 
@@ -307,8 +329,6 @@ export class EntityService implements ServerServiceInterface {
           }
         }
       ])
-    )
-      .map(p => p._id)
-      .filter(p => !p.startsWith("_"));
+    ).map(p => p._id);
   }
 }

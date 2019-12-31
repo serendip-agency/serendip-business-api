@@ -35,9 +35,11 @@ class BusinessController {
                                 member.mobile = queryUser.mobile;
                                 member.mobileCountryCode = queryUser.mobileCountryCode;
                             }
-                            // member.profile = await this.profileService.findProfileByUserId(
-                            //   member.userId
-                            // );
+                            member.profile = (await this.entityService.collection.find({
+                                _entity: "_profile",
+                                _business: business._id,
+                                userId: member.userId
+                            }))[0];
                             business.members[mi] = member;
                         }
                         model[i] = business;
@@ -102,11 +104,18 @@ class BusinessController {
             actions: [
                 BusinessService_1.BusinessService.checkUserAccess,
                 async (req, res, next, done, model) => {
-                    var userId = req.body.userId;
-                    if (!userId)
-                        return next(new serendip_1.HttpError(400, "userId field missing"));
+                    const toAdd = req.body;
+                    const user = await this.authService.findUserByMobile(toAdd.mobile, toAdd.mobileCountryCode);
                     model.business.members = _.reject(model.business.members, (item) => {
-                        return item.userId == userId;
+                        return item.userId == user._id.toString();
+                    });
+                    await this.entityService.insert({
+                        _entity: "_notification",
+                        viewed: false,
+                        icon: "club-1",
+                        text: `user access of (${toAdd.mobileCountryCode})${toAdd.mobile} deleted`,
+                        flash: false,
+                        _business: model.business._id.toString()
                     });
                     try {
                         await this.businessService.update(model.business);
@@ -138,6 +147,14 @@ class BusinessController {
                         }
                     }
                     model.business.members.push(toAdd);
+                    await this.entityService.insert({
+                        _entity: "_notification",
+                        viewed: false,
+                        icon: "club-1",
+                        text: `New user granted access to business (${toAdd.mobileCountryCode})${toAdd.mobile}`,
+                        flash: false,
+                        _business: model.business._id.toString()
+                    });
                     try {
                         await this.businessService.update(model.business);
                     }

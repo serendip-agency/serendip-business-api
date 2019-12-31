@@ -40,6 +40,11 @@ export class BusinessService implements ServerServiceInterface {
   }
 
   async notifyUsers(event: "insert" | "update" | "delete", model: EntityModel) {
+    if (!model._entity.startsWith("_")) {
+      // TODO: check for entity setting
+      return;
+    }
+
     let business = await this.findById(model._business);
 
     await Promise.all(
@@ -61,19 +66,18 @@ export class BusinessService implements ServerServiceInterface {
   async insert(model: BusinessModel) {
     (model as any)._entity = "_business";
 
-    await this.notifyUsers("insert", model);
     return await this.businessCollection.insertOne(model);
   }
 
   async update(model: BusinessModel) {
     (model as any)._entity = "_business";
-    await this.notifyUsers("update", model);
+
     return this.businessCollection.updateOne(model);
   }
 
   async delete(model: BusinessModel) {
     (model as any)._entity = "_business";
-    await this.notifyUsers("delete", model);
+
     return this.businessCollection.deleteOne(model._id);
   }
 

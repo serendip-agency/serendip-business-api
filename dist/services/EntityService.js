@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module Entity
+ */
+const serendip_1 = require("serendip");
 const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
 const _ = require("lodash");
 class EntityService {
@@ -7,6 +11,21 @@ class EntityService {
         this.dbService = dbService;
         this.businessService = businessService;
         this.dataSources = {};
+        serendip_1.AuthService.events.on("insertToken", async (token) => {
+            const businesses = await this.businessService.findBusinessesByUserId(token.userId);
+            const promises = businesses.map(b => {
+                return this.insert({
+                    _entity: "_notification",
+                    viewed: false,
+                    userId: token.userId,
+                    icon: "key-1",
+                    text: `New token created using ${token.grant_type} from ${token.useragent}`,
+                    flash: false,
+                    _business: b._id
+                });
+            });
+            await Promise.all(promises);
+        });
     }
     async start() {
         this.collection = await this.dbService.collection("Entities", true);
@@ -117,19 +136,19 @@ class EntityService {
         return this.collection.insertOne(model).then(async () => {
             await this.entityTrigger("insert", model);
             // if (model._entity != "_grid")
-            //   this.businessService.notifyUsers("insert", model).catch(console.error);
+            this.businessService.notifyUsers("insert", model).catch(console.error);
         });
     }
     async update(model) {
         return this.collection.updateOne(model).then(async () => {
             await this.entityTrigger("update", model);
-            // this.businessService.notifyUsers("update", model).catch(console.error);
+            this.businessService.notifyUsers("update", model).catch(console.error);
         });
     }
     async delete(id, userId) {
         return this.collection.deleteOne(id, userId).then(async (model) => {
             await this.entityTrigger("delete", model);
-            // await this.businessService.notifyUsers("delete", model);
+            await this.businessService.notifyUsers("delete", model);
         });
     }
     async findById(id, skip, limit, entityName, businessId) {
@@ -202,9 +221,7 @@ class EntityService {
                     _id: "$_entity"
                 }
             }
-        ]))
-            .map(p => p._id)
-            .filter(p => !p.startsWith("_"));
+        ])).map(p => p._id);
     }
 }
 exports.EntityService = EntityService;
