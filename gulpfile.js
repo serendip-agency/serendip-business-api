@@ -71,6 +71,7 @@ gulp.task("typedoc", function () {
       module: "commonjs",
       target: "es2017",
 
+      skipLibCheck : true,
       includeDeclarations: true,
       excludePrivate: true,
       excludeProtected: true,

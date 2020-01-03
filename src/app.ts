@@ -24,7 +24,7 @@ import { MongodbProvider } from "serendip-mongodb-provider";
 import * as dotenv from "dotenv";
 import { HooksController } from "./controllers/HooksController";
 import { EntityService } from "./services";
-
+import { MingodbProvider } from "serendip-mingodb-provider";
 dotenv.config();
 
 Server.dir = __dirname;
@@ -42,7 +42,7 @@ DbService.configure({
     //   options: {}
     // },
     Mongodb: {
-      object: new MongodbProvider(),
+      object: new MingodbProvider(),
       options: {
         mongoDb: process.env["db.mongoDb"],
         mongoUrl: process.env["db.mongoUrl"],

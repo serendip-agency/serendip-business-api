@@ -8,10 +8,10 @@ const BusinessService_1 = require("./services/BusinessService");
 const DashboardService_1 = require("./services/DashboardService");
 const StorageService_1 = require("./services/StorageService");
 const StorageController_1 = require("./controllers/StorageController");
-const serendip_mongodb_provider_1 = require("serendip-mongodb-provider");
 const dotenv = require("dotenv");
 const HooksController_1 = require("./controllers/HooksController");
 const services_1 = require("./services");
+const serendip_mingodb_provider_1 = require("serendip-mingodb-provider");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
@@ -26,7 +26,7 @@ serendip_1.DbService.configure({
         //   options: {}
         // },
         Mongodb: {
-            object: new serendip_mongodb_provider_1.MongodbProvider(),
+            object: new serendip_mingodb_provider_1.MingodbProvider(),
             options: {
                 mongoDb: process.env["db.mongoDb"],
                 mongoUrl: process.env["db.mongoUrl"],
