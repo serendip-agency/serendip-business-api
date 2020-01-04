@@ -1,6 +1,6 @@
 {
   "name": "serendip-dashboard",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": "https://github.com/serendip-agency/serendip-business-api",
   "description": "serendip business api on nodejs",
   "main": "index.js",
