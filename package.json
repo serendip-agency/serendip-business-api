@@ -51,7 +51,6 @@
     "multistream": "^2.1.1",
     "request": "^2.88.0",
     "serendip": "^1.1.20",
-    "serendip-business-client": "^1.0.7",
     "serendip-business-model": "^1.1.13",
     "serendip-mingodb-provider": "^1.0.2",
     "serendip-mongodb-provider": "^1.0.16",
