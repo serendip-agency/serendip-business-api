@@ -26,17 +26,51 @@ export interface BusinessCheckAccessResultInterface {
 export class BusinessService implements ServerServiceInterface {
   public businessCollection: DbCollectionInterface<BusinessModel>;
 
+  static mode;
   constructor(
     private webSocketService: WebSocketService,
     private dbService: DbService,
     private authService: AuthService
-  ) {}
+  ) {
+
+
+  }
 
   async start() {
     this.businessCollection = await this.dbService.collection<BusinessModel>(
       "Businesses",
       true
     );
+
+    if (BusinessService.mode === 'single-user') {
+
+      let defaultUser = await this.authService.findUserByUsername('default');
+      if (!defaultUser) {
+
+        defaultUser = await this.authService.registerUser({
+          username: 'default',
+          password: "serendip",
+          "email": "serendip@localhost.default",
+
+        }, null, null, true);
+
+
+        const defaultBusinesses = await this.findBusinessesByUserId(defaultUser._id);
+
+        if (!defaultBusinesses.find(p => p.title.toLowerCase() === 'default'))
+          await this.insert({
+            title: 'Default',
+            description: "default business for single-user mode",
+            owner: defaultUser._id,
+            members: [
+              {
+                userId: defaultUser._id,
+              }
+            ],
+          } as any)
+      }
+
+    }
   }
 
   async notifyUsers(event: "insert" | "update" | "delete", model: EntityModel) {
@@ -132,7 +166,7 @@ export class BusinessService implements ServerServiceInterface {
       business = await Server.services["BusinessService"].findById(
         req.body._business || req.query._business
       );
-    } catch (e) {}
+    } catch (e) { }
 
     if (!business) {
       return done(400, "business invalid");

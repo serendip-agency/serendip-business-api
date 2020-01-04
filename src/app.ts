@@ -90,14 +90,9 @@ HttpService.configure({
   ]
 });
 
-//WebSocketService.bypassTokenOnRoutes = ['/']
+export async function run(mode?: string | 'single-user') {
 
-console.log("ENV", process.env);
-
-
-export async function run() {
-
-
+  BusinessService.mode = mode;
 
   return start({
     logging: (process.env["core.logging"] as any) || "info",

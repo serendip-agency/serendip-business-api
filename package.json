@@ -1,19 +1,19 @@
 {
   "name": "serendip-dashboard",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "repository": "https://github.com/serendip-agency/serendip-business-api",
   "description": "serendip business api on nodejs",
   "main": "index.js",
   "bin": {
     "serendip": "./dist/start.js",
     "serendip-dashboard": "./dist/start.js"
-
   },
   "scripts": {
-    "test": "gulp test",
+    "test": "MODE=server gulp test",
     "doc": "gulp typedoc",
-    "dev": "tsnd src/start.ts",
+    "dev": "MODE=debug tsnd src/start.ts",
     "build": "gulp build",
-    "start": "ts-node src/start.ts"
+    "start": "MODE=server ts-node src/start.ts"
   },
   "author": "Mohsen Esmaeili <m-esm@hotmail.com>",
   "license": "ISC",
@@ -39,8 +39,6 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@types/axios": "^0.14.0",
-    "aes-js": "^3.1.2",
     "archiver": "^2.1.1",
     "axios": "^0.19.0",
     "bson": "^4.0.2",
@@ -55,7 +53,7 @@
     "serendip": "^1.1.20",
     "serendip-business-client": "^1.0.7",
     "serendip-business-model": "^1.1.13",
-    "serendip-mingodb-provider": "^1.0.1",
+    "serendip-mingodb-provider": "^1.0.2",
     "serendip-mongodb-provider": "^1.0.16",
     "serendip-utility": "^1.1.1",
     "ts-node": "^8.5.4",

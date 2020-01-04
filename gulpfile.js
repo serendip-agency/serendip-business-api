@@ -14,23 +14,34 @@ var paths = {
 
 var server;
 var serverLog = fs.createWriteStream(
-  "./logs/" + moment().format("YYYY-MM-DD HH-mm") + ".log",
-  { flags: "a" }
+  "./logs/" + moment().format("YYYY-MM-DD HH-mm") + ".log", {
+    flags: "a"
+  }
 );
 
 var run = function () {
-  if (server) if (server.kill) server.kill();
+  if (server)
+    if (server.kill) server.kill();
 
-  server = child.spawn("node", ["dist/app.js"], { stdio: "inherit" });
+  server = child.spawn("node", ["dist/app.js"], {
+    env: {
+      MODE: "debug"
+    },
+    stdio: "inherit"
+  });
 };
 
 gulp.task("cleanLogs", function () {
-  return gulp.src(paths.logs, { read: false }).pipe(clean());
+  return gulp.src(paths.logs, {
+    read: false
+  }).pipe(clean());
 });
 
 // clean dist folder
 gulp.task("clean", function (cb) {
-  return gulp.src(paths.dist, { read: false }).pipe(clean());
+  return gulp.src(paths.dist, {
+    read: false
+  }).pipe(clean());
 });
 
 gulp.task("prod", function () {
@@ -65,13 +76,14 @@ gulp.task("typedoc", function () {
     .src([paths.tsSources,
       './node_modules/serendip-business-model/src/auth/*.ts',
       './node_modules/serendip-business-model/src/db/*.ts',
-      './node_modules/serendip-business-model/src/Server*.ts'])
+      './node_modules/serendip-business-model/src/Server*.ts'
+    ])
     .pipe(typedoc({
       // TypeScript options (see typescript docs)
       module: "commonjs",
       target: "es2017",
 
-      skipLibCheck : true,
+      skipLibCheck: true,
       includeDeclarations: true,
       excludePrivate: true,
       excludeProtected: true,
@@ -104,7 +116,7 @@ gulp.task("ts", function () {
         target: "es2017",
         sourceMap: true,
         module: "CommonJS",
-        skipLibCheck : true,
+        skipLibCheck: true,
 
         baseUrl: ".",
         paths: {
@@ -124,9 +136,9 @@ gulp.watch(paths.tsSources, ["run"]);
 gulp.task("preBuild", ["clean"]);
 
 // clean and compile
-gulp.task("build", ["preBuild", "ts"], function () { });
+gulp.task("build", ["preBuild", "ts"], function () {});
 
 // compile and run node process
 gulp.task("run", ["ts"], run);
 
-gulp.task("default", ["build", "run"], function () { });
+gulp.task("default", ["build", "run"], function () {});
