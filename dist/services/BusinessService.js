@@ -13,6 +13,28 @@ class BusinessService {
     }
     async start() {
         this.businessCollection = await this.dbService.collection("Businesses", true);
+        if (BusinessService.mode === 'single-user') {
+            let defaultUser = await this.authService.findUserByUsername('default');
+            if (!defaultUser) {
+                defaultUser = await this.authService.registerUser({
+                    username: 'default',
+                    password: "serendip",
+                    "email": "serendip@localhost.default",
+                }, null, null, true);
+                const defaultBusinesses = await this.findBusinessesByUserId(defaultUser._id);
+                if (!defaultBusinesses.find(p => p.title.toLowerCase() === 'default'))
+                    await this.insert({
+                        title: 'Default',
+                        description: "default business for single-user mode",
+                        owner: defaultUser._id,
+                        members: [
+                            {
+                                userId: defaultUser._id,
+                            }
+                        ],
+                    });
+            }
+        }
     }
     async notifyUsers(event, model) {
         if (!model._entity.startsWith("_")) {

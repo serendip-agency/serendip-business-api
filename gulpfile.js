@@ -23,7 +23,7 @@ var run = function () {
   if (server)
     if (server.kill) server.kill();
 
-  server = child.spawn("node", ["dist/app.js"], {
+  server = child.spawn("node", ["dist/start.js"], {
     env: {
       MODE: "debug"
     },

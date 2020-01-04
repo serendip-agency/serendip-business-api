@@ -16,7 +16,6 @@ dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
     tokenExpireIn: 1000 * 60 * 60,
-    smsProvider: "SmsIrService"
 });
 serendip_1.DbService.configure({
     defaultProvider: "Mingodb",
@@ -37,13 +36,15 @@ serendip_1.EmailService.configure({
     },
     templatesPath: path_1.join(__dirname, "..", "storage", "email-templates")
 });
-serendip_1.SmsIrService.configure({
-    lineNumber: process.env["smsIr.lineNumber"],
-    apiKey: process.env["smsIr.apiKey"],
-    secretKey: process.env["smsIr.secretKey"],
-    verifyTemplate: process.env["smsIr.verifyTemplate"],
-    verifyTemplateWithIpAndUseragent: process.env["smsIr.verifyTemplateWithIpAndUseragent"]
-});
+// SmsIrService.configure({
+//   lineNumber: process.env["smsIr.lineNumber"],
+//   apiKey: process.env["smsIr.apiKey"],
+//   secretKey: process.env["smsIr.secretKey"],
+//   verifyTemplate: process.env["smsIr.verifyTemplate"] as any,
+//   verifyTemplateWithIpAndUseragent: process.env[
+//     "smsIr.verifyTemplateWithIpAndUseragent"
+//   ] as any
+// });
 serendip_1.HttpService.configure({
     beforeMiddlewares: [
         (req, res, next) => {
@@ -64,15 +65,14 @@ serendip_1.HttpService.configure({
         HooksController_1.HooksController
     ]
 });
-//WebSocketService.bypassTokenOnRoutes = ['/']
-console.log("ENV", process.env);
-async function run() {
+async function run(mode) {
+    BusinessService_1.BusinessService.mode = mode;
     return serendip_1.start({
         logging: process.env["core.logging"] || "info",
         cpuCores: process.env["core.cpuCores"] || 1,
         services: [
             serendip_1.HttpService,
-            serendip_1.SmsIrService,
+            // SmsIrService,
             serendip_1.EmailService,
             serendip_1.FaxService,
             serendip_1.DbService,

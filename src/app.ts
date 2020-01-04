@@ -31,7 +31,7 @@ Server.dir = __dirname;
 
 AuthService.configure({
   tokenExpireIn: 1000 * 60 * 60,
-  smsProvider: "SmsIrService"
+  // smsProvider: "SmsIrService"
 });
 
 DbService.configure({
@@ -57,15 +57,15 @@ EmailService.configure({
   templatesPath: join(__dirname, "..", "storage", "email-templates")
 });
 
-SmsIrService.configure({
-  lineNumber: process.env["smsIr.lineNumber"],
-  apiKey: process.env["smsIr.apiKey"],
-  secretKey: process.env["smsIr.secretKey"],
-  verifyTemplate: process.env["smsIr.verifyTemplate"] as any,
-  verifyTemplateWithIpAndUseragent: process.env[
-    "smsIr.verifyTemplateWithIpAndUseragent"
-  ] as any
-});
+// SmsIrService.configure({
+//   lineNumber: process.env["smsIr.lineNumber"],
+//   apiKey: process.env["smsIr.apiKey"],
+//   secretKey: process.env["smsIr.secretKey"],
+//   verifyTemplate: process.env["smsIr.verifyTemplate"] as any,
+//   verifyTemplateWithIpAndUseragent: process.env[
+//     "smsIr.verifyTemplateWithIpAndUseragent"
+//   ] as any
+// });
 
 HttpService.configure({
   beforeMiddlewares: [
@@ -101,7 +101,7 @@ export async function run(mode?: string | 'single-user') {
 
     services: [
       HttpService,
-      SmsIrService,
+      // SmsIrService,
       EmailService,
       FaxService,
       DbService,
