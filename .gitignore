@@ -11,3 +11,4 @@ node_modules
 ignore.json
 .localStorage.json
 doc/README.md
+mingo

@@ -19,21 +19,11 @@ serendip_1.AuthService.configure({
     smsProvider: "SmsIrService"
 });
 serendip_1.DbService.configure({
-    defaultProvider: "Mongodb",
+    defaultProvider: "Mingodb",
     providers: {
-        // Griddb: {
-        //   object: new GriddbProvider(),
-        //   options: {}
-        // },
-        Mongodb: {
+        Mingodb: {
             object: new serendip_mingodb_provider_1.MingodbProvider(),
-            options: {
-                mongoDb: process.env["db.mongoDb"],
-                mongoUrl: process.env["db.mongoUrl"],
-                authSource: process.env["db.authSource"],
-                user: process.env["db.user"],
-                password: process.env["db.password"]
-            }
+            options: {}
         }
     }
 });
@@ -63,7 +53,7 @@ serendip_1.HttpService.configure({
     ],
     cors: "*",
     httpPort: process.env.PORT || process.env["core.httpPort"] || 2040,
-    staticPath: path_1.join(__dirname, "../", "files", "public"),
+    staticPath: path_1.join(__dirname, '..', "public"),
     controllers: [
         serendip_1.AuthController,
         serendip_1.ServerController,
@@ -76,25 +66,26 @@ serendip_1.HttpService.configure({
 });
 //WebSocketService.bypassTokenOnRoutes = ['/']
 console.log("ENV", process.env);
-serendip_1.start({
-    logging: process.env["core.logging"] || "info",
-    cpuCores: process.env["core.cpuCores"] || 1,
-    services: [
-        serendip_1.HttpService,
-        serendip_1.SmsIrService,
-        serendip_1.EmailService,
-        serendip_1.FaxService,
-        serendip_1.DbService,
-        serendip_1.AuthService,
-        serendip_1.ViewEngineService,
-        BusinessService_1.BusinessService,
-        services_1.EntityService,
-        serendip_1.WebSocketService,
-        StorageService_1.StorageService,
-        DashboardService_1.DashboardService,
-        StorageService_1.StorageService
-        // ClientService
-    ]
-})
-    .then(() => { })
-    .catch(msg => console.log(msg));
+async function run() {
+    return serendip_1.start({
+        logging: process.env["core.logging"] || "info",
+        cpuCores: process.env["core.cpuCores"] || 1,
+        services: [
+            serendip_1.HttpService,
+            serendip_1.SmsIrService,
+            serendip_1.EmailService,
+            serendip_1.FaxService,
+            serendip_1.DbService,
+            serendip_1.AuthService,
+            serendip_1.ViewEngineService,
+            BusinessService_1.BusinessService,
+            services_1.EntityService,
+            serendip_1.WebSocketService,
+            StorageService_1.StorageService,
+            DashboardService_1.DashboardService,
+            StorageService_1.StorageService
+            // ClientService
+        ]
+    });
+}
+exports.run = run;

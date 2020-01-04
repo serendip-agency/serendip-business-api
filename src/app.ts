@@ -35,20 +35,12 @@ AuthService.configure({
 });
 
 DbService.configure({
-  defaultProvider: "Mongodb",
+  defaultProvider: "Mingodb",
   providers: {
-    // Griddb: {
-    //   object: new GriddbProvider(),
-    //   options: {}
-    // },
-    Mongodb: {
+    Mingodb: {
       object: new MingodbProvider(),
       options: {
-        mongoDb: process.env["db.mongoDb"],
-        mongoUrl: process.env["db.mongoUrl"],
-        authSource: process.env["db.authSource"],
-        user: process.env["db.user"],
-        password: process.env["db.password"]
+
       }
     }
   }
@@ -86,7 +78,7 @@ HttpService.configure({
   cors: "*",
   httpPort:
     (process.env.PORT as any) || (process.env["core.httpPort"] as any) || 2040,
-  staticPath: join(__dirname, "../", "files", "public"),
+  staticPath: join(__dirname, '..', "public"),
   controllers: [
     AuthController,
     ServerController,
@@ -102,27 +94,33 @@ HttpService.configure({
 
 console.log("ENV", process.env);
 
-start({
-  logging: (process.env["core.logging"] as any) || "info",
 
-  cpuCores: (process.env["core.cpuCores"] as any) || 1,
+export async function run() {
 
-  services: [
-    HttpService,
-    SmsIrService,
-    EmailService,
-    FaxService,
-    DbService,
-    AuthService,
-    ViewEngineService,
-    BusinessService,
-    EntityService,
-    WebSocketService,
-    StorageService,
-    DashboardService,
-    StorageService
-    // ClientService
-  ]
-})
-  .then(() => {})
-  .catch(msg => console.log(msg));
+
+
+  return start({
+    logging: (process.env["core.logging"] as any) || "info",
+
+    cpuCores: (process.env["core.cpuCores"] as any) || 1,
+
+    services: [
+      HttpService,
+      SmsIrService,
+      EmailService,
+      FaxService,
+      DbService,
+      AuthService,
+      ViewEngineService,
+      BusinessService,
+      EntityService,
+      WebSocketService,
+      StorageService,
+      DashboardService,
+      StorageService
+      // ClientService
+    ]
+  })
+
+
+}

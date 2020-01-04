@@ -87,7 +87,7 @@ gulp.task("typedoc", function () {
       name: "Serendip Business API",
       // theme: "minimal",
       theme: "markdown",
-      ignoreCompilerErrors: false,
+      ignoreCompilerErrors: true,
       version: true
     }))
 
@@ -104,6 +104,8 @@ gulp.task("ts", function () {
         target: "es2017",
         sourceMap: true,
         module: "CommonJS",
+        skipLibCheck : true,
+
         baseUrl: ".",
         paths: {
           "*": ["node_modules/*", "src/types/*"]

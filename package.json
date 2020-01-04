@@ -1,11 +1,19 @@
 {
-  "name": "serendip-business-api",
-  "version": "1.1.0",
+  "name": "serendip-dashboard",
+  "version": "1.0.0",
   "description": "serendip business api on nodejs",
   "main": "index.js",
+  "bin": {
+    "serendip": "./dist/start.js",
+    "serendip-dashboard": "./dist/start.js"
+
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/app.js"
+    "test": "gulp test",
+    "doc": "gulp typedoc",
+    "dev": "tsnd src/start.ts",
+    "build": "gulp build",
+    "start": "ts-node src/start.ts"
   },
   "author": "Mohsen Esmaeili <m-esm@hotmail.com>",
   "license": "ISC",
@@ -22,9 +30,9 @@
     "@types/ws": "^6.0.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
+    "gulp-typedoc": "^2.2.2",
     "gulp-typescript": "^4.0.2",
     "gulp-uglify-es": "^1.0.4",
-    "gulp-typedoc": "^2.2.2",
     "typedoc": "^0.14.2",
     "typedoc-plugin-external-module-name": "^2.0.0",
     "typedoc-plugin-markdown": "^1.2.0",
@@ -50,6 +58,8 @@
     "serendip-mingodb-provider": "^1.0.1",
     "serendip-mongodb-provider": "^1.0.16",
     "serendip-utility": "^1.1.1",
+    "ts-node": "^8.5.4",
+    "ts-node-dev": "^1.0.0-pre.44",
     "underscore": "^1.9.1",
     "ws": "^7.0.0"
   }
