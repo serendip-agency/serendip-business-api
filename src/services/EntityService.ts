@@ -201,7 +201,16 @@ export class EntityService implements ServerServiceInterface {
     }, 3000);
   }
 
-  async entityTrigger(eventType: string, model: EntityModel) {
+  async entityTrigger(eventType: 'insert' | 'delete' | 'update', model: EntityModel) {
+
+    if (model._entity == '_dataSource' && eventType == 'delete') {
+      const dataSource = this.dataSources[model._business].find(p => p.model.name == model.name);
+      if (dataSource)
+        // TODO
+        (dataSource.provider as any).close();
+      this.dataSources[model._business] = this.dataSources[model._business].filter(p => p.model.name != model.name)
+    }
+
     if (["_notification", "_task"].indexOf(model._entity) == -1) {
       await Promise.all(
         _.uniq(

@@ -12,6 +12,15 @@ class BusinessController {
         this.businessService = businessService;
         this.authService = authService;
         this.entityService = entityService;
+        this.mode = {
+            method: "get",
+            publicAccess: true,
+            actions: [
+                async (req, res, next, done) => {
+                    res.json(BusinessService_1.BusinessService.mode);
+                }
+            ]
+        };
         this.list = {
             method: "get",
             actions: [

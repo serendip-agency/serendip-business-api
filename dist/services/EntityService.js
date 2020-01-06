@@ -52,10 +52,12 @@ class EntityService {
             if (!this.dataSources[business._id.toString()])
                 this.dataSources[business._id.toString()] = [];
             for (const source of businessDataSources) {
-                if (this.dataSources[business._id.toString()].find(p => p.model._id == source._id))
+                if (this.dataSources[business._id.toString()].find(p => p.model._id == source._id && p.model._vdate === source._vdate)) {
                     continue;
+                }
                 if (source.type.toLowerCase() == "mongodb") {
-                    const mongoProvider = await new serendip_mongodb_provider_1.MongodbProvider();
+                    console.info('connecting to ', source.name);
+                    const mongoProvider = new serendip_mongodb_provider_1.MongodbProvider();
                     mongoProvider
                         .initiate(source.options)
                         .then(() => {
@@ -90,6 +92,13 @@ class EntityService {
                         _entity: "_entity"
                     });
                 }
+                if (entityTypeQuery[0] && typeof entityTypeQuery[0].name.split('.')[1] == 'string') {
+                    const entitySource = this.dataSources[business._id.toString()]
+                        .find(p => p.model.name == entityTypeQuery[0].name.split('.')[0]);
+                    if (!entitySource) {
+                        await this.delete(entityTypeQuery[0]._id);
+                    }
+                }
             }
             if (!this.dataSources[business._id.toString()])
                 this.dataSources[business._id.toString()] = [];
@@ -116,6 +125,13 @@ class EntityService {
         }, 3000);
     }
     async entityTrigger(eventType, model) {
+        if (model._entity == '_dataSource' && eventType == 'delete') {
+            const dataSource = this.dataSources[model._business].find(p => p.model.name == model.name);
+            if (dataSource)
+                // TODO
+                dataSource.provider.close();
+            this.dataSources[model._business] = this.dataSources[model._business].filter(p => p.model.name != model.name);
+        }
         if (["_notification", "_task"].indexOf(model._entity) == -1) {
             await Promise.all(_.uniq(["_cuser", "_uuser", "_duser", "userId"]
                 .map(p => model[p])
@@ -197,7 +213,7 @@ class EntityService {
             this.dataSources[businessId] = [];
         const dataSource = this.dataSources[businessId].find(p => p.model.name == entityName.split(".")[0] &&
             typeof entityName.split(".")[1] === "string");
-        if (entityName && entityName != "null" && entityName != "undefined") {
+        if (!dataSource && entityName && entityName != "null" && entityName != "undefined") {
             pipeline.unshift({
                 $match: { _entity: entityName }
             });
@@ -214,14 +230,17 @@ class EntityService {
         }
     }
     async types(businessId) {
-        return (await this.collection.aggregate([
+        return _.uniq((await this.collection.aggregate([
             { $match: { _business: businessId.toString() } },
             {
                 $group: {
                     _id: "$_entity"
                 }
             }
-        ])).map(p => p._id);
+        ])).map(p => p._id)).concat((await this.find({
+            _business: businessId.toString(),
+            _entity: '_entity'
+        })).map(p => p.name));
     }
 }
 exports.EntityService = EntityService;
