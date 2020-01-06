@@ -20,8 +20,16 @@ export class BusinessController {
     private businessService: BusinessService,
     private authService: AuthService,
     private entityService: EntityService
-  ) {}
+  ) { }
 
+  public mode : HttpEndpointInterface = {
+    method: "get",
+    publicAccess : true,
+    actions: [
+      async (req, res, next, done) => {
+        res.json(BusinessService.mode)
+      }]
+  }
   public list = {
     method: "get",
     actions: [

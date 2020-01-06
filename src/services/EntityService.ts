@@ -76,6 +76,8 @@ export class EntityService implements ServerServiceInterface {
   }
 
   async refreshDataSources() {
+
+
     const businesses = await this.businessService.businessCollection.find({});
 
     for (const business of businesses) {
@@ -84,19 +86,28 @@ export class EntityService implements ServerServiceInterface {
         _entity: "_dataSource"
       });
 
+
+
       if (!this.dataSources[business._id.toString()])
         this.dataSources[business._id.toString()] = [];
 
       for (const source of businessDataSources) {
+
+
         if (
           this.dataSources[business._id.toString()].find(
-            p => p.model._id == source._id
+            p => p.model._id == source._id && p.model._vdate === source._vdate
           )
-        )
+        ) {
+
           continue;
+        }
+
 
         if (source.type.toLowerCase() == "mongodb") {
-          const mongoProvider = await new MongodbProvider();
+
+          console.info('connecting to ', source.name)
+          const mongoProvider = new MongodbProvider();
 
           mongoProvider
             .initiate(source.options)
@@ -108,6 +119,7 @@ export class EntityService implements ServerServiceInterface {
               console.info("connected to dataSource!", source);
             })
             .catch(console.error);
+
         }
       }
     }
@@ -117,25 +129,47 @@ export class EntityService implements ServerServiceInterface {
     }, 3000);
   }
   async refreshEntityTypes() {
+
     const businesses = await this.businessService.businessCollection.find({});
 
     for (const business of businesses) {
       const businessEntityTypes = await this.types(business._id.toString());
 
       for (const entityTypeName of businessEntityTypes) {
+
         const entityTypeQuery = await this.find({
           name: entityTypeName,
           _business: business._id.toString(),
           _entity: "_entity"
         });
 
+
         if (!entityTypeQuery[0]) {
+
+
           await this.insert({
             name: entityTypeName,
             _business: business._id.toString(),
             _entity: "_entity"
           });
+
+
         }
+
+
+        if (entityTypeQuery[0] && typeof entityTypeQuery[0].name.split('.')[1] == 'string') {
+
+          const entitySource = this.dataSources[business._id.toString()]
+            .find(p => p.model.name == entityTypeQuery[0].name.split('.')[0]);
+
+          if (!entitySource) {
+
+            await this.delete(entityTypeQuery[0]._id);
+          }
+
+        }
+
+
       }
 
       if (!this.dataSources[business._id.toString()])
@@ -300,13 +334,15 @@ export class EntityService implements ServerServiceInterface {
         typeof entityName.split(".")[1] === "string"
     );
 
-    if (entityName && entityName != "null" && entityName != "undefined") {
+
+    if (!dataSource && entityName && entityName != "null" && entityName != "undefined") {
       pipeline.unshift({
         $match: { _entity: entityName }
       });
     }
 
     if (dataSource) {
+
       if (pipeline[0] && pipeline[0].$match) {
         delete pipeline[0].$match._entity;
       }
@@ -320,7 +356,7 @@ export class EntityService implements ServerServiceInterface {
   }
 
   async types(businessId: string): Promise<string[]> {
-    return (
+    return _.uniq((
       await this.collection.aggregate([
         { $match: { _business: businessId.toString() } },
         {
@@ -329,6 +365,9 @@ export class EntityService implements ServerServiceInterface {
           }
         }
       ])
-    ).map(p => p._id);
+    ).map(p => p._id)).concat((await this.find({
+      _business: businessId.toString(),
+      _entity: '_entity'
+    })).map(p => p.name));
   }
 }
