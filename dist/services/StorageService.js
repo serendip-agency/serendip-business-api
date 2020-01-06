@@ -3,13 +3,13 @@
  * @module Storage
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const serendip_1 = require("serendip");
 const path_1 = require("path");
 const fs = require("fs-extra");
 const _ = require("underscore");
 const promise_serial = require("promise-serial");
 const bson_1 = require("bson");
 const multiStream = require("multistream");
+const os = require("os");
 class StorageService {
     constructor(dbService, webSocketService) {
         this.dbService = dbService;
@@ -190,8 +190,8 @@ class StorageService {
         this.filesCollection = await this.dbService.collection("fs.files", false);
         this.chunksCollection = await this.dbService.collection("fs.chunks", false);
         this.filesCollection.ensureIndex({ filename: 1 }, { unique: true });
-        this.dataPath = path_1.join(serendip_1.Server.dir, "..", "data");
-        fs.ensureDirSync(this.dataPath);
+        this.dataPath = path_1.join(os.homedir(), ".serendip", "temp");
+        await fs.ensureDir(this.dataPath);
         this.usersCollection = await this.dbService.collection("Users");
         this.businessesCollection = await this.dbService.collection("Businesses");
         var ensureDirPromises = [];

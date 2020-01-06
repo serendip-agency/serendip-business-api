@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const serendip_1 = require("serendip");
+const os = require("os");
 const path_1 = require("path");
 const controllers_1 = require("./controllers");
 const EntityController_1 = require("./controllers/EntityController");
@@ -12,17 +13,23 @@ const dotenv = require("dotenv");
 const HooksController_1 = require("./controllers/HooksController");
 const services_1 = require("./services");
 const serendip_mingodb_provider_1 = require("serendip-mingodb-provider");
+const path = require("path");
+const fs = require("fs-extra");
 dotenv.config();
 serendip_1.Server.dir = __dirname;
 serendip_1.AuthService.configure({
     tokenExpireIn: 1000 * 60 * 60,
 });
+const mingoPath = path.join(os.homedir(), '.serendip', 'mingo');
+fs.ensureDir(mingoPath);
 serendip_1.DbService.configure({
     defaultProvider: "Mingodb",
     providers: {
         Mingodb: {
             object: new serendip_mingodb_provider_1.MingodbProvider(),
-            options: {}
+            options: {
+                mingoPath
+            }
         }
     }
 });

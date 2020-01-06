@@ -1,6 +1,6 @@
 {
   "name": "serendip-dashboard",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "repository": "https://github.com/serendip-agency/serendip-business-api",
   "description": "serendip business api on nodejs",
   "main": "index.js",
@@ -12,6 +12,7 @@
     "test": "MODE=server gulp test",
     "doc": "gulp typedoc",
     "dev": "MODE=debug tsnd src/start.ts",
+    "single-user": "MODE=single-user tsnd src/start.ts",
     "build": "gulp build",
     "start": "MODE=server ts-node src/start.ts"
   },
