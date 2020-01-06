@@ -12,7 +12,7 @@ import {
   HttpService,
   WebSocketService
 } from "serendip";
-
+import * as os from 'os';
 import { join } from "path";
 import { BusinessController } from "./controllers";
 import { EntityController } from "./controllers/EntityController";
@@ -25,14 +25,20 @@ import * as dotenv from "dotenv";
 import { HooksController } from "./controllers/HooksController";
 import { EntityService } from "./services";
 import { MingodbProvider } from "serendip-mingodb-provider";
+import * as path from 'path';
+import * as fs from 'fs-extra'
 dotenv.config();
 
 Server.dir = __dirname;
+
 
 AuthService.configure({
   tokenExpireIn: 1000 * 60 * 60,
   // smsProvider: "SmsIrService"
 });
+
+const mingoPath = path.join(os.homedir(),'.serendip','mingo');
+fs.ensureDir(mingoPath);
 
 DbService.configure({
   defaultProvider: "Mingodb",
@@ -40,7 +46,7 @@ DbService.configure({
     Mingodb: {
       object: new MingodbProvider(),
       options: {
-
+        mingoPath
       }
     }
   }

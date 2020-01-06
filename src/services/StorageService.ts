@@ -17,6 +17,7 @@ import * as promise_serial from "promise-serial";
 import { ObjectID } from "bson";
 import * as mime from "mime-types";
 import * as multiStream from "multistream";
+import * as os from 'os';
 
 import {
   UserModel,
@@ -292,8 +293,10 @@ export class StorageService {
     );
     this.filesCollection.ensureIndex({ filename: 1 }, { unique: true });
 
-    this.dataPath = join(Server.dir, "..", "data");
-    fs.ensureDirSync(this.dataPath);
+    this.dataPath = join(os.homedir(), ".serendip", "temp");
+
+
+    await fs.ensureDir(this.dataPath);
 
     this.usersCollection = await this.dbService.collection<UserModel>("Users");
 
